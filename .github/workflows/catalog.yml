@@ -1,0 +1,52 @@
+name: Validate and publish quote catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Wiseish/WiseishShared/quotes.json"
+      - "scripts/validate_catalog.py"
+      - ".github/workflows/catalog.yml"
+  pull_request:
+    paths:
+      - "Wiseish/WiseishShared/quotes.json"
+      - "scripts/validate_catalog.py"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: quote-catalog-pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: python3 scripts/validate_catalog.py
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - run: |
+          mkdir _site
+          cp Wiseish/WiseishShared/quotes.json _site/quotes.json
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026-08-24.1",
+  "quotes": [
+    {
+      "id": "quiet-1",
+      "mood": "quiet",
+      "text": "選ばなかった道にも、\nたぶん工事中はある。",
+      "reflection": "選ばなかったものを、美化していないだろうか。",
+      "theme": "選択について",
+      "aside": "知らんけどの。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-2",
+      "mood": "quiet",
+      "text": "立ち止まると、\n景色のほうが動き出す。\nたまに鳩も来る。",
+      "reflection": "進まない時間にも、こちらへ来るものはある。鳩とか。",
+      "theme": "休息について",
+      "aside": "鳩は急いでおる。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-3",
+      "mood": "quiet",
+      "text": "心を空っぽにするのじゃ。\n団子は入れてよい。\nたぶんの。",
+      "reflection": "今日は何を一つ、置いておけそう？",
+      "theme": "余白について",
+      "aside": "団子は別腹じゃ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-4",
+      "mood": "quiet",
+      "text": "人の心は読めぬものじゃ。\n献立も読めぬ。字が小さい。",
+      "reflection": "わからないまま、そっとしておけることはある？",
+      "theme": "人について",
+      "aside": "眼鏡どこじゃ。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-5",
+      "mood": "quiet",
+      "text": "休むのも歩みのうちじゃ。\nわしは最初から休んでおる。",
+      "reflection": "休むことを、予定に入れてもよいかの？",
+      "theme": "歩みについて",
+      "aside": "先に座っとる。",
+      "tags": ["rest", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-1",
+      "mood": "foggy",
+      "text": "自分探しの旅に出た。\n留守だった。",
+      "reflection": "探している自分は、見つかる側の準備ができているだろうか。",
+      "theme": "自分について",
+      "aside": "また来るかの。",
+      "tags": ["daily", "relationship"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-2",
+      "mood": "foggy",
+      "text": "霧の中にも道はある。\nたぶん。なければ休憩。",
+      "reflection": "見えないときは、見えるまでお茶にしてもよい。",
+      "theme": "不確かさについて",
+      "aside": "茶はあったかの？",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-3",
+      "mood": "foggy",
+      "text": "わからぬ日は、\nわからぬまま干しておけ。\n靴下の隣にな。",
+      "reflection": "今日決めなくてもよいことは、どれ？",
+      "theme": "保留について",
+      "aside": "片方しかない。",
+      "tags": ["information", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-4",
+      "mood": "foggy",
+      "text": "迷いは道を深くする。\n同じ角を三度曲がったがの。\n知らんけどの。",
+      "reflection": "迷ったぶん、見えたものもあった？",
+      "theme": "迷いについて",
+      "aside": "ここ、さっきも見た。",
+      "tags": ["creative", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-5",
+      "mood": "foggy",
+      "text": "情報は多いほど迷うのじゃ。\n茶柱は一本で足りる。",
+      "reflection": "今日は、何を見ないことにする？",
+      "theme": "情報について",
+      "aside": "茶は見てよい。",
+      "tags": ["information", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-1",
+      "mood": "thinking",
+      "text": "深く考えるほど、\n浅い眠りになる。",
+      "reflection": "その問いは、今夜まで起きている必要があるだろうか。",
+      "theme": "思考について",
+      "aside": "寝るかの。",
+      "tags": ["rest", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-2",
+      "mood": "thinking",
+      "text": "答えが出ないのは、問いが\nまだ帰りたくないからだ。",
+      "reflection": "今日は、問いを泊めておくだけでもよいだろうか。",
+      "theme": "答えについて",
+      "aside": "布団は一つじゃ。",
+      "tags": ["information", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-3",
+      "mood": "thinking",
+      "text": "答えは急ぐと逃げるのじゃ。\nわしはもう座るが。",
+      "reflection": "その答えは、今日でなくてもよいかの？",
+      "theme": "答えについて",
+      "aside": "茶も待っておる。",
+      "tags": ["work", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-4",
+      "mood": "thinking",
+      "text": "考えは煮込むとうまくなる。\n焦げたら知らんけどの。",
+      "reflection": "少し火を弱めてもよい考えはある？",
+      "theme": "思索について",
+      "aside": "鍋は見ておれ。",
+      "tags": ["creative", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-5",
+      "mood": "thinking",
+      "text": "数字は嘘をつかんという。\nわしは暗算を間違えるが。",
+      "reflection": "その数字以外に、見ておきたいものはある？",
+      "theme": "数字について",
+      "aside": "指が足りん。",
+      "tags": ["money", "work"],
+      "isPremium": false
+    }
+  ]
+}

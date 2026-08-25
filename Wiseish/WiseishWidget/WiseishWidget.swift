@@ -7,12 +7,25 @@ private struct WidgetQuote {
     let text: String
     let theme: String
     let tags: [String]
+    let activeMonths: [Int]?
+
+    func isActive(on date: Date, calendar: Calendar) -> Bool {
+        guard let activeMonths else { return true }
+        return activeMonths.contains(calendar.component(.month, from: date))
+    }
 }
 
 private enum WidgetQuoteStore {
     static var quotes: [WidgetQuote] {
         WiseishCatalogStore.currentCatalog().quotes.map {
-            WidgetQuote(id: $0.id, mood: $0.mood, text: $0.text, theme: $0.theme, tags: $0.tags)
+            WidgetQuote(
+                id: $0.id,
+                mood: $0.mood,
+                text: $0.text,
+                theme: $0.theme,
+                tags: $0.tags,
+                activeMonths: $0.activeMonths
+            )
         }
     }
 
@@ -25,8 +38,9 @@ private enum WidgetQuoteStore {
         }
 
         let mood = WiseishContextStore.recommendedMood(date: date)
-        let matchingMood = quotes.filter { $0.mood == mood }
-        let candidates = matchingMood.isEmpty ? quotes : matchingMood
+        let active = quotes.filter { $0.isActive(on: date, calendar: calendar) }
+        let matchingMood = active.filter { $0.mood == mood }
+        let candidates = matchingMood.isEmpty ? active : matchingMood
         let index = WiseishContextStore.preferredIndex(
             candidateIDs: candidates.map(\.id),
             candidateTags: Dictionary(uniqueKeysWithValues: candidates.map { ($0.id, $0.tags) }),
@@ -46,7 +60,8 @@ private enum WidgetQuoteStore {
             mood: WiseishContextStore.recommendedMood(date: date),
             text: record.text,
             theme: record.theme,
-            tags: ["daily"]
+            tags: ["daily"],
+            activeMonths: nil
         )
     }
 
@@ -55,7 +70,14 @@ private enum WidgetQuoteStore {
            calendar.isDate(generated.createdAt, inSameDayAs: date) {
             return generated.contextReason
         }
-        return WiseishContextStore.recentExternalContext(now: date)?.reason
+        let context = WiseishContextStore.recentExternalContext(now: date)
+        let todayRecord = WiseishContextStore.quoteHistory().first {
+            calendar.isDate($0.shownAt, inSameDayAs: date)
+        }
+        if let todayRecord, let context, context.createdAt >= todayRecord.shownAt {
+            return nil
+        }
+        return context?.reason
     }
 
     private static func generatedQuote(for date: Date, calendar: Calendar) -> WidgetQuote? {
@@ -68,7 +90,8 @@ private enum WidgetQuoteStore {
             mood: WiseishContextStore.recommendedMood(date: date),
             text: generated.text,
             theme: generated.theme,
-            tags: generated.tags
+            tags: generated.tags,
+            activeMonths: nil
         )
     }
 }

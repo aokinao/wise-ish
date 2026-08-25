@@ -22,4 +22,5 @@ In the repository settings, open **Pages** and set **Source** to **GitHub Action
 - Catalog size is capped at 500 quotes and 512 KB.
 - IDs must be unique.
 - Only known moods and tags are accepted.
+- Seasonal quotes can use `activeMonths` with month numbers from `1` through `12`.
 - Text is data only; executable code and remote prompt instructions are not supported.

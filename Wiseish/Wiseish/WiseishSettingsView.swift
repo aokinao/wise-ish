@@ -69,7 +69,14 @@ struct WiseishSettingsView: View {
 
                 Toggle("", isOn: notificationBinding)
                     .labelsHidden()
-                    .tint(mustard)
+                    .toggleStyle(
+                        WiseishToggleStyle(
+                            onColor: mustard,
+                            offColor: ink.opacity(0.24),
+                            thumbColor: lightPaper,
+                            outlineColor: ink.opacity(0.38)
+                        )
+                    )
                     .disabled(isUpdatingNotification)
             }
 
@@ -153,7 +160,7 @@ struct WiseishSettingsView: View {
                 Text("言葉の棚")
                     .font(.system(size: 12, weight: .bold, design: .serif))
                 Spacer()
-                Text("60枚")
+                Text("\(WiseishCatalogStore.currentCatalog().quotes.count)枚")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(softInk)
             }
@@ -240,6 +247,38 @@ struct WiseishSettingsView: View {
                 notificationEnabled = false
             }
         }
+    }
+}
+
+private struct WiseishToggleStyle: ToggleStyle {
+    let onColor: Color
+    let offColor: Color
+    let thumbColor: Color
+    let outlineColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            ZStack {
+                Capsule()
+                    .fill(configuration.isOn ? onColor : offColor)
+
+                Capsule()
+                    .stroke(outlineColor, lineWidth: 1)
+
+                Circle()
+                    .fill(thumbColor)
+                    .frame(width: 24, height: 24)
+                    .shadow(color: .black.opacity(0.16), radius: 2, y: 1)
+                    .offset(x: configuration.isOn ? 10 : -10)
+            }
+            .frame(width: 50, height: 30)
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .animation(.easeOut(duration: 0.18), value: configuration.isOn)
+        .accessibilityValue(configuration.isOn ? "オン" : "オフ")
     }
 }
 

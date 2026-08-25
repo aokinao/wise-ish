@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-24.2",
+  "catalogVersion": "2026-08-25.1",
   "quotes": [
     {
       "id": "quiet-1",
@@ -600,6 +600,626 @@
       "theme": "明日について",
       "aside": "わしも横になるかの。",
       "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-21",
+      "mood": "quiet",
+      "activeMonths": [3, 4],
+      "text": "桜は散るから美しいという。\n掃除する人は、もっと偉い。",
+      "reflection": "終わったあとを整えてくれる人はいる？",
+      "theme": "桜について",
+      "aside": "ほうきはどこかの。",
+      "tags": ["daily", "relationship"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-22",
+      "mood": "quiet",
+      "activeMonths": [6, 7],
+      "text": "雨音は心を静かにする。\n洗濯物は騒いでおるが。",
+      "reflection": "雨の日に静かにしておきたいことはある？",
+      "theme": "雨について",
+      "aside": "まだ乾かんの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-23",
+      "mood": "quiet",
+      "activeMonths": [7, 8],
+      "text": "蝉は七日を全力で鳴く。\nわしは七分で休む。",
+      "reflection": "今日は七分だけできそうなことはある？",
+      "theme": "夏について",
+      "aside": "声量では負けたの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-24",
+      "mood": "quiet",
+      "activeMonths": [10, 11],
+      "text": "落ち葉は道を彩る。\n滑るので、悟りより足元じゃ。",
+      "reflection": "遠くより先に見たい足元はある？",
+      "theme": "秋について",
+      "aside": "腰は大事じゃぞ。",
+      "tags": ["daily", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-25",
+      "mood": "quiet",
+      "activeMonths": [12, 1, 2],
+      "text": "初雪は世界を白くする。\nわしの髭は先に白い。",
+      "reflection": "新しく見直せそうなものはある？",
+      "theme": "雪について",
+      "aside": "年季では勝ったぞ。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-26",
+      "mood": "quiet",
+      "activeMonths": [6, 7, 8],
+      "text": "夏の夕暮れは長い。\n蚊には短くしてほしい。",
+      "reflection": "少し長く味わいたい時間はある？",
+      "theme": "夕暮れについて",
+      "aside": "そこを刺すでないぞい。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-27",
+      "mood": "quiet",
+      "activeMonths": [1],
+      "text": "新しい年には希望がある。\n古い餅も、まだある。",
+      "reflection": "新しくせず残しておきたいものはある？",
+      "theme": "新年について",
+      "aside": "焼けばいけるかの。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-28",
+      "mood": "quiet",
+      "text": "猫は日なたを見つける。\n予定表を見ずにな。",
+      "reflection": "今日の日なたはどこにありそう？",
+      "theme": "猫について",
+      "aside": "あやつは達人じゃ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-29",
+      "mood": "quiet",
+      "text": "犬のしっぽは正直じゃ。\nわしの眉毛より、よく動く。",
+      "reflection": "言葉より先に出ている気持ちはある？",
+      "theme": "素直さについて",
+      "aside": "眉は寝ておる。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-30",
+      "mood": "quiet",
+      "text": "鳩が三羽で集まっておる。\n議題はたぶん、パンじゃ。",
+      "reflection": "難しく考えすぎている集まりはある？",
+      "theme": "会議について",
+      "aside": "議事録は羽じゃ。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-31",
+      "mood": "quiet",
+      "text": "亀は急がず進んでおる。\n遅刻かどうかは聞いてない。",
+      "reflection": "急がなくても進めることはある？",
+      "theme": "歩みについて",
+      "aside": "待ち合わせは何時じゃ。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-32",
+      "mood": "quiet",
+      "text": "雀は小さくてもよく喋る。\n内容は聞き取れぬが。",
+      "reflection": "意味より調子を聞きたい声はある？",
+      "theme": "声について",
+      "aside": "朝から元気じゃの。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-33",
+      "mood": "quiet",
+      "text": "カピバラは湯につかる。\n悟りは、たぶん適温じゃ。",
+      "reflection": "今日はどのくらいが適温だろう？",
+      "theme": "適温について",
+      "aside": "肩まで入るのじゃ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-34",
+      "mood": "quiet",
+      "text": "梟は夜に目が冴える。\nわしは夜ほど目が細い。",
+      "reflection": "夜まで起こしておかなくてよい考えはある？",
+      "theme": "夜について",
+      "aside": "もう半分寝とる。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-35",
+      "mood": "quiet",
+      "text": "財布を忘れても払える時代じゃ。\n暗証番号も忘れたが。",
+      "reflection": "便利さに預けすぎた記憶はある？",
+      "theme": "支払いについて",
+      "aside": "顔認証も眠そうじゃ。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-36",
+      "mood": "quiet",
+      "text": "人工知能は何でも答える。\nわしの昼寝の理由以外は。",
+      "reflection": "答えがなくても困らない問いはある？",
+      "theme": "AIについて",
+      "aside": "理由は昼寝中じゃ。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-37",
+      "mood": "quiet",
+      "text": "値札が少し育っておる。\nわしの小銭は小さいままじゃ。",
+      "reflection": "お金をかけず大事にできるものはある？",
+      "theme": "物価について",
+      "aside": "背比べは負けじゃ。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-38",
+      "mood": "quiet",
+      "text": "荷物は留守でも届く。\nわしは在宅でも出ぬことがある。",
+      "reflection": "受け取る余白を残せている？",
+      "theme": "宅配について",
+      "aside": "居留守ではない。瞑想じゃ。",
+      "tags": ["daily", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-39",
+      "mood": "quiet",
+      "text": "通知は世界からの呼び鈴じゃ。\n今日は茶の音だけ聞く。",
+      "reflection": "いま聞かなくてよい呼び鈴はある？",
+      "theme": "通知について",
+      "aside": "湯が沸いたぞ。",
+      "tags": ["information", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-40",
+      "mood": "quiet",
+      "text": "画面越しにも顔は見える。\nわしはミュートのまま頷く。",
+      "reflection": "言葉にせず伝わっていることはある？",
+      "theme": "オンラインについて",
+      "aside": "声が出てないぞ、わし。",
+      "tags": ["work", "relationship"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-21",
+      "mood": "foggy",
+      "activeMonths": [2, 3, 4],
+      "text": "春は眠いのか、わしが眠いのか。\n花粉に聞いても返事がない。",
+      "reflection": "原因を決めなくても休めそう？",
+      "theme": "春眠について",
+      "aside": "目は開かんの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-22",
+      "mood": "foggy",
+      "activeMonths": [6, 7],
+      "text": "傘を持つと雨がやむ。\n忘れると、よく降る。",
+      "reflection": "備えが無駄でも笑えることはある？",
+      "theme": "梅雨について",
+      "aside": "天気は見ておるのか。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-23",
+      "mood": "foggy",
+      "activeMonths": [6, 7, 8, 9],
+      "text": "暑さで考えが溶けてきた。\n冷房のリモコンも見つからぬ。",
+      "reflection": "考える前に涼しくしたい場所はある？",
+      "theme": "猛暑について",
+      "aside": "冷蔵庫には入れんぞ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-24",
+      "mood": "foggy",
+      "activeMonths": [8, 9, 10],
+      "text": "台風の進路は曲がっておる。\nわしの予定も似たようなものじゃ。",
+      "reflection": "曲がっても困らない予定はある？",
+      "theme": "進路について",
+      "aside": "まず戸を閉めるぞ。",
+      "tags": ["daily", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-25",
+      "mood": "foggy",
+      "activeMonths": [9, 10, 11],
+      "text": "秋は着るものに迷う。\n朝のわしと昼のわしが揉めておる。",
+      "reflection": "両方に合わせなくてもよい選択はある？",
+      "theme": "季節の境目について",
+      "aside": "羽織は持ったかの。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-26",
+      "mood": "foggy",
+      "activeMonths": [12, 1, 2],
+      "text": "布団から出る理由を探した。\n布団の中にはなかった。",
+      "reflection": "理由より先に動かせそうなものはある？",
+      "theme": "冬の朝について",
+      "aside": "もう少し探すかの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-27",
+      "mood": "foggy",
+      "activeMonths": [3, 4, 9, 10, 11],
+      "text": "季節の変わり目は忙しい。\n衣替えが途中で四季になった。",
+      "reflection": "途中のままでも使えるものはある？",
+      "theme": "衣替えについて",
+      "aside": "半袖に羽織じゃ。",
+      "tags": ["daily", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-28",
+      "mood": "foggy",
+      "text": "猫は箱があれば入る。\n大きさは入ってから考える。",
+      "reflection": "先に試してから考えられることはある？",
+      "theme": "試すことについて",
+      "aside": "しっぽは出とるぞい。",
+      "tags": ["creative", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-29",
+      "mood": "foggy",
+      "text": "烏が光るものを拾った。\nわしの眼鏡かもしれん。",
+      "reflection": "なくしたと思っているものは近くにある？",
+      "theme": "発見について",
+      "aside": "返してくれんかの。",
+      "tags": ["daily", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-30",
+      "mood": "foggy",
+      "text": "犬に散歩されている人がおる。\n目的地は犬だけ知っておる。",
+      "reflection": "誰かに任せてもよい道順はある？",
+      "theme": "散歩について",
+      "aside": "足取りは軽いの。",
+      "tags": ["relationship", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-31",
+      "mood": "foggy",
+      "text": "ペンギンは皆で並んでおる。\n何の列かは誰も言わぬ。",
+      "reflection": "理由を知らず並んでいることはある？",
+      "theme": "行列について",
+      "aside": "最後尾はここかの。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-32",
+      "mood": "foggy",
+      "text": "鹿が道の真ん中で考えておる。\n車のほうが先に答えを出した。",
+      "reflection": "立ち止まる場所を変えたい問いはある？",
+      "theme": "立ち止まることについて",
+      "aside": "端で考えるかの。",
+      "tags": ["daily", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-33",
+      "mood": "foggy",
+      "text": "蛸には腕が八本ある。\nそれでも手が足りぬ日もあろう。",
+      "reflection": "手を増やすより減らせる用事はある？",
+      "theme": "忙しさについて",
+      "aside": "二本でも余っとる。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-34",
+      "mood": "foggy",
+      "text": "合言葉を安全な場所にしまった。\n安全すぎて入れぬ。",
+      "reflection": "守りすぎて使えないものはある？",
+      "theme": "パスワードについて",
+      "aside": "秘密は守られたの。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-35",
+      "mood": "foggy",
+      "text": "献立が四角い印の中にある。\n読み込む前に腹が鳴った。",
+      "reflection": "便利になる前に済ませたいことはある？",
+      "theme": "電子メニューについて",
+      "aside": "紙はないのかの。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-36",
+      "mood": "foggy",
+      "text": "長い話をAIに縮めてもらった。\nわしの理解も縮んだ。",
+      "reflection": "短くする前に残したい部分はある？",
+      "theme": "要約について",
+      "aside": "三行でも長いかの。",
+      "tags": ["information", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-37",
+      "mood": "foggy",
+      "text": "得する印を集めておる。\n何を買ったかは忘れた。",
+      "reflection": "手段が目的になっていることはある？",
+      "theme": "ポイントについて",
+      "aside": "あと一つで何じゃ。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-38",
+      "mood": "foggy",
+      "text": "知らせを追うほど先が見えぬ。\n鳩の便りくらいでよいかの。",
+      "reflection": "今日追わなくてよい知らせはある？",
+      "theme": "ニュースについて",
+      "aside": "鳩はまだ来ん。",
+      "tags": ["information", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-39",
+      "mood": "foggy",
+      "text": "小さな車が荷物を運んでおる。\n道は機械のほうが詳しい。",
+      "reflection": "任せたほうが迷わないことはある？",
+      "theme": "配達ロボットについて",
+      "aside": "わしも乗れるかの。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-40",
+      "mood": "foggy",
+      "text": "同意する前に全部読もうとした。\n季節が一つ過ぎた。",
+      "reflection": "全部理解せず選んでいることはある？",
+      "theme": "利用規約について",
+      "aside": "まだ第一章じゃ。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-21",
+      "mood": "thinking",
+      "activeMonths": [3, 4],
+      "text": "桜は毎年きちんと咲く。\n予定表は持っておらぬのに。",
+      "reflection": "管理しなくても巡るものはある？",
+      "theme": "巡りについて",
+      "aside": "会議招待も出さん。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-22",
+      "mood": "thinking",
+      "activeMonths": [6, 7, 8, 9],
+      "text": "気温が体温に近づいておる。\n親しくならんでよいぞ。",
+      "reflection": "距離を置いたほうがよい熱はある？",
+      "theme": "暑さについて",
+      "aside": "水を飲むのじゃ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-23",
+      "mood": "thinking",
+      "activeMonths": [9, 10, 11],
+      "text": "秋は考えが深くなる。\n腹も同じくらい深くなる。",
+      "reflection": "頭より先に満たしたいものはある？",
+      "theme": "秋について",
+      "aside": "栗はあるかの。",
+      "tags": ["rest", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-24",
+      "mood": "thinking",
+      "activeMonths": [11, 12, 1, 2, 3],
+      "text": "暖房を一度上げるか、服を着るか。\n考えている間が一番寒い。",
+      "reflection": "考えるより先にできる小さなことはある？",
+      "theme": "冬支度について",
+      "aside": "まず靴下じゃ。",
+      "tags": ["daily", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-25",
+      "mood": "thinking",
+      "activeMonths": [12],
+      "text": "年末に全部終わらせようとした。\n年のほうが先に終わった。",
+      "reflection": "来年へ渡しても困らないものはある？",
+      "theme": "年末について",
+      "aside": "来年のわし、頼んだぞ。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-26",
+      "mood": "thinking",
+      "activeMonths": [3, 4, 9, 10],
+      "text": "季節を先取りして服を買った。\n季節に追い越された。",
+      "reflection": "先回りしすぎている準備はある？",
+      "theme": "先取りについて",
+      "aside": "まだ札が付いとるぞい。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-27",
+      "mood": "thinking",
+      "text": "蟻は働き者じゃという。\n休憩中の蟻には聞いてない。",
+      "reflection": "見えていない休憩を忘れていない？",
+      "theme": "働き方について",
+      "aside": "あやつも茶を飲むかの。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-28",
+      "mood": "thinking",
+      "text": "蜂は役割を分けて働く。\nわしの役割は見守ることじゃ。",
+      "reflection": "自分がしなくてもよい役割はある？",
+      "theme": "役割について",
+      "aside": "遠くから見守るぞ。",
+      "tags": ["work", "relationship"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-29",
+      "mood": "thinking",
+      "text": "渡り鳥は地図なしで帰る。\nわしは駅で出口を失う。",
+      "reflection": "考えず戻れる場所はある？",
+      "theme": "帰る場所について",
+      "aside": "北口はどっちじゃ。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-30",
+      "mood": "thinking",
+      "text": "栗鼠は冬に備えて木の実を隠す。\n場所まで隠したらしい。",
+      "reflection": "備えたこと自体を忘れていない？",
+      "theme": "備えについて",
+      "aside": "わしの団子もない。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-31",
+      "mood": "thinking",
+      "text": "猫は座る場所を迷わぬ。\n人の椅子だからじゃ。",
+      "reflection": "借りてもよい余白はある？",
+      "theme": "決断について",
+      "aside": "わしの席なんじゃが。",
+      "tags": ["relationship", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-32",
+      "mood": "thinking",
+      "text": "海豚は会話が上手いらしい。\nわしは相槌だけで半日いける。",
+      "reflection": "話すより聞いたほうがよいことはある？",
+      "theme": "会話について",
+      "aside": "うむ、ほう、なるほどの。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-33",
+      "mood": "thinking",
+      "text": "梟は賢そうな顔をしておる。\n黙っている時間が長いからかの。",
+      "reflection": "答えずにおいたほうがよい問いはある？",
+      "theme": "沈黙について",
+      "aside": "わしも顔だけなら。",
+      "tags": ["information", "relationship"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-34",
+      "mood": "thinking",
+      "text": "AIに正解を三つもらった。\n迷いも三倍になった。",
+      "reflection": "正解を増やさず選べることはある？",
+      "theme": "正解について",
+      "aside": "一つでよかったのじゃ。",
+      "tags": ["information", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-35",
+      "mood": "thinking",
+      "text": "毎月少しずつ払っておる。\n何にかは、もう覚えておらぬ。",
+      "reflection": "惰性で続けている契約はある？",
+      "theme": "定額について",
+      "aside": "解約の入口が見えぬ。",
+      "tags": ["money", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-36",
+      "mood": "thinking",
+      "text": "値上がりには理由があるという。\n団子には理由なく増えてほしい。",
+      "reflection": "数字以外の豊かさを増やせそう？",
+      "theme": "値上がりについて",
+      "aside": "一本おまけせんかの。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-37",
+      "mood": "thinking",
+      "text": "家でも仕事はできる。\n仕事をしないことも、よくできる。",
+      "reflection": "場所より境目を決めたいことはある？",
+      "theme": "働く場所について",
+      "aside": "布団が近すぎるんじゃ。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-38",
+      "mood": "thinking",
+      "text": "おすすめだけ見て一日が終わった。\nわしの意思も、おすすめされたかの。",
+      "reflection": "自分で選び直したいものはある？",
+      "theme": "おすすめについて",
+      "aside": "次も見よ、と出ておる。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-39",
+      "mood": "thinking",
+      "text": "未読の手紙が山になった。\n登頂しても返信は減らぬ。",
+      "reflection": "全部返さなくてもよい知らせはある？",
+      "theme": "未読について",
+      "aside": "まず下山するかの。",
+      "tags": ["work", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-40",
+      "mood": "thinking",
+      "text": "月へ行く機械を作る時代じゃ。\nわしは台所までの用事を忘れた。",
+      "reflection": "遠い目標より近くで忘れているものはある？",
+      "theme": "宇宙について",
+      "aside": "茶を取りに来たんじゃ。",
+      "tags": ["creative", "information"],
       "isPremium": false
     }
   ]

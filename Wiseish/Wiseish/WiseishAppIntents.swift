@@ -48,8 +48,9 @@ private enum WiseishTodayQuoteResolver {
         }
 
         let mood = WiseishContextStore.recommendedMood(date: date)
-        let candidates = catalog.quotes.filter { $0.mood == mood }
-        let available = candidates.isEmpty ? catalog.quotes : candidates
+        let active = catalog.quotes.filter { $0.isActive(on: date, calendar: calendar) }
+        let candidates = active.filter { $0.mood == mood }
+        let available = candidates.isEmpty ? active : candidates
         let index = WiseishContextStore.preferredIndex(
             candidateIDs: available.map(\.id),
             candidateTags: Dictionary(uniqueKeysWithValues: available.map { ($0.id, $0.tags) }),

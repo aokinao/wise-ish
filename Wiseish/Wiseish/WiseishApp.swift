@@ -11,7 +11,7 @@ struct WiseishApp: App {
 
 private struct WiseishRootView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @AppStorage("onboarding.v1.completed") private var hasCompletedOnboarding = false
+    @AppStorage("onboarding.v2.completed") private var hasCompletedOnboarding = false
     @State private var showsLaunchAnimation = true
 
     var body: some View {
@@ -41,10 +41,15 @@ private struct WiseishRootView: View {
             }
         }
         .task {
-            let duration: Duration = reduceMotion ? .milliseconds(500) : .milliseconds(1_550)
+            let duration: Duration
+            if reduceMotion {
+                duration = .milliseconds(250)
+            } else {
+                duration = hasCompletedOnboarding ? .milliseconds(550) : .milliseconds(900)
+            }
             try? await Task.sleep(for: duration)
 
-            withAnimation(.easeOut(duration: reduceMotion ? 0.18 : 0.36)) {
+            withAnimation(.easeOut(duration: reduceMotion ? 0.14 : 0.24)) {
                 showsLaunchAnimation = false
             }
         }

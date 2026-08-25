@@ -14,29 +14,32 @@ struct WiseishLaunchAnimationView: View {
         ZStack {
             paper.ignoresSafeArea()
 
-            Circle()
-                .trim(from: 0.08, to: hasAppeared ? 0.92 : 0.08)
-                .stroke(
-                    mustard.opacity(0.7),
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
-                .frame(width: 232, height: 232)
-                .rotationEffect(.degrees(hasAppeared ? 28 : -82))
-                .opacity(reduceMotion ? 0 : 1)
-
             VStack(spacing: 16) {
-                Image("Ish")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 176, height: 176)
-                    .scaleEffect(hasAppeared ? 1 : 0.82, anchor: .bottom)
-                    .offset(y: hasAppeared ? 0 : 24)
-                    .rotationEffect(
-                        .degrees(reduceMotion ? 0 : (isNodding ? 2.5 : -2)),
-                        anchor: .bottom
-                    )
-                    .opacity(hasAppeared ? 1 : 0)
-                    .shadow(color: ink.opacity(0.08), radius: 6, y: 5)
+                ZStack {
+                    Circle()
+                        .trim(from: 0.08, to: hasAppeared ? 0.92 : 0.08)
+                        .stroke(
+                            mustard.opacity(0.7),
+                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                        )
+                        .frame(width: 216, height: 216)
+                        .rotationEffect(.degrees(hasAppeared ? 28 : -82))
+                        .opacity(reduceMotion ? 0 : 1)
+
+                    Image("Ish")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 176, height: 176)
+                        .scaleEffect(hasAppeared ? 1 : 0.82, anchor: .bottom)
+                        .offset(y: hasAppeared ? 0 : 24)
+                        .rotationEffect(
+                            .degrees(reduceMotion ? 0 : (isNodding ? 2.5 : -2)),
+                            anchor: .bottom
+                        )
+                        .opacity(hasAppeared ? 1 : 0)
+                        .shadow(color: ink.opacity(0.08), radius: 6, y: 5)
+                }
+                .frame(width: 216, height: 216)
 
                 VStack(spacing: 7) {
                     HStack(spacing: 0) {

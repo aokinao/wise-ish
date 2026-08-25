@@ -1,7 +1,6 @@
 import UIKit
 import UniformTypeIdentifiers
 import Vision
-import WidgetKit
 
 final class ShareViewController: UIViewController {
     private let titleLabel = UILabel()
@@ -100,11 +99,9 @@ final class ShareViewController: UIViewController {
             let combined = (fragments + [recognized]).filter { !$0.isEmpty }.joined(separator: "\n")
             let context = WiseishContextClassifier.classify(combined)
             WiseishContextStore.saveExternalContext(tags: context.tags, reason: context.reason)
-            WiseishContextStore.savePendingInput(combined)
-            WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
 
             DispatchQueue.main.async {
-                self?.statusLabel.text = "もぐもぐ。\n\(context.reason)として受け取りました。\nWise-ishを開くと、Ishが考えます。"
+                self?.statusLabel.text = "もぐもぐ。\n\(context.reason)として受け取りました。\n明日の一枚へ、こっそり混ぜます。"
                 self?.doneButton.isEnabled = true
             }
         }

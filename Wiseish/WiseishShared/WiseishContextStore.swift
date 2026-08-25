@@ -40,6 +40,10 @@ enum WiseishReflectionReaction: String, Codable, CaseIterable {
 
 enum WiseishUsageEvent: String, CaseIterable {
     case appOpened
+    case onboardingReply
+    case onboardingCompleted
+    case notificationPrompted
+    case widgetInstalled
     case favoriteAdded
     case nextQuote
     case moodChanged
@@ -58,6 +62,7 @@ enum WiseishContextStore {
 
     private enum Key {
         static let preferredMood = "personalization.preferredMood"
+        static let preferredMoodDay = "personalization.preferredMoodDay"
         static let favoriteQuoteIDs = "personalization.favoriteQuoteIDs"
         static let skippedQuoteCounts = "personalization.skippedQuoteCounts"
         static let externalContext = "personalization.externalContext"
@@ -75,11 +80,12 @@ enum WiseishContextStore {
     }
 
     static var preferredMood: String? {
-        defaults.string(forKey: Key.preferredMood)
+        preferredMood(for: .now)
     }
 
-    static func recordMood(_ mood: String) {
+    static func recordMood(_ mood: String, date: Date = .now) {
         defaults.set(mood, forKey: Key.preferredMood)
+        defaults.set(dayKey(for: date), forKey: Key.preferredMoodDay)
     }
 
     static func recordFavorite(quoteID: String, isFavorite: Bool) {
@@ -112,17 +118,20 @@ enum WiseishContextStore {
         let skips = defaults.dictionary(forKey: Key.skippedQuoteCounts) as? [String: Int] ?? [:]
         let quoteScores = defaults.dictionary(forKey: Key.quoteReactionScores) as? [String: Int] ?? [:]
         let tagScores = defaults.dictionary(forKey: Key.tagReactionScores) as? [String: Int] ?? [:]
+        let contextTags = Set(recentExternalContext(now: date)?.tags ?? [])
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
-        let contextBias = recentExternalContext(now: date)?.tags.joined().unicodeScalars.reduce(0) { $0 + Int($1.value) } ?? 0
+        let contextBias = contextTags.joined().unicodeScalars.reduce(0) { $0 + Int($1.value) }
         let recentDays = recentlyShownDaysByQuoteID(relativeTo: date)
 
         let ranked = candidateIDs.enumerated().sorted { lhs, rhs in
             let lhsScore = (favorites.contains(lhs.element) ? 3 : 0) - min(skips[lhs.element, default: 0], 3)
                 + reactionScore(for: lhs.element, candidateTags: candidateTags, quoteScores: quoteScores, tagScores: tagScores)
+                + contextScore(for: lhs.element, candidateTags: candidateTags, contextTags: contextTags)
                 + recencyScore(daysAgo: recentDays[lhs.element])
                 + ((day + contextBias + lhs.offset) % candidateIDs.count == 0 ? 1 : 0)
             let rhsScore = (favorites.contains(rhs.element) ? 3 : 0) - min(skips[rhs.element, default: 0], 3)
                 + reactionScore(for: rhs.element, candidateTags: candidateTags, quoteScores: quoteScores, tagScores: tagScores)
+                + contextScore(for: rhs.element, candidateTags: candidateTags, contextTags: contextTags)
                 + recencyScore(daysAgo: recentDays[rhs.element])
                 + ((day + contextBias + rhs.offset) % candidateIDs.count == 0 ? 1 : 0)
             return lhsScore == rhsScore ? lhs.offset < rhs.offset : lhsScore > rhsScore
@@ -160,6 +169,23 @@ enum WiseishContextStore {
         let reactions = defaults.dictionary(forKey: Key.reflectionReactions) as? [String: String] ?? [:]
         return reactions[reflectionKey(quoteID: quoteID, date: date)]
             .flatMap(WiseishReflectionReaction.init(rawValue:))
+    }
+
+    static func previousDayReaction(
+        relativeTo date: Date = .now,
+        calendar: Calendar = .current
+    ) -> WiseishReflectionReaction? {
+        guard let previousDate = calendar.date(byAdding: .day, value: -1, to: date),
+              let record = quoteHistory().first(where: {
+                  calendar.isDate($0.shownAt, inSameDayAs: previousDate)
+              }) else {
+            return nil
+        }
+        return reflectionReaction(quoteID: record.quoteID, date: previousDate)
+    }
+
+    static func metDayCount(calendar: Calendar = .current) -> Int {
+        Set(quoteHistory().map { calendar.startOfDay(for: $0.shownAt) }).count
     }
 
     static func saveExternalContext(tags: [String], reason: String, date: Date = .now) {
@@ -214,6 +240,7 @@ enum WiseishContextStore {
         guard
             let data = defaults.data(forKey: Key.generatedQuote),
             let quote = try? JSONDecoder().decode(WiseishGeneratedQuote.self, from: data),
+            now.timeIntervalSince(quote.createdAt) >= -300,
             now.timeIntervalSince(quote.createdAt) < 60 * 60 * 24 * 7
         else {
             return nil
@@ -267,16 +294,34 @@ enum WiseishContextStore {
         defaults.set(counts, forKey: Key.usageCounts)
     }
 
+    static func recordUsageOnce(_ event: WiseishUsageEvent) {
+        var counts = defaults.dictionary(forKey: Key.usageCounts) as? [String: Int] ?? [:]
+        guard counts[event.rawValue, default: 0] == 0 else { return }
+        counts[event.rawValue] = 1
+        defaults.set(counts, forKey: Key.usageCounts)
+    }
+
     static func usageCounts() -> [String: Int] {
         defaults.dictionary(forKey: Key.usageCounts) as? [String: Int] ?? [:]
     }
 
     static func recommendedMood(date: Date = .now) -> String {
-        if let preferredMood { return preferredMood }
+        if let preferredMood = preferredMood(for: date) { return preferredMood }
         let hour = Calendar.current.component(.hour, from: date)
         if hour >= 22 || hour < 6 { return "thinking" }
         if recentExternalContext()?.tags.contains("information") == true { return "foggy" }
         return "quiet"
+    }
+
+    private static func preferredMood(for date: Date) -> String? {
+        guard defaults.string(forKey: Key.preferredMoodDay) == dayKey(for: date) else {
+            return nil
+        }
+        return defaults.string(forKey: Key.preferredMood)
+    }
+
+    private static func dayKey(for date: Date) -> String {
+        date.formatted(.iso8601.year().month().day())
     }
 
     private static func reactionScore(
@@ -291,6 +336,14 @@ enum WiseishContextStore {
             .max()
             .map { min(max($0, -2), 2) } ?? 0
         return quoteScore + tagScore
+    }
+
+    private static func contextScore(
+        for quoteID: String,
+        candidateTags: [String: [String]],
+        contextTags: Set<String>
+    ) -> Int {
+        Set(candidateTags[quoteID] ?? []).intersection(contextTags).count * 3
     }
 
     private static func recentlyShownDaysByQuoteID(relativeTo date: Date) -> [String: Int] {

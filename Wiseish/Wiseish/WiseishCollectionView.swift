@@ -12,8 +12,6 @@ struct WiseishCollectionView: View {
     @State private var selectedSection: Section = .history
     @State private var revision = 0
 
-    let onSelect: (WiseishQuoteRecord) -> Void
-
     private let paper = Color(red: 0.96, green: 0.92, blue: 0.85)
     private let lightPaper = Color(red: 1.00, green: 0.98, blue: 0.94)
     private let ink = Color(red: 0.16, green: 0.15, blue: 0.13)
@@ -27,12 +25,19 @@ struct WiseishCollectionView: View {
         return history.filter { WiseishContextStore.isFavorite(quoteID: $0.quoteID) }
     }
 
+    private var metDayCount: Int {
+        _ = revision
+        return WiseishContextStore.metDayCount()
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 paper.ignoresSafeArea()
 
                 VStack(spacing: 14) {
+                    milestoneCard
+
                     Picker("表示", selection: $selectedSection) {
                         ForEach(Section.allCases) { section in
                             Text(section.rawValue).tag(section)
@@ -71,6 +76,49 @@ struct WiseishCollectionView: View {
         }
     }
 
+    private var milestoneCard: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack {
+                Text("Ishと会った日")
+                    .font(.system(size: 11, weight: .bold, design: .serif))
+                Spacer()
+                Text("\(metDayCount)日")
+                    .font(.system(size: 16, weight: .bold, design: .serif))
+            }
+
+            Text(milestoneMessage)
+                .font(.system(size: 10, weight: .medium, design: .serif))
+                .foregroundStyle(softInk)
+
+            HStack(spacing: 5) {
+                ForEach(0..<7, id: \.self) { index in
+                    Capsule()
+                        .fill(index < min(metDayCount, 7) ? mustard : ink.opacity(0.1))
+                        .frame(maxWidth: .infinity, minHeight: 5, maxHeight: 5)
+                }
+            }
+
+            Text("連続でなくてよい。休んだ日は、わしも休む。")
+                .font(.system(size: 8, weight: .medium, design: .serif))
+                .foregroundStyle(softInk.opacity(0.85))
+        }
+        .padding(14)
+        .background(lightPaper.opacity(0.58), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.1), lineWidth: 1))
+    }
+
+    private var milestoneMessage: String {
+        switch metDayCount {
+        case 0: "最初の一枚は、まだ棚の外じゃ。"
+        case 1: "まず一日。Ishはもう座っておる。"
+        case 2: "あと一日会えば、少し顔を覚えるぞ。"
+        case 3: "三日会ったの。そなたの返事も少し覚えた。"
+        case 4...6: "七日ぶん並ぶと、ちいさな週になるぞ。"
+        case 7: "七日会った。これで立派な、だいたい一週間じゃ。"
+        default: "\(metDayCount)日ぶん、答えのない日が並んでおる。"
+        }
+    }
+
     private func recordCard(_ record: WiseishQuoteRecord) -> some View {
         VStack(alignment: .leading, spacing: 9) {
                 HStack {
@@ -106,11 +154,6 @@ struct WiseishCollectionView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(lightPaper, in: RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.1), lineWidth: 1))
-        .contentShape(RoundedRectangle(cornerRadius: 14))
-        .onTapGesture {
-            onSelect(record)
-            dismiss()
-        }
     }
 
     private var emptyState: some View {

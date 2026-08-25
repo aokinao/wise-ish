@@ -42,8 +42,13 @@ enum WiseishMood: String, CaseIterable, Identifiable {
 
     @MainActor
     var quotes: [WiseishQuote] {
+        quotes(for: .now)
+    }
+
+    @MainActor
+    func quotes(for date: Date) -> [WiseishQuote] {
         WiseishCatalogStore.currentCatalog().quotes
-            .filter { $0.mood == rawValue }
+            .filter { $0.mood == rawValue && $0.isActive(on: date) }
             .map(WiseishQuote.init)
     }
 }
@@ -63,20 +68,15 @@ private extension WiseishQuote {
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var selectedMood: WiseishMood = .quiet
-    @State private var quoteIndex = 0
     @State private var displayedQuote = WiseishMood.quiet.quotes[0]
     @State private var isFavorite = false
-    @State private var isFlipping = false
     @State private var isPoked = false
     @State private var ishMessage: String?
     @State private var pokeID = UUID()
     @State private var isFloating = false
     @State private var selectedReaction: WiseishReflectionReaction?
+    @State private var previousDayReaction: WiseishReflectionReaction?
     @State private var contextReason: String?
-    @State private var isGeneratingQuote = false
-    @State private var generationStatus: String?
-    @State private var showsMoodPicker = false
     @State private var showsIshInput = false
     @State private var ishInputText = ""
     @State private var showsWidgetGuide = false
@@ -104,9 +104,8 @@ struct ContentView: View {
                     header
                     dateHeader
                     quoteSection
-                    actionBar
-                    ishInputPrompt
                     reflectionCard
+                    actionBar
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 8)
@@ -114,7 +113,6 @@ struct ContentView: View {
             }
         }
         .foregroundStyle(ink)
-        .sheet(isPresented: $showsMoodPicker) { moodPicker }
         .sheet(isPresented: $showsIshInput) { ishInputSheet }
         .sheet(isPresented: $showsWidgetGuide) { widgetGuide }
         .sheet(isPresented: $showsSettings) {
@@ -127,9 +125,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showsCollection) {
-            WiseishCollectionView { record in
-                show(record)
-            }
+            WiseishCollectionView()
         }
         .sheet(item: $sharePayload) { payload in
             WiseishActivityView(image: payload.image)
@@ -137,8 +133,8 @@ struct ContentView: View {
         .onAppear {
             restorePersonalizedState()
             WiseishContextStore.recordUsage(.appOpened)
-            processPersonalizedQuoteIfNeeded()
             refreshCatalogIfNeeded()
+            detectWidgetInstallation()
             withAnimation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true)) {
                 isFloating = true
             }
@@ -146,8 +142,8 @@ struct ContentView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 restorePersonalizedState()
-                processPersonalizedQuoteIfNeeded()
                 refreshCatalogIfNeeded()
+                detectWidgetInstallation()
             }
         }
     }
@@ -242,16 +238,11 @@ struct ContentView: View {
                     .padding(.top, 5)
             }
 
-            if isGeneratingQuote {
-                Text("Ish、考え中…")
-                    .font(.system(size: 9, weight: .semibold))
+            if let previousDayReaction {
+                Text(previousReplyMessage(for: previousDayReaction))
+                    .font(.system(size: 9, weight: .semibold, design: .serif))
                     .foregroundStyle(softInk)
-                    .padding(.top, 4)
-            } else if let generationStatus {
-                Text(generationStatus)
-                    .font(.system(size: 8, weight: .medium))
-                    .foregroundStyle(softInk)
-                    .padding(.top, 3)
+                    .padding(.top, 5)
             }
 
             Text(currentQuote.text)
@@ -287,13 +278,6 @@ struct ContentView: View {
             .offset(y: -12)
         }
         .shadow(color: ink.opacity(0.12), radius: 14, y: 8)
-        .rotation3DEffect(
-            .degrees(isFlipping ? 88 : 0),
-            axis: (x: 1, y: 0, z: 0),
-            anchor: .top,
-            perspective: 0.55
-        )
-        .opacity(isFlipping ? 0 : 1)
     }
 
     private var mascot: some View {
@@ -340,8 +324,8 @@ struct ContentView: View {
     private var reflectionCard: some View {
         VStack(alignment: .leading, spacing: 13) {
             HStack(alignment: .top, spacing: 12) {
-                Text("?")
-                    .font(.system(size: 19, weight: .bold, design: .serif))
+                Image(systemName: "bubble.left.fill")
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(lightPaper)
                     .frame(width: 34, height: 34)
                     .background(ink, in: UnevenRoundedRectangle(
@@ -352,19 +336,37 @@ struct ContentView: View {
                     ))
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("今日の問い")
+                    Text("ISHに返事")
                         .font(.system(size: 9, weight: .bold))
                         .tracking(1)
                         .foregroundStyle(softInk)
 
-                    Text(currentQuote.reflection)
+                    Text("この一枚、今日のそなたには効きそうかの？")
                         .font(.system(size: 13, weight: .semibold, design: .serif))
                         .lineSpacing(5)
-                        .contentTransition(.opacity)
                 }
             }
 
             reactionBar
+
+            Text(selectedReaction == nil
+                 ? "返事は、明日の一枚にこっそり混ぜるぞ。"
+                 : "覚えたぞ。明日は少しだけ、そなた寄りじゃ。")
+                .font(.system(size: 9, weight: .medium, design: .serif))
+                .foregroundStyle(softInk)
+                .contentTransition(.opacity)
+
+            if selectedReaction != nil {
+                Button {
+                    showsIshInput = true
+                } label: {
+                    Label("明日のIshに、もう少し話す", systemImage: "ellipsis.bubble")
+                        .font(.system(size: 10, weight: .semibold, design: .serif))
+                        .foregroundStyle(ink)
+                }
+                .buttonStyle(.plain)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(13)
@@ -374,8 +376,8 @@ struct ContentView: View {
 
     private var reactionBar: some View {
         HStack(spacing: 6) {
-            reactionButton(.resonate, title: "たしかにの")
-            reactionButton(.leaveIt, title: "今日は置いとく")
+            reactionButton(.resonate, title: "効きそう")
+            reactionButton(.leaveIt, title: "今日はむり")
             reactionButton(.unknown, title: "知らんけど")
         }
     }
@@ -395,7 +397,7 @@ struct ContentView: View {
                 .overlay(Capsule().stroke(ink.opacity(isSelected ? 0 : 0.13), lineWidth: 1))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("今日の問いに「\(title)」と返す")
+        .accessibilityLabel("Ishに「\(title)」と返す")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
@@ -414,54 +416,9 @@ struct ContentView: View {
                 actionLabel("共有", systemImage: "square.and.arrow.up")
             }
 
-            Button {
-                showNextQuote()
-            } label: {
-                actionLabel("もう一枚", systemImage: "arrow.clockwise")
-            }
-
-            Button {
-                showsMoodPicker = true
-            } label: {
-                actionLabel(selectedMood.title, systemImage: "slider.horizontal.3")
-            }
         }
         .buttonStyle(.plain)
-        .padding(.bottom, 10)
-    }
-
-    private var ishInputPrompt: some View {
-        Button {
-            showsIshInput = true
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(mustard)
-                    .frame(width: 34, height: 34)
-                    .background(ink, in: Circle())
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Ishに一言")
-                        .font(.system(size: 12, weight: .bold, design: .serif))
-                    Text("いまのことを、雑に話す")
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(softInk)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(softInk)
-            }
-            .padding(.horizontal, 13)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .background(lightPaper.opacity(0.55), in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.13), lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-        .disabled(isGeneratingQuote)
+        .padding(.top, 10)
         .padding(.bottom, 16)
     }
 
@@ -479,71 +436,13 @@ struct ContentView: View {
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(ink.opacity(0.13), lineWidth: 1))
     }
 
-    private var moodPicker: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text("今日は、どんな感じ？")
-                .font(.system(.title3, design: .serif, weight: .bold))
-
-            HStack(spacing: 8) {
-                ForEach(WiseishMood.allCases) { mood in
-                    Button {
-                        select(mood)
-                    } label: {
-                        VStack(spacing: 5) {
-                            Text(mood.symbol).font(.system(size: 24, design: .serif))
-                            Text(mood.title).font(.system(size: 11, weight: .semibold))
-                        }
-                        .foregroundStyle(ink)
-                        .frame(maxWidth: .infinity, minHeight: 72)
-                        .background(selectedMood == mood ? mustard : paper, in: RoundedRectangle(cornerRadius: 14))
-                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.16), lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            HStack(spacing: 8) {
-                Button {
-                    showsMoodPicker = false
-                } label: {
-                    Text("この気分にする")
-                        .font(.system(size: 12, weight: .semibold))
-                        .frame(maxWidth: .infinity, minHeight: 48)
-                        .background(paper, in: RoundedRectangle(cornerRadius: 14))
-                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.16), lineWidth: 1))
-                }
-
-                Button {
-                    showsMoodPicker = false
-                    WiseishContextStore.recordUsage(.aiRequested)
-                    processPersonalizedQuoteIfNeeded(force: true)
-                } label: {
-                    Label("Ishに頼む", systemImage: "sparkles")
-                        .font(.system(size: 12, weight: .semibold))
-                        .frame(maxWidth: .infinity, minHeight: 48)
-                        .background(ink, in: RoundedRectangle(cornerRadius: 14))
-                        .foregroundStyle(lightPaper)
-                }
-                .disabled(isGeneratingQuote)
-            }
-            .buttonStyle(.plain)
-
-            Text("「Ishに頼む」は、端末内AIで今日に合う一枚を選びます。")
-                .font(.system(size: 10))
-                .foregroundStyle(softInk)
-        }
-        .padding(22)
-        .presentationDetents([.height(310)])
-        .presentationDragIndicator(.visible)
-    }
-
     private var ishInputSheet: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 5) {
-                Label("Ishに一言", systemImage: "sparkles")
+                Label("明日のIshに一言", systemImage: "ellipsis.bubble")
                     .font(.system(.title3, design: .serif, weight: .bold))
 
-                Text("まとまってなくてよい。わしもだいたいそうじゃ。")
+                Text("まとまってなくてよい。明日の一枚へ、こっそり混ぜるぞ。")
                     .font(.system(size: 11, weight: .medium, design: .serif))
                     .foregroundStyle(softInk)
             }
@@ -584,14 +483,14 @@ struct ContentView: View {
             Button {
                 submitIshInput()
             } label: {
-                Label("一枚もらう", systemImage: "sparkles")
+                Label("Ishに預ける", systemImage: "arrow.down.heart")
                     .font(.system(size: 13, weight: .semibold))
                     .frame(maxWidth: .infinity, minHeight: 48)
                     .background(ink, in: RoundedRectangle(cornerRadius: 14))
                     .foregroundStyle(lightPaper)
             }
             .buttonStyle(.plain)
-            .disabled(ishInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isGeneratingQuote)
+            .disabled(ishInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .opacity(ishInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1)
         }
         .padding(22)
@@ -643,32 +542,6 @@ struct ContentView: View {
         }
     }
 
-    private func select(_ mood: WiseishMood) {
-        guard mood != selectedMood, !isFlipping else { return }
-        WiseishContextStore.recordMood(mood.rawValue)
-        let nextIndex = preferredIndex(for: mood.quotes)
-        let nextQuote = mood.quotes[nextIndex]
-        selectedMood = mood
-        WiseishContextStore.recordUsage(.moodChanged)
-        isFavorite = false
-        flipQuote(to: nextQuote, index: nextIndex)
-        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-        Task {
-            try? await Task.sleep(for: .milliseconds(360))
-            pokeIsh()
-        }
-    }
-
-    private func showNextQuote() {
-        guard !isFlipping else { return }
-        WiseishContextStore.recordSkip(quoteID: currentQuote.id)
-        WiseishContextStore.recordUsage(.nextQuote)
-        let nextIndex = (quoteIndex + 1) % selectedMood.quotes.count
-        let nextQuote = selectedMood.quotes[nextIndex]
-        isFavorite = false
-        flipQuote(to: nextQuote, index: nextIndex)
-    }
-
     private func toggleFavorite() {
         withAnimation(.spring(duration: 0.25, bounce: 0.55)) {
             isFavorite.toggle()
@@ -677,22 +550,6 @@ struct ContentView: View {
         if isFavorite { WiseishContextStore.recordUsage(.favoriteAdded) }
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
         if isFavorite { pokeIsh() }
-    }
-
-    private func flipQuote(to nextQuote: WiseishQuote, index nextIndex: Int) {
-        withAnimation(.easeIn(duration: 0.26)) {
-            isFlipping = true
-        }
-        Task {
-            try? await Task.sleep(for: .milliseconds(260))
-            displayedQuote = nextQuote
-            quoteIndex = nextIndex
-            selectedReaction = WiseishContextStore.reflectionReaction(quoteID: nextQuote.id)
-            recordCurrentQuote()
-            withAnimation(.spring(duration: 0.34, bounce: 0.18)) {
-                isFlipping = false
-            }
-        }
     }
 
     private func pokeIsh(message: String? = nil) {
@@ -715,29 +572,25 @@ struct ContentView: View {
     private func restorePersonalizedState() {
         let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood()) ?? .quiet
         let index = preferredIndex(for: mood.quotes)
-        selectedMood = mood
-        quoteIndex = index
 
         if let todayRecord = WiseishContextStore.quoteHistory().first(where: {
             Calendar.current.isDateInToday($0.shownAt)
         }) {
             displayedQuote = quote(from: todayRecord)
-            if let catalogQuote = WiseishCatalogStore.currentCatalog().quotes.first(where: { $0.id == todayRecord.quoteID }),
-               let recordedMood = WiseishMood(rawValue: catalogQuote.mood) {
-                selectedMood = recordedMood
-                quoteIndex = recordedMood.quotes.firstIndex(where: { $0.id == todayRecord.quoteID }) ?? index
-            }
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
             selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
             if let generated = WiseishContextStore.recentGeneratedQuote(),
                WiseishContextStore.generatedQuoteIsFromToday(),
                generated.catalogID == todayRecord.quoteID {
                 contextReason = generated.contextReason
+            } else if let context = WiseishContextStore.recentExternalContext(),
+                      context.createdAt < todayRecord.shownAt {
+                contextReason = context.reason
             } else {
-                contextReason = WiseishContextStore.recentExternalContext()?.reason
+                contextReason = nil
             }
-            generationStatus = nil
             WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+            restorePreviousReplyHint()
             return
         }
 
@@ -745,10 +598,10 @@ struct ContentView: View {
            WiseishContextStore.generatedQuoteIsFromToday() {
             displayedQuote = quote(from: generated)
             contextReason = generated.contextReason
-            generationStatus = nil
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
             selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
             recordCurrentQuote()
+            restorePreviousReplyHint()
             return
         }
 
@@ -757,49 +610,23 @@ struct ContentView: View {
         selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
         contextReason = WiseishContextStore.recentExternalContext()?.reason
         recordCurrentQuote()
+        restorePreviousReplyHint()
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
     }
 
-    private func processPersonalizedQuoteIfNeeded(force: Bool = false) {
-        guard !isGeneratingQuote else { return }
-        let pendingInput = WiseishContextStore.pendingInput()
-        guard force || pendingInput != nil else { return }
+    private func restorePreviousReplyHint() {
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: .now) ?? 0
+        let shouldMention = WiseishContextStore.metDayCount() <= 3 || day.isMultiple(of: 4)
+        previousDayReaction = shouldMention
+            ? WiseishContextStore.previousDayReaction()
+            : nil
+    }
 
-        isGeneratingQuote = true
-        generationStatus = nil
-        let mood = selectedMood.title
-
-        Task {
-            let result = await WiseishLanguageModelService.generate(
-                sourceText: pendingInput?.text,
-                mood: mood
-            )
-
-            switch result {
-            case .generated(let generated):
-                WiseishContextStore.saveGeneratedQuote(generated)
-                WiseishContextStore.saveExternalContext(tags: generated.tags, reason: generated.contextReason)
-                WiseishContextStore.clearPendingInput()
-                contextReason = generated.contextReason
-                generationStatus = nil
-                let generatedQuote = quote(from: generated)
-                if isFlipping {
-                    displayedQuote = generatedQuote
-                } else {
-                    flipQuote(to: generatedQuote, index: quoteIndex)
-                }
-                WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-                Task {
-                    try? await Task.sleep(for: .milliseconds(430))
-                    WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-                    pokeIsh(message: generatedQuote.aside)
-                }
-
-            case .failed(let message):
-                generationStatus = "\(message) · 収録文から選択"
-                WiseishContextStore.clearPendingInput()
-            }
-            isGeneratingQuote = false
+    private func previousReplyMessage(for reaction: WiseishReflectionReaction) -> String {
+        switch reaction {
+        case .resonate: "昨日の「効きそう」、少し覚えておるぞ。"
+        case .leaveIt: "昨日は「今日はむり」じゃったな。今日は軽めじゃ。"
+        case .unknown: "昨日も「知らんけど」じゃったな。わしもじゃ。"
         }
     }
 
@@ -827,14 +654,6 @@ struct ContentView: View {
         )
     }
 
-    private func show(_ record: WiseishQuoteRecord) {
-        displayedQuote = quote(from: record)
-        isFavorite = WiseishContextStore.isFavorite(quoteID: record.quoteID)
-        selectedReaction = WiseishContextStore.reflectionReaction(quoteID: record.quoteID)
-        contextReason = nil
-        generationStatus = nil
-    }
-
     private func recordCurrentQuote() {
         WiseishContextStore.recordQuote(
             quoteID: currentQuote.id,
@@ -853,8 +672,9 @@ struct ContentView: View {
 
     private func submitIshInput() {
         let input = ishInputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !input.isEmpty, !isGeneratingQuote else { return }
-        WiseishContextStore.savePendingInput(input)
+        guard !input.isEmpty else { return }
+        let context = WiseishContextClassifier.classify(input)
+        WiseishContextStore.saveExternalContext(tags: context.tags, reason: context.reason)
         WiseishContextStore.recordUsage(.aiRequested)
         isIshInputFocused = false
         showsIshInput = false
@@ -862,7 +682,25 @@ struct ContentView: View {
 
         Task {
             try? await Task.sleep(for: .milliseconds(260))
-            processPersonalizedQuoteIfNeeded(force: true)
+            pokeIsh(message: "聞いたぞ。明日のわしに渡しておく。")
+
+            let calendar = Calendar.current
+            let tomorrow = calendar.date(
+                byAdding: .day,
+                value: 1,
+                to: calendar.startOfDay(for: .now)
+            ) ?? Date.now.addingTimeInterval(86_400)
+            let mood = WiseishMood(
+                rawValue: WiseishContextStore.recommendedMood(date: tomorrow)
+            ) ?? .quiet
+            let result = await WiseishLanguageModelService.generate(
+                sourceText: input,
+                mood: mood.title,
+                date: tomorrow
+            )
+            if case .generated(let generated) = result {
+                WiseishContextStore.saveGeneratedQuote(generated)
+            }
         }
     }
 
@@ -879,8 +717,8 @@ struct ContentView: View {
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
 
         let message = switch reaction {
-        case .resonate: "うむ。わしも今そう思った。"
-        case .leaveIt: "置いとけ置いとけ。逃げはせぬ。たぶん。"
+        case .resonate: "うむ。そなた、話が早いの。"
+        case .leaveIt: "むりなら置いとけ。床は広いぞ。"
         case .unknown: "よい返事じゃ。わしも知らん。"
         }
         pokeIsh(message: message)
@@ -898,6 +736,16 @@ struct ContentView: View {
             guard await WiseishCatalogUpdater.shared.refreshIfNeeded() else { return }
             restorePersonalizedState()
             WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+        }
+    }
+
+    private func detectWidgetInstallation() {
+        WidgetCenter.shared.getCurrentConfigurations { result in
+            guard case .success(let configurations) = result,
+                  configurations.contains(where: { $0.kind == "WiseishDailyWidget" }) else {
+                return
+            }
+            WiseishContextStore.recordUsageOnce(.widgetInstalled)
         }
     }
 }

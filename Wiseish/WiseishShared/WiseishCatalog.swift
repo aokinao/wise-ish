@@ -15,6 +15,12 @@ struct WiseishCatalogQuote: Codable, Equatable, Identifiable {
     let aside: String
     let tags: [String]
     let isPremium: Bool
+    let activeMonths: [Int]?
+
+    func isActive(on date: Date, calendar: Calendar = .current) -> Bool {
+        guard let activeMonths else { return true }
+        return activeMonths.contains(calendar.component(.month, from: date))
+    }
 }
 
 enum WiseishCatalogError: Error {
@@ -62,6 +68,8 @@ enum WiseishCatalogValidator {
                 !quote.aside.isEmpty,
                 !quote.tags.isEmpty,
                 quote.tags.allSatisfy(tags.contains),
+                quote.activeMonths?.allSatisfy((1...12).contains) != false,
+                quote.activeMonths?.isEmpty != true,
                 !quote.text.contains("."),
                 !quote.text.contains(",")
             else {
@@ -75,8 +83,13 @@ enum WiseishCatalogStore {
     private static let cacheFileName = "wiseish-quotes.json"
 
     static func currentCatalog(bundle: Bundle = .main) -> WiseishCatalog {
-        if let cached = cachedCatalog() { return cached }
-        if let bundled = bundledCatalog(bundle: bundle) { return bundled }
+        let cached = cachedCatalog()
+        let bundled = bundledCatalog(bundle: bundle)
+        if let cached, let bundled {
+            return cached.catalogVersion > bundled.catalogVersion ? cached : bundled
+        }
+        if let cached { return cached }
+        if let bundled { return bundled }
         return fallbackCatalog
     }
 
@@ -124,7 +137,8 @@ enum WiseishCatalogStore {
                 theme: "余白について",
                 aside: "団子は別腹じゃ。",
                 tags: ["rest", "daily"],
-                isPremium: false
+                isPremium: false,
+                activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-foggy",
@@ -134,7 +148,8 @@ enum WiseishCatalogStore {
                 theme: "不確かさについて",
                 aside: "茶はあったかの？",
                 tags: ["rest", "daily"],
-                isPremium: false
+                isPremium: false,
+                activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-thinking",
@@ -144,7 +159,8 @@ enum WiseishCatalogStore {
                 theme: "答えについて",
                 aside: "茶も待っておる。",
                 tags: ["work", "information"],
-                isPremium: false
+                isPremium: false,
+                activeMonths: nil
             )
         ]
     )

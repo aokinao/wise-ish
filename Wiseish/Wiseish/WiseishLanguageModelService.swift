@@ -40,7 +40,7 @@ enum WiseishLanguageModelService {
         mood: String,
         date: Date = .now
     ) async -> WiseishGenerationResult {
-        let candidates = candidates(for: mood)
+        let candidates = candidates(for: mood, date: date)
         guard !candidates.isEmpty else {
             return .failed(message: "Ish、言葉の棚を見失いました")
         }
@@ -117,9 +117,9 @@ enum WiseishLanguageModelService {
         }
     }
 
-    private static func candidates(for moodTitle: String) -> [WiseishQuote] {
+    private static func candidates(for moodTitle: String, date: Date) -> [WiseishQuote] {
         let mood = WiseishMood.allCases.first { $0.title == moodTitle } ?? .quiet
-        return mood.quotes
+        return mood.quotes(for: date)
     }
 
     private static func chooseLocally(

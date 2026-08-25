@@ -7,7 +7,7 @@ import sys
 CATALOG_PATH = pathlib.Path(__file__).parents[1] / "Wiseish" / "WiseishShared" / "quotes.json"
 MOODS = {"quiet", "foggy", "thinking"}
 TAGS = {"work", "information", "rest", "relationship", "money", "creative", "daily"}
-VOICE_MARKERS = ("じゃ", "かの", "わし", "たぶん", "知らん", "ぬ", "おる", "がの")
+VOICE_MARKERS = ("じゃ", "かの", "わし", "たぶん", "知らん", "ぬ", "おる", "がの", "ぞい")
 
 
 def fail(message: str) -> None:
@@ -30,6 +30,7 @@ if not isinstance(quotes, list) or not 1 <= len(quotes) <= 500:
 ids: set[str] = set()
 unknown_keys = set()
 required = {"id", "mood", "text", "reflection", "theme", "aside", "tags", "isPremium"}
+optional = {"activeMonths"}
 for index, quote in enumerate(quotes):
     missing = required - quote.keys()
     if missing:
@@ -46,6 +47,13 @@ for index, quote in enumerate(quotes):
         fail(f"{quote_id}: invalid tags")
     if not isinstance(quote["isPremium"], bool):
         fail(f"{quote_id}: isPremium must be boolean")
+    active_months = quote.get("activeMonths")
+    if active_months is not None and (
+        not isinstance(active_months, list)
+        or not active_months
+        or not all(isinstance(month, int) and 1 <= month <= 12 for month in active_months)
+    ):
+        fail(f"{quote_id}: activeMonths must contain months from 1 through 12")
 
     text = quote["text"]
     compact_length = len("".join(text.split()))
@@ -62,7 +70,7 @@ for index, quote in enumerate(quotes):
         if not isinstance(quote[field], str) or not quote[field].strip():
             fail(f"{quote_id}: {field} is required")
 
-unknown_keys = set().union(*(set(quote.keys()) - required for quote in quotes))
+unknown_keys = set().union(*(set(quote.keys()) - required - optional for quote in quotes))
 if unknown_keys:
     fail(f"unknown quote fields: {sorted(unknown_keys)}")
 

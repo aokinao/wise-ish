@@ -80,6 +80,7 @@ struct ContentView: View {
     @State private var showsIshInput = false
     @State private var ishInputText = ""
     @State private var showsWidgetGuide = false
+    @State private var showsSettings = false
     @State private var showsCollection = false
     @State private var sharePayload: WiseishSharePayload?
     @FocusState private var isIshInputFocused: Bool
@@ -116,6 +117,15 @@ struct ContentView: View {
         .sheet(isPresented: $showsMoodPicker) { moodPicker }
         .sheet(isPresented: $showsIshInput) { ishInputSheet }
         .sheet(isPresented: $showsWidgetGuide) { widgetGuide }
+        .sheet(isPresented: $showsSettings) {
+            WiseishSettingsView {
+                Task {
+                    try? await Task.sleep(for: .milliseconds(280))
+                    WiseishContextStore.recordUsage(.widgetGuideOpened)
+                    showsWidgetGuide = true
+                }
+            }
+        }
         .sheet(isPresented: $showsCollection) {
             WiseishCollectionView { record in
                 show(record)
@@ -166,18 +176,17 @@ struct ContentView: View {
             .accessibilityLabel("履歴とお気に入りを見る")
 
             Button {
-                WiseishContextStore.recordUsage(.widgetGuideOpened)
-                showsWidgetGuide = true
+                WiseishContextStore.recordUsage(.settingsOpened)
+                showsSettings = true
             } label: {
-                Label("ウィジェット", systemImage: "square.grid.2x2")
-                    .font(.system(size: 10, weight: .semibold))
-                    .padding(.horizontal, 11)
-                    .frame(height: 36)
-                    .background(.white.opacity(0.18), in: Capsule())
-                    .overlay(Capsule().stroke(ink.opacity(0.15), lineWidth: 1))
+                Image(systemName: "gearshape")
+                    .font(.system(size: 14, weight: .semibold))
+                    .frame(width: 36, height: 36)
+                    .background(.white.opacity(0.18), in: Circle())
+                    .overlay(Circle().stroke(ink.opacity(0.15), lineWidth: 1))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("ウィジェットの置き方を見る")
+            .accessibilityLabel("設定を開く")
         }
         .font(.system(.title2, design: .serif, weight: .bold))
     }

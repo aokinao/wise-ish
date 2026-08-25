@@ -49,6 +49,8 @@ enum WiseishUsageEvent: String, CaseIterable {
     case collectionOpened
     case appIntentRun
     case reflectionReacted
+    case settingsOpened
+    case notificationEnabled
 }
 
 enum WiseishContextStore {

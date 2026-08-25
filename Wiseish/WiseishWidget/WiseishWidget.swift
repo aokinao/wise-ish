@@ -134,6 +134,7 @@ private struct WiseishWidgetView: View {
     let entry: WiseishEntry
 
     private let paper = Color(red: 0.96, green: 0.92, blue: 0.85)
+    private let lightPaper = Color(red: 1.00, green: 0.98, blue: 0.94)
     private let ink = Color(red: 0.16, green: 0.15, blue: 0.13)
     private let softInk = Color(red: 0.44, green: 0.41, blue: 0.37)
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
@@ -155,42 +156,46 @@ private struct WiseishWidgetView: View {
     }
 
     private var smallWidget: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(alignment: .leading, spacing: 0) {
-                brandAndDate
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 8) {
+                compactDate
 
-                Text(entry.quote.text)
-                    .font(.system(size: 15, weight: .semibold, design: .serif))
-                    .lineSpacing(2)
-                    .lineLimit(4)
-                    .minimumScaleFactor(0.64)
-                    .allowsTightening(true)
-                    .layoutPriority(2)
-                    .padding(.top, 9)
+                Spacer(minLength: 4)
 
-                Spacer(minLength: 5)
-
-                Text("# \(entry.quote.theme)")
-                    .font(.system(size: 8, weight: .semibold))
-                    .foregroundStyle(softInk)
-                    .lineLimit(1)
-                    .padding(.trailing, 36)
+                brand
+                    .padding(.top, 3)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
-            Image("IshWidget")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 37, height: 41)
-                .accessibilityHidden(true)
+            Rectangle()
+                .fill(ink.opacity(0.16))
+                .frame(height: 1)
+                .padding(.vertical, 8)
+
+            Text(entry.quote.text)
+                .font(.system(size: 14, weight: .semibold, design: .serif))
+                .lineSpacing(2)
+                .lineLimit(3)
+                .minimumScaleFactor(0.72)
+                .allowsTightening(true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Spacer(minLength: 4)
+
+            Text(entry.quote.theme)
+                .font(.system(size: 8, weight: .semibold))
+                .foregroundStyle(softInk)
+                .lineLimit(1)
         }
-        .padding(13)
+        .padding(12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private var mediumWidget: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
+            calendarPage
+
             VStack(alignment: .leading, spacing: 0) {
-                brandAndDate
+                brand
 
                 if let reason = entry.contextReason {
                     Text("あなた向け · \(reason)")
@@ -221,29 +226,65 @@ private struct WiseishWidgetView: View {
             Image("IshWidget")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 93)
+                .frame(width: 72)
                 .accessibilityHidden(true)
         }
-        .padding(16)
+        .padding(14)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var brandAndDate: some View {
-        HStack(alignment: .firstTextBaseline) {
-            HStack(spacing: 0) {
-                Text("Wise")
-                Text("–").foregroundStyle(mustard)
-                Text("ish")
+    private var compactDate: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 3) {
+            Text(dayNumber)
+                .font(.system(size: 31, weight: .bold, design: .serif))
+            VStack(alignment: .leading, spacing: 0) {
+                Text(monthLabel)
+                Text(entry.date, format: .dateTime.weekday(.abbreviated))
             }
-            .font(.system(size: 11, weight: .bold, design: .serif))
+            .font(.system(size: 8, weight: .bold))
+            .foregroundStyle(softInk)
+        }
+        .accessibilityElement(children: .combine)
+    }
 
-            Spacer()
-
-            Text(entry.date, format: .dateTime.month(.abbreviated).day())
+    private var calendarPage: some View {
+        VStack(spacing: 1) {
+            Text(monthLabel)
                 .font(.system(size: 9, weight: .bold))
-                .textCase(.uppercase)
+                .foregroundStyle(softInk)
+
+            Text(dayNumber)
+                .font(.system(size: 42, weight: .bold, design: .serif))
+                .minimumScaleFactor(0.8)
+
+            Text(entry.date, format: .dateTime.weekday(.wide))
+                .font(.system(size: 9, weight: .bold))
                 .foregroundStyle(softInk)
         }
+        .frame(width: 64, height: 94)
+        .background(lightPaper.opacity(0.72), in: RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(ink.opacity(0.12), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+    }
+
+    private var brand: some View {
+        HStack(spacing: 0) {
+            Text("Wise")
+            Text("–").foregroundStyle(mustard)
+            Text("ish")
+        }
+        .font(.system(size: 11, weight: .bold, design: .serif))
+    }
+
+    private var dayNumber: String {
+        String(Calendar.current.component(.day, from: entry.date))
+    }
+
+    private var monthLabel: String {
+        "\(Calendar.current.component(.month, from: entry.date))月"
     }
 }
 

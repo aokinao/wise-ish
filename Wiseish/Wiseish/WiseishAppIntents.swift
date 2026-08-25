@@ -3,7 +3,7 @@ import Foundation
 
 struct TodayWiseishIntent: AppIntent {
     static let title: LocalizedStringResource = "今日のWise-ish"
-    static let description = IntentDescription("今日の哲学っぽい迷言を、Ishがひとつ返します。")
+    static let description = IntentDescription("今日の一言を、Ishがひとつ置いておきます。")
     static let openAppWhenRun = false
 
     @MainActor

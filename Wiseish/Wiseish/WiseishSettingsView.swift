@@ -4,6 +4,7 @@ import UIKit
 
 struct WiseishSettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("notification.daily.enabled") private var notificationEnabled = false
     @AppStorage("notification.daily.hour") private var notificationHour = 8
     @AppStorage("notification.daily.minute") private var notificationMinute = 0
@@ -13,10 +14,10 @@ struct WiseishSettingsView: View {
 
     let onShowWidgetGuide: () -> Void
 
-    private let paper = Color(red: 0.96, green: 0.92, blue: 0.85)
-    private let lightPaper = Color(red: 1.00, green: 0.98, blue: 0.94)
-    private let ink = Color(red: 0.16, green: 0.15, blue: 0.13)
-    private let softInk = Color(red: 0.44, green: 0.41, blue: 0.37)
+    private var paper: Color { colorScheme == .dark ? Color(red: 0.10, green: 0.10, blue: 0.09) : Color(red: 0.96, green: 0.92, blue: 0.85) }
+    private var lightPaper: Color { colorScheme == .dark ? Color(red: 0.16, green: 0.15, blue: 0.13) : Color(red: 1.00, green: 0.98, blue: 0.94) }
+    private var ink: Color { colorScheme == .dark ? Color(red: 0.92, green: 0.89, blue: 0.83) : Color(red: 0.16, green: 0.15, blue: 0.13) }
+    private var softInk: Color { colorScheme == .dark ? Color(red: 0.68, green: 0.65, blue: 0.59) : Color(red: 0.44, green: 0.41, blue: 0.37) }
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
 
     var body: some View {
@@ -60,7 +61,7 @@ struct WiseishSettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("今日のIsh")
                         .font(.system(size: 14, weight: .bold, design: .serif))
-                    Text("一日一度、Ishが呼びにくる")
+                    Text("一日一度、今日の分を置いておく")
                         .font(.system(size: 10, weight: .medium))
                         .foregroundStyle(softInk)
                 }
@@ -84,7 +85,7 @@ struct WiseishSettingsView: View {
                 Divider().overlay(ink.opacity(0.1))
 
                 HStack {
-                    Text("呼びにくる時刻")
+                    Text("置いておく時刻")
                         .font(.system(size: 12, weight: .semibold, design: .serif))
                     Spacer()
                     DatePicker(
@@ -114,7 +115,7 @@ struct WiseishSettingsView: View {
                 }
             }
 
-            Text("迷言は通知に全部出さぬ。開く余地も残しておく。")
+            Text("通知は一日一度だけ。いらない日は、いつでも休めます。")
                 .font(.system(size: 9, weight: .medium, design: .serif))
                 .foregroundStyle(softInk)
         }
@@ -174,13 +175,13 @@ struct WiseishSettingsView: View {
                     .foregroundStyle(softInk)
             }
 
-            Text("入力した言葉と反応は端末内に置いておく。外へは持ち出さん。")
+            Text("お気に入りと過去の日々は端末内に置いておきます。")
                 .font(.system(size: 9, weight: .medium, design: .serif))
                 .lineSpacing(3)
                 .foregroundStyle(softInk)
         }
         .padding(16)
-        .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: 18))
+        .background(lightPaper.opacity(0.35), in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(ink.opacity(0.1), lineWidth: 1))
     }
 

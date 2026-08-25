@@ -78,6 +78,10 @@ unknown_rate = sum("知らんけどの。" in quote["text"] + quote["aside"] for
 if unknown_rate > 0.2:
     fail("『知らんけどの。』must stay at or below 20%")
 
+reflection_question_rate = sum("？" in quote["reflection"] for quote in quotes) / len(quotes)
+if reflection_question_rate > 0.4:
+    fail("reflection questions must stay at or below 40%")
+
 for mood in MOODS:
     if not any(quote["mood"] == mood for quote in quotes):
         fail(f"no quotes for mood: {mood}")

@@ -41,9 +41,7 @@ enum WiseishMood: String, CaseIterable, Identifiable {
     }
 
     @MainActor
-    var quotes: [WiseishQuote] {
-        quotes(for: .now)
-    }
+    var quotes: [WiseishQuote] { quotes(for: .now) }
 
     @MainActor
     func quotes(for date: Date) -> [WiseishQuote] {
@@ -68,31 +66,58 @@ private extension WiseishQuote {
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("experience.lastSeenDay.v1") private var lastSeenDayKey = ""
     @State private var displayedQuote = WiseishMood.quiet.quotes[0]
+    @State private var currentDate = Date.now
     @State private var isFavorite = false
     @State private var isPoked = false
-    @State private var ishMessage: String?
-    @State private var pokeID = UUID()
     @State private var isFloating = false
-    @State private var selectedReaction: WiseishReflectionReaction?
-    @State private var previousDayReaction: WiseishReflectionReaction?
-    @State private var contextReason: String?
-    @State private var showsIshInput = false
-    @State private var ishInputText = ""
+    @State private var isDayRollover = false
+    @State private var rolloverStep = 0
+    @State private var rolloverMessage: String?
+    @State private var outgoingQuote: WiseishQuote?
+    @State private var hasPreparedDay = false
     @State private var showsWidgetGuide = false
     @State private var showsSettings = false
     @State private var showsCollection = false
     @State private var sharePayload: WiseishSharePayload?
-    @FocusState private var isIshInputFocused: Bool
 
-    private let paper = Color(red: 0.96, green: 0.92, blue: 0.85)
-    private let lightPaper = Color(red: 1.00, green: 0.98, blue: 0.94)
-    private let ink = Color(red: 0.16, green: 0.15, blue: 0.13)
-    private let softInk = Color(red: 0.44, green: 0.41, blue: 0.37)
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
 
-    private var currentQuote: WiseishQuote {
-        displayedQuote
+    private var paper: Color {
+        colorScheme == .dark
+            ? Color(red: 0.10, green: 0.10, blue: 0.09)
+            : Color(red: 0.96, green: 0.92, blue: 0.85)
+    }
+
+    private var lightPaper: Color {
+        colorScheme == .dark
+            ? Color(red: 0.16, green: 0.15, blue: 0.13)
+            : Color(red: 1.00, green: 0.98, blue: 0.94)
+    }
+
+    private var ink: Color {
+        colorScheme == .dark
+            ? Color(red: 0.91, green: 0.89, blue: 0.84)
+            : Color(red: 0.16, green: 0.15, blue: 0.13)
+    }
+
+    private var softInk: Color {
+        colorScheme == .dark
+            ? Color(red: 0.66, green: 0.63, blue: 0.58)
+            : Color(red: 0.44, green: 0.41, blue: 0.37)
+    }
+
+    private var currentQuote: WiseishQuote { displayedQuote }
+    private var today: Date { currentDate }
+    private var calendar: Calendar { .current }
+    private var dayNumber: Int { calendar.component(.day, from: today) }
+    private var monthNumber: Int { calendar.component(.month, from: today) }
+    private var yearNumber: Int { calendar.component(.year, from: today) }
+    private var weekday: String {
+        today.formatted(.dateTime.weekday(.wide).locale(Locale(identifier: "ja_JP")))
     }
 
     var body: some View {
@@ -102,18 +127,19 @@ struct ContentView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     header
-                    dateHeader
-                    quoteSection
-                    reflectionCard
+                    dateHero
+                    dayFact
+                    quoteCard
+                    ishCompanion
                     actionBar
                 }
-                .padding(.horizontal, 22)
-                .padding(.top, 8)
-                .padding(.bottom, 36)
+                .padding(.horizontal, 20)
+                .padding(.top, 6)
+                .padding(.bottom, 22)
             }
+            .scrollBounceBehavior(.basedOnSize)
         }
         .foregroundStyle(ink)
-        .sheet(isPresented: $showsIshInput) { ishInputSheet }
         .sheet(isPresented: $showsWidgetGuide) { widgetGuide }
         .sheet(isPresented: $showsSettings) {
             WiseishSettingsView {
@@ -124,407 +150,322 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $showsCollection) {
-            WiseishCollectionView()
-        }
-        .sheet(item: $sharePayload) { payload in
-            WiseishActivityView(image: payload.image)
-        }
+        .sheet(isPresented: $showsCollection) { WiseishCollectionView() }
+        .sheet(item: $sharePayload) { payload in WiseishActivityView(image: payload.image) }
         .onAppear {
-            restorePersonalizedState()
+            prepareDayState()
             WiseishContextStore.recordUsage(.appOpened)
             refreshCatalogIfNeeded()
             detectWidgetInstallation()
-            withAnimation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true)) {
+            guard !reduceMotion else { return }
+            withAnimation(.easeInOut(duration: 3.4).repeatForever(autoreverses: true)) {
                 isFloating = true
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                restorePersonalizedState()
-                refreshCatalogIfNeeded()
-                detectWidgetInstallation()
-            }
+            guard phase == .active else { return }
+            Task { await refreshForActiveDay() }
+            refreshCatalogIfNeeded()
+            detectWidgetInstallation()
+        }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            await watchForDayRollover()
         }
     }
 
     private var header: some View {
-        HStack {
+        HStack(spacing: 10) {
             HStack(spacing: 0) {
                 Text("Wise")
                 Text("–").foregroundStyle(mustard)
                 Text("ish")
             }
+            .font(.system(.title3, design: .serif, weight: .bold))
 
-            Spacer()
-
-            Button {
-                WiseishContextStore.recordUsage(.collectionOpened)
-                showsCollection = true
-            } label: {
-                Image(systemName: "books.vertical")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 36, height: 36)
-                    .background(.white.opacity(0.18), in: Circle())
-                    .overlay(Circle().stroke(ink.opacity(0.15), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("履歴とお気に入りを見る")
-
-            Button {
-                WiseishContextStore.recordUsage(.settingsOpened)
-                showsSettings = true
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 36, height: 36)
-                    .background(.white.opacity(0.18), in: Circle())
-                    .overlay(Circle().stroke(ink.opacity(0.15), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("設定を開く")
-        }
-        .font(.system(.title2, design: .serif, weight: .bold))
-    }
-
-    private var dateHeader: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text("TODAY, PERHAPS")
-                .font(.system(size: 9, weight: .bold))
-                .tracking(1.8)
+            Text("今日を、雑に眺める。")
+                .font(.system(size: 9, weight: .medium, design: .serif))
                 .foregroundStyle(softInk)
 
-            HStack(alignment: .center, spacing: 12) {
-                Text(Date.now, format: .dateTime.day(.twoDigits))
-                    .font(.system(size: 60, weight: .regular, design: .serif))
-                    .tracking(-4)
+            Spacer(minLength: 6)
 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(Date.now.formatted(.dateTime.month(.abbreviated).locale(Locale(identifier: "en_US"))).uppercased())
-                        .font(.system(size: 13, weight: .bold))
-                    Text(Date.now.formatted(.dateTime.weekday(.wide).locale(Locale(identifier: "en_US"))).uppercased())
-                        .font(.system(size: 9, weight: .semibold))
+            headerButton(systemImage: "books.vertical", label: "過去の日を見る") {
+                WiseishContextStore.recordUsage(.collectionOpened)
+                showsCollection = true
+            }
+
+            headerButton(systemImage: "gearshape", label: "設定を開く") {
+                WiseishContextStore.recordUsage(.settingsOpened)
+                showsSettings = true
+            }
+        }
+        .frame(height: 42)
+    }
+
+    private func headerButton(
+        systemImage: String,
+        label: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 13, weight: .semibold))
+                .frame(width: 32, height: 32)
+                .background(lightPaper.opacity(0.48), in: Circle())
+                .overlay(Circle().stroke(ink.opacity(0.12), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+
+    private var dateHero: some View {
+        HStack(alignment: .center, spacing: 14) {
+            Text("\(dayNumber)")
+                .font(.system(size: 88, weight: .regular, design: .serif))
+                .tracking(-5)
+                .minimumScaleFactor(0.75)
+                .contentTransition(.numericText(value: Double(dayNumber)))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(monthNumber)月")
+                    .font(.system(size: 22, weight: .bold, design: .serif))
+                Text(weekday)
+                    .font(.system(size: 14, weight: .semibold, design: .serif))
+                Text("\(yearNumber)年")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(softInk)
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(yearNumber)年\(monthNumber)月\(dayNumber)日 \(weekday)")
+    }
+
+    @ViewBuilder
+    private var dayFact: some View {
+        let metric = WiseishDailyMetric.make(for: today)
+        VStack(alignment: .leading, spacing: 9) {
+            HStack {
+                Text(metric.title)
+                    .font(.system(size: 8, weight: .bold))
+                    .tracking(1)
+                    .foregroundStyle(softInk)
+                Spacer()
+                Text("意味は、まだない")
+                    .font(.system(size: 9, weight: .semibold, design: .serif))
+                    .foregroundStyle(softInk)
+            }
+
+            HStack(spacing: 14) {
+                if let progress = metric.progress {
+                    ZStack {
+                        Circle()
+                            .stroke(ink.opacity(0.1), lineWidth: 7)
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(mustard.opacity(0.82), style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                        Text("\(Int(progress * 100))")
+                            .font(.system(size: 12, weight: .bold, design: .serif))
+                    }
+                    .frame(width: 54, height: 54)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(metric.value)
+                        .font(.system(size: 22, weight: .semibold, design: .serif))
+                    Text(metric.detail)
+                        .font(.system(size: 10, weight: .medium, design: .serif))
                         .foregroundStyle(softInk)
+                        .lineLimit(2)
                 }
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 20)
-    }
-
-    private var quoteSection: some View {
-        ZStack(alignment: .bottomTrailing) {
-            quoteCard
-                .padding(.bottom, 52)
-
-            mascot
-                .frame(width: 150)
-                .offset(x: 13, y: 13)
-        }
-        .padding(.top, 14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(lightPaper.opacity(0.48), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.1), lineWidth: 1))
     }
 
     private var quoteCard: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("今日の WISE-ISH")
-                .font(.system(size: 9, weight: .bold))
-                .tracking(1.4)
-                .foregroundStyle(softInk)
-
-            if let contextReason {
-                Text("あなた向け · \(contextReason)")
-                    .font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(mustard)
-                    .padding(.top, 5)
+        Group {
+            // めくり中は古い紙だけを描画する。新しい紙を下に重ねると、
+            // 同じ文言が二重に見えたり、差し替え時に古い紙が一瞬戻ったりする。
+            if isDayRollover, let outgoingQuote {
+                quoteSheet(for: outgoingQuote)
+                    .rotation3DEffect(
+                        .degrees(Double(pageTurnProgress) * -76),
+                        axis: (x: 1, y: 0, z: 0),
+                        anchor: .topTrailing,
+                        perspective: 0.58
+                    )
+                    .rotationEffect(.degrees(Double(pageTurnProgress) * 3.5), anchor: .topTrailing)
+                    .scaleEffect(1 - (pageTurnProgress * 0.06), anchor: .topTrailing)
+                    .offset(
+                        x: pageTurnProgress * 30,
+                        y: pageTurnProgress * 94
+                    )
+                    .opacity(pageTurnOpacity)
+                    .shadow(
+                        color: Color.black.opacity(0.12 * pageTurnOpacity),
+                        radius: 18,
+                        x: -6,
+                        y: 14
+                    )
+                    .allowsHitTesting(false)
+            } else {
+                quoteSheet(for: currentQuote)
             }
-
-            if let previousDayReaction {
-                Text(previousReplyMessage(for: previousDayReaction))
-                    .font(.system(size: 9, weight: .semibold, design: .serif))
-                    .foregroundStyle(softInk)
-                    .padding(.top, 5)
-            }
-
-            Text(currentQuote.text)
-                .font(.system(size: 25, weight: .semibold, design: .serif))
-                .tracking(0.4)
-                .lineSpacing(10)
-                .frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
-                .padding(.vertical, 13)
-
-            Divider().overlay(ink.opacity(0.12))
-
-            Text("# \(currentQuote.theme)")
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(softInk)
-            .padding(.top, 7)
         }
-        .padding(.horizontal, 22)
-        .padding(.top, 25)
-        .padding(.bottom, 13)
-        .background(lightPaper)
-        .clipShape(.rect(cornerRadius: 10))
-        .overlay(alignment: .top) {
-            HStack {
-                ForEach(0..<4, id: \.self) { _ in
-                    Capsule()
-                        .fill(mustard)
-                        .frame(width: 8, height: 24)
-                        .overlay(Capsule().stroke(ink, lineWidth: 2.5))
-                        .rotationEffect(.degrees(8))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .offset(y: -12)
-        }
-        .shadow(color: ink.opacity(0.12), radius: 14, y: 8)
+        .padding(.top, 12)
     }
 
-    private var mascot: some View {
-        ZStack(alignment: .topLeading) {
-            if isPoked {
-                Text(ishMessage ?? currentQuote.aside)
-                    .font(.system(size: 11, weight: .semibold, design: .serif))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 7)
-                    .background(lightPaper, in: UnevenRoundedRectangle(
-                        topLeadingRadius: 12,
-                        bottomLeadingRadius: 12,
+    private func quoteSheet(for quote: WiseishQuote) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("今日の、たぶん哲学")
+                .font(.system(size: 9, weight: .bold))
+                .tracking(1.3)
+                .foregroundStyle(softInk)
+
+            Text(quote.text)
+                .font(.system(size: 25, weight: .semibold, design: .serif))
+                .tracking(0.2)
+                .lineSpacing(9)
+                .frame(maxWidth: .infinity, minHeight: 106, alignment: .leading)
+                .padding(.vertical, 12)
+
+            Rectangle()
+                .fill(ink.opacity(0.11))
+                .frame(height: 1)
+
+            Text(quote.theme)
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(softInk)
+                .padding(.top, 7)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 17)
+        .background(lightPaper, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(ink.opacity(0.09), lineWidth: 1))
+        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.18 : 0.08), radius: 14, y: 7)
+    }
+
+    private var ishCompanion: some View {
+        HStack(alignment: .bottom, spacing: 4) {
+            Spacer(minLength: 4)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(isDayRollover ? "Ishは、今日いちばん動いている" : "Ishは、考えすぎている")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(softInk)
+
+                Text(rolloverMessage ?? currentQuote.aside)
+                    .font(.system(size: 12, weight: .semibold, design: .serif))
+                    .lineSpacing(3)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(lightPaper.opacity(0.76), in: UnevenRoundedRectangle(
+                        topLeadingRadius: 14,
+                        bottomLeadingRadius: 14,
                         bottomTrailingRadius: 4,
-                        topTrailingRadius: 12
+                        topTrailingRadius: 14
                     ))
                     .overlay {
                         UnevenRoundedRectangle(
-                            topLeadingRadius: 12,
-                            bottomLeadingRadius: 12,
+                            topLeadingRadius: 14,
+                            bottomLeadingRadius: 14,
                             bottomTrailingRadius: 4,
-                            topTrailingRadius: 12
+                            topTrailingRadius: 14
                         )
-                        .stroke(ink.opacity(0.14), lineWidth: 1)
+                        .stroke(ink.opacity(0.1), lineWidth: 1)
                     }
-                    .offset(x: -36, y: -16)
-                    .transition(.scale(scale: 0.8, anchor: .bottomTrailing).combined(with: .opacity))
-                    .zIndex(2)
             }
+            .padding(.bottom, 22)
 
-            Image("Ish")
-                .resizable()
-                .scaledToFit()
+            ZStack(alignment: .bottom) {
+                Image("Ish")
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(isTurningPage ? 0 : 1)
+
+                Image("IshTurningPage")
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(isTurningPage ? 1 : 0)
+            }
+                .frame(width: 112, height: 112, alignment: .bottom)
+                .scaleEffect(ishRolloverTransform.scale, anchor: .bottom)
+                .offset(
+                    x: ishRolloverTransform.x,
+                    y: ishRolloverTransform.y + (isFloating && !isDayRollover ? -3 : 1)
+                )
+                .rotationEffect(
+                    .degrees(isDayRollover
+                        ? ishRolloverTransform.rotation
+                        : (isPoked ? 3.5 : (isFloating ? 0.7 : -0.5))),
+                    anchor: .bottom
+                )
                 .contentShape(Rectangle())
-                .offset(y: isFloating ? -4 : 1)
-                .rotationEffect(.degrees(isPoked ? 5 : (isFloating ? 1.2 : -0.8)), anchor: .bottom)
-                .scaleEffect(x: isPoked ? 0.98 : 1, y: isPoked ? 1.02 : 1, anchor: .bottom)
-                .shadow(color: ink.opacity(0.09), radius: 5, y: 5)
-                .onTapGesture { pokeIsh() }
-                .accessibilityLabel("小さな仙人のIsh")
+                .onTapGesture {
+                    guard !isDayRollover else { return }
+                    pokeIsh()
+                }
+#if DEBUG
+                .onLongPressGesture(minimumDuration: 0.8) {
+                    Task { await previewDayRollover() }
+                }
+#endif
+                .accessibilityLabel("今日を眺めているIsh")
                 .accessibilityAddTraits(.isButton)
         }
-    }
-
-    private var reflectionCard: some View {
-        VStack(alignment: .leading, spacing: 13) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "bubble.left.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(lightPaper)
-                    .frame(width: 34, height: 34)
-                    .background(ink, in: UnevenRoundedRectangle(
-                        topLeadingRadius: 17,
-                        bottomLeadingRadius: 6,
-                        bottomTrailingRadius: 17,
-                        topTrailingRadius: 17
-                    ))
-
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("ISHに返事")
-                        .font(.system(size: 9, weight: .bold))
-                        .tracking(1)
-                        .foregroundStyle(softInk)
-
-                    Text("この一枚、今日のそなたには効きそうかの？")
-                        .font(.system(size: 13, weight: .semibold, design: .serif))
-                        .lineSpacing(5)
-                }
-            }
-
-            reactionBar
-
-            Text(selectedReaction == nil
-                 ? "返事は、明日の一枚にこっそり混ぜるぞ。"
-                 : "覚えたぞ。明日は少しだけ、そなた寄りじゃ。")
-                .font(.system(size: 9, weight: .medium, design: .serif))
-                .foregroundStyle(softInk)
-                .contentTransition(.opacity)
-
-            if selectedReaction != nil {
-                Button {
-                    showsIshInput = true
-                } label: {
-                    Label("明日のIshに、もう少し話す", systemImage: "ellipsis.bubble")
-                        .font(.system(size: 10, weight: .semibold, design: .serif))
-                        .foregroundStyle(ink)
-                }
-                .buttonStyle(.plain)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(13)
-        .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.14), lineWidth: 1))
-    }
-
-    private var reactionBar: some View {
-        HStack(spacing: 6) {
-            reactionButton(.resonate, title: "効きそう")
-            reactionButton(.leaveIt, title: "今日はむり")
-            reactionButton(.unknown, title: "知らんけど")
-        }
-    }
-
-    private func reactionButton(_ reaction: WiseishReflectionReaction, title: String) -> some View {
-        let isSelected = selectedReaction == reaction
-        return Button {
-            react(to: reaction)
-        } label: {
-            Text(title)
-                .font(.system(size: 9, weight: .semibold, design: .serif))
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
-                .frame(maxWidth: .infinity, minHeight: 34)
-                .foregroundStyle(isSelected ? lightPaper : ink)
-                .background(isSelected ? ink : lightPaper.opacity(0.6), in: Capsule())
-                .overlay(Capsule().stroke(ink.opacity(isSelected ? 0 : 0.13), lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Ishに「\(title)」と返す")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .frame(maxWidth: .infinity, minHeight: 122, alignment: .trailing)
     }
 
     private var actionBar: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             Button {
                 toggleFavorite()
             } label: {
-                actionLabel(isFavorite ? "好き" : "残す", systemImage: isFavorite ? "heart.fill" : "heart")
+                Label(isFavorite ? "残した" : "残す", systemImage: isFavorite ? "heart.fill" : "heart")
+                    .foregroundStyle(isFavorite ? mustard : ink)
+                    .frame(maxWidth: .infinity, minHeight: 42)
             }
-            .foregroundStyle(isFavorite ? mustard : ink)
 
             Button {
                 createShareCard()
             } label: {
-                actionLabel("共有", systemImage: "square.and.arrow.up")
+                Label("共有", systemImage: "square.and.arrow.up")
+                    .foregroundStyle(ink)
+                    .frame(maxWidth: .infinity, minHeight: 42)
             }
-
         }
+        .font(.system(size: 11, weight: .semibold))
         .buttonStyle(.plain)
-        .padding(.top, 10)
-        .padding(.bottom, 16)
-    }
-
-    private func actionLabel(_ title: String, systemImage: String) -> some View {
-        VStack(spacing: 5) {
-            Image(systemName: systemImage)
-                .font(.system(size: 15, weight: .semibold))
-            Text(title)
-                .font(.system(size: 9, weight: .semibold))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity, minHeight: 52)
-        .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(ink.opacity(0.13), lineWidth: 1))
-    }
-
-    private var ishInputSheet: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 5) {
-                Label("明日のIshに一言", systemImage: "ellipsis.bubble")
-                    .font(.system(.title3, design: .serif, weight: .bold))
-
-                Text("まとまってなくてよい。明日の一枚へ、こっそり混ぜるぞ。")
-                    .font(.system(size: 11, weight: .medium, design: .serif))
-                    .foregroundStyle(softInk)
-            }
-
-            ZStack(alignment: .topLeading) {
-                if ishInputText.isEmpty {
-                    Text("例：会議ばかりで、もう何も考えたくない")
-                        .font(.system(size: 12, design: .serif))
-                        .foregroundStyle(softInk.opacity(0.72))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 14)
-                        .allowsHitTesting(false)
-                }
-
-                TextEditor(text: $ishInputText)
-                    .font(.system(size: 14, weight: .medium, design: .serif))
-                    .scrollContentBackground(.hidden)
-                    .padding(8)
-                    .focused($isIshInputFocused)
-                    .onChange(of: ishInputText) { _, value in
-                        if value.count > 240 {
-                            ishInputText = String(value.prefix(240))
-                        }
-                    }
-            }
-            .frame(height: 112)
-            .background(paper, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.16), lineWidth: 1))
-
-            HStack {
-                Text("端末の外へは送りません")
-                Spacer()
-                Text("\(ishInputText.count) / 240")
-            }
-            .font(.system(size: 9, weight: .medium))
-            .foregroundStyle(softInk)
-
-            Button {
-                submitIshInput()
-            } label: {
-                Label("Ishに預ける", systemImage: "arrow.down.heart")
-                    .font(.system(size: 13, weight: .semibold))
-                    .frame(maxWidth: .infinity, minHeight: 48)
-                    .background(ink, in: RoundedRectangle(cornerRadius: 14))
-                    .foregroundStyle(lightPaper)
-            }
-            .buttonStyle(.plain)
-            .disabled(ishInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .opacity(ishInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1)
-        }
-        .padding(22)
-        .presentationDetents([.height(370)])
-        .presentationDragIndicator(.visible)
-        .onAppear {
-            Task {
-                try? await Task.sleep(for: .milliseconds(300))
-                isIshInputFocused = true
-            }
-        }
+        .background(lightPaper.opacity(0.38), in: RoundedRectangle(cornerRadius: 13))
+        .overlay(RoundedRectangle(cornerRadius: 13).stroke(ink.opacity(0.1), lineWidth: 1))
     }
 
     private var widgetGuide: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Label("ホーム画面にIshを置く", systemImage: "square.grid.2x2")
+            Label("ホーム画面に今日を置く", systemImage: "square.grid.2x2")
                 .font(.system(.title3, design: .serif, weight: .bold))
 
             guideRow(number: "1", text: "ホーム画面の何もない場所を長押し")
             guideRow(number: "2", text: "「編集」から「ウィジェットを追加」を選ぶ")
             guideRow(number: "3", text: "Wise-ishを検索し、好きなサイズを追加")
 
-            Text("今日の一枚は、アプリとウィジェットで同じになります。")
+            Text("日付と今日の、たぶん哲学は、アプリと同じものが置かれます。")
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(softInk)
 
-            Button("わかった") {
-                showsWidgetGuide = false
-            }
-            .font(.system(size: 14, weight: .semibold))
-            .foregroundStyle(lightPaper)
-            .frame(maxWidth: .infinity, minHeight: 46)
-            .background(ink, in: RoundedRectangle(cornerRadius: 14))
-            .buttonStyle(.plain)
+            Button("わかった") { showsWidgetGuide = false }
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(lightPaper)
+                .frame(maxWidth: .infinity, minHeight: 46)
+                .background(ink, in: RoundedRectangle(cornerRadius: 14))
+                .buttonStyle(.plain)
         }
         .padding(22)
         .presentationDetents([.height(360)])
@@ -543,7 +484,7 @@ struct ContentView: View {
     }
 
     private func toggleFavorite() {
-        withAnimation(.spring(duration: 0.25, bounce: 0.55)) {
+        withAnimation(.spring(duration: 0.25, bounce: 0.4)) {
             isFavorite.toggle()
         }
         WiseishContextStore.recordFavorite(quoteID: currentQuote.id, isFavorite: isFavorite)
@@ -552,82 +493,215 @@ struct ContentView: View {
         if isFavorite { pokeIsh() }
     }
 
-    private func pokeIsh(message: String? = nil) {
-        let currentPokeID = UUID()
-        pokeID = currentPokeID
-        ishMessage = message ?? currentQuote.aside
-        withAnimation(.spring(duration: 0.55, bounce: 0.48)) {
+    private func pokeIsh() {
+        withAnimation(.spring(duration: 0.55, bounce: 0.38)) {
             isPoked = true
         }
         Task {
-            try? await Task.sleep(for: .milliseconds(1_550))
-            guard pokeID == currentPokeID else { return }
-            withAnimation(.easeOut(duration: 0.22)) {
+            try? await Task.sleep(for: .milliseconds(800))
+            withAnimation(.easeOut(duration: 0.25)) {
                 isPoked = false
             }
-            ishMessage = nil
         }
     }
 
-    private func restorePersonalizedState() {
-        let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood()) ?? .quiet
-        let index = preferredIndex(for: mood.quotes)
+    private func prepareDayState() {
+        guard !hasPreparedDay else { return }
+        hasPreparedDay = true
+
+        let now = Date.now
+        let todayKey = WiseishDayRollover.dayKey(for: now)
+        guard !lastSeenDayKey.isEmpty else {
+            currentDate = now
+            restorePersonalizedState(for: now)
+            lastSeenDayKey = todayKey
+            return
+        }
+
+        if lastSeenDayKey != todayKey,
+           let previousRecord = WiseishContextStore.quoteHistory().first(where: {
+               WiseishDayRollover.dayKey(for: $0.shownAt) == lastSeenDayKey
+           }) {
+            currentDate = previousRecord.shownAt
+            displayedQuote = quote(from: previousRecord)
+            isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
+            Task {
+                try? await Task.sleep(for: .milliseconds(650))
+                await performDayRollover(to: now)
+            }
+            return
+        }
+
+        currentDate = now
+        restorePersonalizedState(for: now)
+        lastSeenDayKey = todayKey
+    }
+
+    private func refreshForActiveDay() async {
+        guard hasPreparedDay else { return }
+        let now = Date.now
+        guard WiseishDayRollover.dayKey(for: currentDate) != WiseishDayRollover.dayKey(for: now) else {
+            restorePersonalizedState(for: now)
+            // アプリを開いた直後もWidgetへ現在日の再取得を依頼する。
+            // WidgetKit側の古いTimelineが残っている場合の復帰点になる。
+            WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+            return
+        }
+        await performDayRollover(to: now)
+    }
+
+    private func watchForDayRollover() async {
+        while !Task.isCancelled {
+            let now = Date.now
+            let nextDay = WiseishDayRollover.nextStartOfDay(after: now)
+            let delay = max(nextDay.timeIntervalSince(now), 0.25)
+            do {
+                try await Task.sleep(for: .seconds(delay))
+            } catch {
+                return
+            }
+            guard scenePhase == .active else { return }
+            await refreshForActiveDay()
+        }
+    }
+
+    private func performDayRollover(to date: Date) async {
+        guard !isDayRollover else { return }
+        isDayRollover = true
+        outgoingQuote = currentQuote
+        rolloverMessage = "ま、待て。日付が重い。"
+
+        if reduceMotion {
+            try? await Task.sleep(for: .milliseconds(320))
+            withAnimation(.easeInOut(duration: 0.35)) {
+                currentDate = date
+                restorePersonalizedState(for: date)
+                outgoingQuote = nil
+                rolloverMessage = "日付が変わった。わしは特に変わっておらん。"
+            }
+        } else {
+            // 一日で唯一の大仕事なので、気づく間と、めくった後の余韻を残す。
+            try? await Task.sleep(for: .milliseconds(420))
+            // 前日の紙が完全に画面から消えるまでは、日付も本文も更新しない。
+            for step in 1...WiseishDayRollover.contentReplacementStep {
+                withAnimation(.spring(duration: 0.2, bounce: 0.32)) {
+                    rolloverStep = step
+                }
+                try? await Task.sleep(for: .milliseconds(180))
+            }
+
+            // 古い紙が不可視になったあと、カレンダーと本文を一つの更新として差し替える。
+            withAnimation(.easeInOut(duration: 0.36)) {
+                currentDate = date
+                restorePersonalizedState(for: date)
+                // 古い紙が消えた瞬間に表示対象を新しい紙へ切り替える。
+                // めくり終了後まで outgoingQuote を残すと、旧文言が再表示される。
+                outgoingQuote = nil
+                rolloverMessage = "日付が変わった。わしは特に変わっておらん。"
+            }
+            try? await Task.sleep(for: .milliseconds(360))
+
+            withAnimation(.spring(duration: 0.2, bounce: 0.24)) {
+                rolloverStep = 12
+            }
+            try? await Task.sleep(for: .milliseconds(180))
+        }
+
+        lastSeenDayKey = WiseishDayRollover.dayKey(for: date)
+        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+
+        withAnimation(.spring(duration: 0.58, bounce: 0.28)) {
+            rolloverStep = 0
+        }
+        try? await Task.sleep(for: .milliseconds(reduceMotion ? 420 : 580))
+        isDayRollover = false
+        outgoingQuote = nil
+        try? await Task.sleep(for: .milliseconds(2_200))
+        withAnimation(.easeOut(duration: 0.3)) {
+            rolloverMessage = nil
+        }
+    }
+
+#if DEBUG
+    private func previewDayRollover() async {
+        guard !isDayRollover,
+              let previousDate = Calendar.current.date(byAdding: .day, value: -1, to: Date.now) else {
+            return
+        }
+
+        currentDate = previousDate
+        if let previousRecord = WiseishContextStore.quoteHistory().first(where: {
+            Calendar.current.isDate($0.shownAt, inSameDayAs: previousDate)
+        }) {
+            displayedQuote = quote(from: previousRecord)
+        } else {
+            let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood(date: previousDate)) ?? .quiet
+            let candidates = mood.quotes(for: previousDate)
+            let index = preferredIndex(for: candidates, date: previousDate)
+            displayedQuote = candidates[index % candidates.count]
+        }
+
+        try? await Task.sleep(for: .milliseconds(220))
+        await performDayRollover(to: .now)
+    }
+#endif
+
+    private var ishRolloverTransform: (x: CGFloat, y: CGFloat, rotation: Double, scale: CGFloat) {
+        switch rolloverStep {
+        case 1: (-7, -2, -6, 1.03)
+        case 2: (11, -7, 9, 0.98)
+        case 3: (-14, -3, -12, 1.07)
+        case 4: (16, -12, 15, 0.96)
+        case 5: (-17, -6, -15, 1.09)
+        case 6: (14, -17, 13, 1.02)
+        case 7: (-13, -22, -12, 1.14)
+        case 8: (12, -14, 10, 1.07)
+        case 9: (-9, -9, -8, 1.05)
+        case 10: (7, -6, 6, 1.03)
+        case 11: (-4, -3, -3, 1.02)
+        case 12: (2, -1, 1.5, 1.01)
+        default: (0, 0, 0, 1)
+        }
+    }
+
+    private var isTurningPage: Bool {
+        isDayRollover && rolloverStep >= 1 && rolloverStep <= 11
+    }
+
+    private var pageTurnProgress: CGFloat {
+        CGFloat(WiseishDayRollover.pageTurnProgress(for: rolloverStep))
+    }
+
+    private var pageTurnOpacity: Double {
+        WiseishDayRollover.pageTurnOpacity(for: rolloverStep)
+    }
+
+    private func restorePersonalizedState(for date: Date = .now) {
+        let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood(date: date)) ?? .quiet
+        let quotes = mood.quotes(for: date)
 
         if let todayRecord = WiseishContextStore.quoteHistory().first(where: {
-            Calendar.current.isDateInToday($0.shownAt)
+            Calendar.current.isDate($0.shownAt, inSameDayAs: date)
         }) {
             displayedQuote = quote(from: todayRecord)
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-            selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
-            if let generated = WiseishContextStore.recentGeneratedQuote(),
-               WiseishContextStore.generatedQuoteIsFromToday(),
-               generated.catalogID == todayRecord.quoteID {
-                contextReason = generated.contextReason
-            } else if let context = WiseishContextStore.recentExternalContext(),
-                      context.createdAt < todayRecord.shownAt {
-                contextReason = context.reason
-            } else {
-                contextReason = nil
-            }
             WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-            restorePreviousReplyHint()
             return
         }
 
-        if let generated = WiseishContextStore.recentGeneratedQuote(),
-           WiseishContextStore.generatedQuoteIsFromToday() {
+        if let generated = WiseishContextStore.recentGeneratedQuote(now: date),
+           Calendar.current.isDate(generated.createdAt, inSameDayAs: date) {
             displayedQuote = quote(from: generated)
-            contextReason = generated.contextReason
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-            selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
-            recordCurrentQuote()
-            restorePreviousReplyHint()
+            if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
             return
         }
 
-        displayedQuote = mood.quotes[index]
+        let index = preferredIndex(for: quotes, date: date)
+        displayedQuote = quotes[index % quotes.count]
         isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-        selectedReaction = WiseishContextStore.reflectionReaction(quoteID: displayedQuote.id)
-        contextReason = WiseishContextStore.recentExternalContext()?.reason
-        recordCurrentQuote()
-        restorePreviousReplyHint()
+        if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-    }
-
-    private func restorePreviousReplyHint() {
-        let day = Calendar.current.ordinality(of: .day, in: .era, for: .now) ?? 0
-        let shouldMention = WiseishContextStore.metDayCount() <= 3 || day.isMultiple(of: 4)
-        previousDayReaction = shouldMention
-            ? WiseishContextStore.previousDayReaction()
-            : nil
-    }
-
-    private func previousReplyMessage(for reaction: WiseishReflectionReaction) -> String {
-        switch reaction {
-        case .resonate: "昨日の「効きそう」、少し覚えておるぞ。"
-        case .leaveIt: "昨日は「今日はむり」じゃったな。今日は軽めじゃ。"
-        case .unknown: "昨日も「知らんけど」じゃったな。わしもじゃ。"
-        }
     }
 
     private func quote(from generated: WiseishGeneratedQuote) -> WiseishQuote {
@@ -642,15 +716,15 @@ struct ContentView: View {
     }
 
     private func quote(from record: WiseishQuoteRecord) -> WiseishQuote {
-        let catalogTags = WiseishCatalogStore.currentCatalog().quotes
-            .first(where: { $0.id == record.quoteID })?.tags ?? ["daily"]
+        let catalogQuote = WiseishCatalogStore.currentCatalog().quotes
+            .first(where: { $0.id == record.quoteID })
         return WiseishQuote(
             id: record.quoteID,
             text: record.text,
             reflection: record.reflection,
             theme: record.theme,
             aside: record.aside,
-            tags: catalogTags
+            tags: catalogQuote?.tags ?? ["daily"]
         )
     }
 
@@ -665,76 +739,23 @@ struct ContentView: View {
     }
 
     private func createShareCard() {
-        guard let image = WiseishShareCardRenderer.render(quote: currentQuote) else { return }
+        guard let image = WiseishShareCardRenderer.render(quote: currentQuote, date: currentDate) else { return }
         WiseishContextStore.recordUsage(.shareCardCreated)
         sharePayload = WiseishSharePayload(image: image)
     }
 
-    private func submitIshInput() {
-        let input = ishInputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !input.isEmpty else { return }
-        let context = WiseishContextClassifier.classify(input)
-        WiseishContextStore.saveExternalContext(tags: context.tags, reason: context.reason)
-        WiseishContextStore.recordUsage(.aiRequested)
-        isIshInputFocused = false
-        showsIshInput = false
-        ishInputText = ""
-
-        Task {
-            try? await Task.sleep(for: .milliseconds(260))
-            pokeIsh(message: "聞いたぞ。明日のわしに渡しておく。")
-
-            let calendar = Calendar.current
-            let tomorrow = calendar.date(
-                byAdding: .day,
-                value: 1,
-                to: calendar.startOfDay(for: .now)
-            ) ?? Date.now.addingTimeInterval(86_400)
-            let mood = WiseishMood(
-                rawValue: WiseishContextStore.recommendedMood(date: tomorrow)
-            ) ?? .quiet
-            let result = await WiseishLanguageModelService.generate(
-                sourceText: input,
-                mood: mood.title,
-                date: tomorrow
-            )
-            if case .generated(let generated) = result {
-                WiseishContextStore.saveGeneratedQuote(generated)
-            }
-        }
-    }
-
-    private func react(to reaction: WiseishReflectionReaction) {
-        withAnimation(.spring(duration: 0.28, bounce: 0.35)) {
-            selectedReaction = reaction
-        }
-        WiseishContextStore.recordReflectionReaction(
-            reaction,
-            quoteID: currentQuote.id,
-            tags: currentQuote.tags
-        )
-        WiseishContextStore.recordUsage(.reflectionReacted)
-        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-
-        let message = switch reaction {
-        case .resonate: "うむ。そなた、話が早いの。"
-        case .leaveIt: "むりなら置いとけ。床は広いぞ。"
-        case .unknown: "よい返事じゃ。わしも知らん。"
-        }
-        pokeIsh(message: message)
-    }
-
-    private func preferredIndex(for quotes: [WiseishQuote]) -> Int {
+    private func preferredIndex(for quotes: [WiseishQuote], date: Date = .now) -> Int {
         WiseishContextStore.preferredIndex(
             candidateIDs: quotes.map(\.id),
-            candidateTags: Dictionary(uniqueKeysWithValues: quotes.map { ($0.id, $0.tags) })
+            candidateTags: Dictionary(uniqueKeysWithValues: quotes.map { ($0.id, $0.tags) }),
+            date: date
         )
     }
 
     private func refreshCatalogIfNeeded() {
         Task {
             guard await WiseishCatalogUpdater.shared.refreshIfNeeded() else { return }
-            restorePersonalizedState()
+            restorePersonalizedState(for: currentDate)
             WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
         }
     }

@@ -41,6 +41,18 @@ private enum WidgetQuoteStore {
         let active = quotes.filter { $0.isActive(on: date, calendar: calendar) }
         let matchingMood = active.filter { $0.mood == mood }
         let candidates = matchingMood.isEmpty ? active : matchingMood
+        guard !candidates.isEmpty else {
+            // 季節限定データや一時的なCatalog更新で候補が空になっても、
+            // Widget全体を落とさず、最低限の一言を表示する。
+            return WidgetQuote(
+                id: "widget-fallback",
+                mood: "quiet",
+                text: "今日は、今日として置いておく。\nそれ以上は、また明日でよい。",
+                theme: "今日について",
+                tags: ["daily"],
+                activeMonths: nil
+            )
+        }
         let index = WiseishContextStore.preferredIndex(
             candidateIDs: candidates.map(\.id),
             candidateTags: Dictionary(uniqueKeysWithValues: candidates.map { ($0.id, $0.tags) }),
@@ -65,21 +77,6 @@ private enum WidgetQuoteStore {
         )
     }
 
-    static func contextReason(for date: Date, calendar: Calendar = .current) -> String? {
-        if let generated = WiseishContextStore.recentGeneratedQuote(now: date),
-           calendar.isDate(generated.createdAt, inSameDayAs: date) {
-            return generated.contextReason
-        }
-        let context = WiseishContextStore.recentExternalContext(now: date)
-        let todayRecord = WiseishContextStore.quoteHistory().first {
-            calendar.isDate($0.shownAt, inSameDayAs: date)
-        }
-        if let todayRecord, let context, context.createdAt >= todayRecord.shownAt {
-            return nil
-        }
-        return context?.reason
-    }
-
     private static func generatedQuote(for date: Date, calendar: Calendar) -> WidgetQuote? {
         guard let generated = WiseishContextStore.recentGeneratedQuote(now: date),
               calendar.isDate(generated.createdAt, inSameDayAs: date) else {
@@ -99,45 +96,68 @@ private enum WidgetQuoteStore {
 private struct WiseishEntry: TimelineEntry {
     let date: Date
     let quote: WidgetQuote
-    let contextReason: String?
 }
 
 private struct WiseishProvider: TimelineProvider {
     func placeholder(in context: Context) -> WiseishEntry {
-        WiseishEntry(date: .now, quote: WidgetQuoteStore.quotes[0], contextReason: nil)
+        WiseishEntry(date: .now, quote: WidgetQuoteStore.quote(for: .now))
     }
 
     func getSnapshot(in context: Context, completion: @escaping (WiseishEntry) -> Void) {
         completion(WiseishEntry(
             date: .now,
-            quote: WidgetQuoteStore.quote(for: .now),
-            contextReason: WidgetQuoteStore.contextReason(for: .now)
+            quote: WidgetQuoteStore.quote(for: .now)
         ))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WiseishEntry>) -> Void) {
         let now = Date()
         let calendar = Calendar.current
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))
-            ?? now.addingTimeInterval(86_400)
-        let entry = WiseishEntry(
-            date: now,
-            quote: WidgetQuoteStore.quote(for: now, calendar: calendar),
-            contextReason: WidgetQuoteStore.contextReason(for: now, calendar: calendar)
-        )
-        completion(Timeline(entries: [entry], policy: .after(tomorrow)))
+        let dates = WiseishDayRollover.timelineDates(from: now, daysAhead: 7, calendar: calendar)
+        let entries = dates.map { date in
+            WiseishEntry(
+                date: date,
+                quote: WidgetQuoteStore.quote(for: date, calendar: calendar)
+            )
+        }
+        // 未来分のエントリを先に作っていても、WidgetKit が古いタイムラインを
+        // 保持することがある。次の0時に必ず再取得させ、アプリと同じ日付を出す。
+        let reloadDate = WiseishDayRollover.nextStartOfDay(after: now, calendar: calendar)
+        completion(Timeline(entries: entries, policy: .after(reloadDate)))
     }
 }
 
 private struct WiseishWidgetView: View {
     @Environment(\.widgetFamily) private var family
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let entry: WiseishEntry
 
-    private let paper = Color(red: 0.96, green: 0.92, blue: 0.85)
-    private let lightPaper = Color(red: 1.00, green: 0.98, blue: 0.94)
-    private let ink = Color(red: 0.16, green: 0.15, blue: 0.13)
-    private let softInk = Color(red: 0.44, green: 0.41, blue: 0.37)
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
+
+    private var paper: Color {
+        colorScheme == .dark
+            ? Color(red: 0.10, green: 0.10, blue: 0.09)
+            : Color(red: 0.96, green: 0.92, blue: 0.85)
+    }
+
+    private var lightPaper: Color {
+        colorScheme == .dark
+            ? Color(red: 0.16, green: 0.15, blue: 0.13)
+            : Color(red: 1.00, green: 0.98, blue: 0.94)
+    }
+
+    private var ink: Color {
+        colorScheme == .dark
+            ? Color(red: 0.91, green: 0.89, blue: 0.84)
+            : Color(red: 0.16, green: 0.15, blue: 0.13)
+    }
+
+    private var softInk: Color {
+        colorScheme == .dark
+            ? Color(red: 0.66, green: 0.63, blue: 0.58)
+            : Color(red: 0.44, green: 0.41, blue: 0.37)
+    }
 
     var body: some View {
         Group {
@@ -185,9 +205,15 @@ private struct WiseishWidgetView: View {
                 .font(.system(size: 8, weight: .semibold))
                 .foregroundStyle(softInk)
                 .lineLimit(1)
+                .padding(.trailing, 34)
         }
         .padding(12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .overlay(alignment: .bottomTrailing) {
+            animatedIsh(width: 36)
+                .padding(.trailing, 8)
+                .padding(.bottom, 5)
+        }
     }
 
     private var mediumWidget: some View {
@@ -197,13 +223,12 @@ private struct WiseishWidgetView: View {
             VStack(alignment: .leading, spacing: 0) {
                 brand
 
-                if let reason = entry.contextReason {
-                    Text("あなた向け · \(reason)")
-                        .font(.system(size: 8, weight: .semibold))
-                        .foregroundStyle(mustard)
-                        .lineLimit(1)
-                        .padding(.top, 4)
-                }
+                let metric = WiseishDailyMetric.make(for: entry.date)
+                Text("\(metric.value) · \(metric.title)")
+                    .font(.system(size: 8, weight: .semibold, design: .serif))
+                    .foregroundStyle(softInk)
+                    .lineLimit(1)
+                    .padding(.top, 4)
 
                 Spacer(minLength: 8)
 
@@ -223,11 +248,7 @@ private struct WiseishWidgetView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Image("IshWidget")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 72)
-                .accessibilityHidden(true)
+            animatedIsh(width: 72)
         }
         .padding(14)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -279,12 +300,63 @@ private struct WiseishWidgetView: View {
         .font(.system(size: 11, weight: .bold, design: .serif))
     }
 
+    private func animatedIsh(width: CGFloat) -> some View {
+        Image("IshWidget")
+            .resizable()
+            .scaledToFit()
+            .frame(width: width)
+            .id("ish-\(dayKey)")
+            .transition(ishTransition)
+            .animation(
+                reduceMotion
+                    ? .easeOut(duration: 0.18)
+                    : .easeInOut(duration: 2.0),
+                value: dayKey
+            )
+            .accessibilityHidden(true)
+    }
+
+    private var ishTransition: AnyTransition {
+        guard !reduceMotion else { return .opacity }
+        return .asymmetric(
+            insertion: .modifier(
+                active: WidgetIshRolloverModifier(progress: 0),
+                identity: WidgetIshRolloverModifier(progress: 1)
+            ),
+            removal: .opacity
+        )
+    }
+
+    private var dayKey: String {
+        WiseishDayRollover.dayKey(for: entry.date)
+    }
+
     private var dayNumber: String {
         String(Calendar.current.component(.day, from: entry.date))
     }
 
     private var monthLabel: String {
         "\(Calendar.current.component(.month, from: entry.date))月"
+    }
+}
+
+private struct WidgetIshRolloverModifier: ViewModifier, Animatable {
+    var progress: CGFloat
+
+    var animatableData: CGFloat {
+        get { progress }
+        set { progress = newValue }
+    }
+
+    func body(content: Content) -> some View {
+        let remaining = 1 - progress
+        let shake = sin(progress * .pi * 6) * remaining
+        let hop = sin(progress * .pi) * remaining
+
+        content
+            .scaleEffect(0.78 + (0.22 * progress) + (hop * 0.12), anchor: .bottom)
+            .offset(x: shake * 16, y: -hop * 18)
+            .rotationEffect(.degrees(shake * 18), anchor: .bottom)
     }
 }
 
@@ -296,7 +368,7 @@ private struct WiseishWidget: Widget {
             WiseishWidgetView(entry: entry)
         }
         .configurationDisplayName("今日の Wise-ish")
-        .description("今日の哲学っぽい迷言を、Ishと一緒に表示します。")
+        .description("日付と、Ishの役に立たない哲学を置いておきます。")
         .supportedFamilies([.systemSmall, .systemMedium])
         .contentMarginsDisabled()
     }

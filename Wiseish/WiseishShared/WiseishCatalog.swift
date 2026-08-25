@@ -34,6 +34,7 @@ enum WiseishCatalogError: Error {
 enum WiseishCatalogValidator {
     private static let moods = Set(["quiet", "foggy", "thinking"])
     private static let tags = Set(["work", "information", "rest", "relationship", "money", "creative", "daily"])
+    private static let voiceMarkers = ["じゃ", "かの", "わし", "たぶん", "知らん", "ぬ", "おる", "がの", "ぞい"]
 
     static func decodeAndValidate(_ data: Data) throws -> WiseishCatalog {
         let catalog = try JSONDecoder().decode(WiseishCatalog.self, from: data)
@@ -66,6 +67,7 @@ enum WiseishCatalogValidator {
                 !quote.reflection.isEmpty,
                 !quote.theme.isEmpty,
                 !quote.aside.isEmpty,
+                voiceMarkers.contains(where: { quote.text.contains($0) || quote.aside.contains($0) }),
                 !quote.tags.isEmpty,
                 quote.tags.allSatisfy(tags.contains),
                 quote.activeMonths?.allSatisfy((1...12).contains) != false,
@@ -75,6 +77,11 @@ enum WiseishCatalogValidator {
             else {
                 throw WiseishCatalogError.invalidQuote(quote.id)
             }
+        }
+
+        let reflectionQuestionCount = catalog.quotes.filter { $0.reflection.contains("？") }.count
+        guard reflectionQuestionCount * 10 <= catalog.quotes.count * 4 else {
+            throw WiseishCatalogError.invalidQuote("reflection-question-rate")
         }
     }
 }
@@ -127,38 +134,38 @@ enum WiseishCatalogStore {
 
     private static let fallbackCatalog = WiseishCatalog(
         schemaVersion: 1,
-        catalogVersion: "fallback-1",
+        catalogVersion: "fallback-2",
         quotes: [
             WiseishCatalogQuote(
                 id: "fallback-quiet",
                 mood: "quiet",
-                text: "心を空っぽにするのじゃ。\n団子は入れてよい。\nたぶんの。",
-                reflection: "今日は何を一つ、置いておけそう？",
-                theme: "余白について",
-                aside: "団子は別腹じゃ。",
-                tags: ["rest", "daily"],
+                text: "人は物差しで世界を比べる。\nわしのは曲がっておるので、だいたい皆同じじゃ。",
+                reflection: "曲がった物差しは、違いまでやさしく曲げる。",
+                theme: "比較について",
+                aside: "三寸ほど怪しい。",
+                tags: ["relationship", "daily"],
                 isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-foggy",
                 mood: "foggy",
-                text: "霧にも道はあるのじゃ。\nなければ茶にする。",
-                reflection: "見えるまで、少し休んでもよいかの？",
-                theme: "不確かさについて",
-                aside: "茶はあったかの？",
-                tags: ["rest", "daily"],
+                text: "知識が増えるほど、無知も広がる。\n茶柱一本にも、なぜ立つのか分からぬことが多い。",
+                reflection: "知るほど、知らないものの輪郭が増える。",
+                theme: "情報について",
+                aside: "茶は見てよい。",
+                tags: ["information", "work"],
                 isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-thinking",
                 mood: "thinking",
-                text: "答えは急ぐと逃げるのじゃ。\nわしはもう座るが。",
-                reflection: "その答えは、今日でなくてもよいかの？",
-                theme: "答えについて",
-                aside: "茶も待っておる。",
-                tags: ["work", "information"],
+                text: "人は、分からぬものに名前をつけて安心する。\nわしは昨夜の不眠を、真理と名づけた。",
+                reflection: "名前をつけただけで、分かった気になっているものはある？",
+                theme: "思考について",
+                aside: "真理は、少し眠い。",
+                tags: ["rest", "work"],
                 isPremium: false,
                 activeMonths: nil
             )

@@ -40,6 +40,57 @@ struct WiseishTests {
         #expect(!snowQuote.isActive(on: august, calendar: calendar))
     }
 
+    @Test func dayFactsUseTheCalendarDayWithoutNetworkData() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let august25 = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 25)))
+        let august26 = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 26)))
+
+        #expect(WiseishDayFact.make(for: august25, calendar: calendar).text == "今年の237日目")
+        #expect(WiseishDayFact.make(for: august26, calendar: calendar).text == "今年はあと127日")
+    }
+
+    @Test func dayRolloverUsesCalendarMidnightAcrossDaylightSavingTime() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "America/Los_Angeles"))
+        let beforeSpringForward = try #require(
+            calendar.date(from: DateComponents(year: 2026, month: 3, day: 7, hour: 23, minute: 59))
+        )
+        let nextDay = WiseishDayRollover.nextStartOfDay(
+            after: beforeSpringForward,
+            calendar: calendar
+        )
+        let components = calendar.dateComponents([.year, .month, .day, .hour], from: nextDay)
+
+        #expect(components.year == 2026)
+        #expect(components.month == 3)
+        #expect(components.day == 8)
+        #expect(components.hour == 0)
+    }
+
+    @Test func widgetTimelinePrecomputesFutureMidnights() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let now = try #require(
+            calendar.date(from: DateComponents(year: 2026, month: 8, day: 25, hour: 18))
+        )
+        let dates = WiseishDayRollover.timelineDates(from: now, daysAhead: 2, calendar: calendar)
+
+        #expect(dates.count == 3)
+        #expect(dates[0] == now)
+        #expect(calendar.component(.day, from: dates[1]) == 26)
+        #expect(calendar.component(.hour, from: dates[1]) == 0)
+        #expect(calendar.component(.day, from: dates[2]) == 27)
+    }
+
+    @Test func dayContentChangesOnlyAfterThePreviousPageIsInvisible() {
+        let replacementStep = WiseishDayRollover.contentReplacementStep
+
+        #expect(WiseishDayRollover.pageTurnOpacity(for: replacementStep - 1) > 0)
+        #expect(WiseishDayRollover.pageTurnProgress(for: replacementStep) == 1)
+        #expect(WiseishDayRollover.pageTurnOpacity(for: replacementStep) == 0)
+    }
+
     @Test func contextClassifierFallsBackToDaily() {
         let context = WiseishContextClassifier.classify("なんとなくぼんやり")
 

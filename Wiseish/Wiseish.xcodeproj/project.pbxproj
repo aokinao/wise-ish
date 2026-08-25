@@ -351,9 +351,10 @@
 				};
 			};
 			buildConfigurationList = EDC5183B303C00C7008434F6 /* Build configuration list for PBXProject "Wiseish" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				ja,
 				en,
 				Base,
 			);

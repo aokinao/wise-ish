@@ -12,6 +12,17 @@ private struct WiseishModelDecision {
 
     @Guide(description: "work, information, rest, relationship, money, creative, daily の中から関係するもの")
     var tags: [String]
+
+    @Guide(description: "返答の型。comfort, leave, laugh, noPush, tea のどれか一つ")
+    var replyStyle: String
+}
+
+private enum WiseishReplyStyle: String {
+    case comfort
+    case leave
+    case laugh
+    case noPush
+    case tea
 }
 
 enum WiseishGenerationResult {
@@ -36,9 +47,16 @@ enum WiseishLanguageModelService {
 
         let localContext = sourceText.map(WiseishContextClassifier.classify)
         let localChoice = chooseLocally(from: candidates, context: localContext, date: date)
+        let hasPersonalInput = sourceText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
         let model = SystemLanguageModel.default
-        guard case .available = model.availability else {
-            return .generated(makeQuote(from: localChoice, context: localContext, date: date))
+        guard case .available = model.availability,
+              model.supportsLocale(japaneseLocale) else {
+            return .generated(makeQuote(
+                from: localChoice,
+                context: localContext,
+                personalizedReply: hasPersonalInput,
+                date: date
+            ))
         }
 
         let hour = Calendar.current.component(.hour, from: date)
@@ -70,6 +88,7 @@ enum WiseishLanguageModelService {
             \(candidateList)
 
             今日に合う候補IDを一つ選び、短い選定理由とタグを返してください。
+            さらに、入力へのIshの返答に合う型を一つ選んでください。返答文そのものは書きません。
             """
 
         do {
@@ -78,15 +97,23 @@ enum WiseishLanguageModelService {
             let selected = candidates.first { $0.id == decision.selectedQuoteID } ?? localChoice
             let tags = decision.tags.filter(allowedTags.contains)
             let reason = cleanReason(decision.contextReason, fallback: localContext?.reason)
+            let replyStyle = WiseishReplyStyle(rawValue: decision.replyStyle)
+                ?? replyStyle(for: localContext)
             return .generated(makeQuote(
                 from: selected,
                 reason: reason,
                 tags: tags.isEmpty ? selected.tags : tags,
+                aside: hasPersonalInput ? reply(for: replyStyle, quoteID: selected.id, date: date) : nil,
                 date: date
             ))
         } catch {
             logger.notice("Model selection failed; using local ranking: \(String(describing: error), privacy: .public)")
-            return .generated(makeQuote(from: localChoice, context: localContext, date: date))
+            return .generated(makeQuote(
+                from: localChoice,
+                context: localContext,
+                personalizedReply: hasPersonalInput,
+                date: date
+            ))
         }
     }
 
@@ -121,12 +148,15 @@ enum WiseishLanguageModelService {
     private static func makeQuote(
         from quote: WiseishQuote,
         context: WiseishExternalContext?,
+        personalizedReply: Bool,
         date: Date
     ) -> WiseishGeneratedQuote {
-        makeQuote(
+        let style = replyStyle(for: context)
+        return makeQuote(
             from: quote,
             reason: context?.reason ?? "今日の気分から選んだ一枚",
             tags: context?.tags ?? quote.tags,
+            aside: personalizedReply ? reply(for: style, quoteID: quote.id, date: date) : nil,
             date: date
         )
     }
@@ -135,6 +165,7 @@ enum WiseishLanguageModelService {
         from quote: WiseishQuote,
         reason: String,
         tags: [String],
+        aside: String?,
         date: Date
     ) -> WiseishGeneratedQuote {
         WiseishGeneratedQuote(
@@ -142,7 +173,7 @@ enum WiseishLanguageModelService {
             text: quote.text,
             reflection: quote.reflection,
             theme: quote.theme,
-            aside: quote.aside,
+            aside: aside ?? quote.aside,
             contextReason: reason,
             tags: Array(tags.filter(allowedTags.contains).prefix(3)),
             createdAt: date
@@ -156,5 +187,56 @@ enum WiseishLanguageModelService {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleaned.isEmpty else { return fallback ?? "今日の気分から選んだ一枚" }
         return String(cleaned.prefix(32))
+    }
+
+    private static func replyStyle(for context: WiseishExternalContext?) -> WiseishReplyStyle {
+        let tags = Set(context?.tags ?? [])
+        if tags.contains("rest") || tags.contains("work") { return .comfort }
+        if tags.contains("information") { return .leave }
+        if tags.contains("relationship") { return .noPush }
+        if tags.contains("creative") { return .laugh }
+        return .tea
+    }
+
+    private static func reply(
+        for style: WiseishReplyStyle,
+        quoteID: String,
+        date: Date
+    ) -> String {
+        let choices: [String] = switch style {
+        case .comfort:
+            [
+                "今日はようやった。もう座れ。",
+                "それは疲れるの。わしなら先に休む。",
+                "うむ。背中より先に、肩の力を抜け。"
+            ]
+        case .leave:
+            [
+                "その件、いったん棚に上げるかの。",
+                "答えは逃げぬ。たぶん。今日は置いとけ。",
+                "情報が多いの。半分は明日のわしに任せよ。"
+            ]
+        case .laugh:
+            [
+                "なるほどの。わしなら茶でごまかす。",
+                "それは少し面白い。困るけどの。",
+                "よい迷いじゃ。出口は知らんが。"
+            ]
+        case .noPush:
+            [
+                "無理に答えんでよい。わしも黙っとる。",
+                "人のことは難しいの。茶は簡単じゃ。",
+                "その気持ち、そこへ座らせておけ。"
+            ]
+        case .tea:
+            [
+                "話は聞いた。まあ茶でも。",
+                "うむ。すぐ答えず、団子にするかの。",
+                "そういう日もある。わしはだいたいそうじゃ。"
+            ]
+        }
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
+        let seed = quoteID.unicodeScalars.reduce(day) { $0 + Int($1.value) }
+        return choices[seed % choices.count]
     }
 }

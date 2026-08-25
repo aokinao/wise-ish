@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-24.1",
+  "catalogVersion": "2026-08-24.2",
   "quotes": [
     {
       "id": "quiet-1",
@@ -50,6 +50,156 @@
       "theme": "歩みについて",
       "aside": "先に座っとる。",
       "tags": ["rest", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-6",
+      "mood": "quiet",
+      "text": "悩みは心の荷物じゃ。\n置き場所は、そのへんでよい。",
+      "reflection": "ずっと持ったままの荷物はある？",
+      "theme": "悩みについて",
+      "aside": "わしの荷物も混じっとる。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-7",
+      "mood": "quiet",
+      "text": "静けさにも音はある。\n茶が冷める音は聞こえぬが。",
+      "reflection": "いま一番小さく聞こえるものは何だろう。",
+      "theme": "静けさについて",
+      "aside": "飲みごろ逃したの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-8",
+      "mood": "quiet",
+      "text": "何もせぬ予定も予定じゃ。\n手帳には薄く書いておけ。",
+      "reflection": "空けておきたい時間はある？",
+      "theme": "予定について",
+      "aside": "消しゴムは要らんぞ。",
+      "tags": ["rest", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-9",
+      "mood": "quiet",
+      "text": "窓を開ければ風が入る。\nたまに伝票も飛んでゆく。",
+      "reflection": "少し風を通したい場所はどこ？",
+      "theme": "風通しについて",
+      "aside": "あれは未払いじゃ。",
+      "tags": ["daily", "money"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-10",
+      "mood": "quiet",
+      "text": "比べる物差しは置いてゆけ。\nわしのは少し曲がっておる。",
+      "reflection": "誰の物差しで測っていた？",
+      "theme": "比較について",
+      "aside": "三寸ほど怪しい。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-11",
+      "mood": "quiet",
+      "text": "やさしさは余ったくらいでよい。\n団子は余らぬがの。",
+      "reflection": "今日は誰に少しやさしくできそう？",
+      "theme": "やさしさについて",
+      "aside": "さっき全部食べた。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-12",
+      "mood": "quiet",
+      "text": "失敗は心のほこりじゃ。\n払えば舞うので、そっとな。",
+      "reflection": "少しだけ払い落とせそうな失敗はある？",
+      "theme": "失敗について",
+      "aside": "くしゃみ出そうじゃ。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-13",
+      "mood": "quiet",
+      "text": "ひとりの時間にも席はある。\nわしの隣、空いとるぞ。",
+      "reflection": "ひとりでいる自分に、何を渡したい？",
+      "theme": "孤独について",
+      "aside": "座布団は半分じゃ。",
+      "tags": ["relationship", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-14",
+      "mood": "quiet",
+      "text": "待つあいだにも湯は沸く。\n見すぎると、なぜか遅い。",
+      "reflection": "待ちながらできる小さなことはある？",
+      "theme": "待つことについて",
+      "aside": "まだかの。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-15",
+      "mood": "quiet",
+      "text": "勇気は大声を出さん。\n靴下を履いて待っておる。",
+      "reflection": "静かに準備できていることは何？",
+      "theme": "勇気について",
+      "aside": "左右は違う柄じゃ。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-16",
+      "mood": "quiet",
+      "text": "何もない日も、しまっておけ。\nあとで効くかもしれん。",
+      "reflection": "今日の何でもない瞬間を一つ挙げるなら？",
+      "theme": "日常について",
+      "aside": "わしもどの引き出しか忘れた。",
+      "tags": ["daily", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-17",
+      "mood": "quiet",
+      "text": "手放すと手が空くのじゃ。\n古い領収書は別じゃが。",
+      "reflection": "握らなくてもよいものはある？",
+      "theme": "手放すことについて",
+      "aside": "経費になるかの。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-18",
+      "mood": "quiet",
+      "text": "歩幅は自分で決めてよい。\n亀には聞かんでもよいぞ。",
+      "reflection": "今日はどのくらいの歩幅がちょうどよい？",
+      "theme": "自分の速さについて",
+      "aside": "あやつ意外と速いのじゃ。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-19",
+      "mood": "quiet",
+      "text": "雨の日は空も休んでおる。\n洗濯物は困っておる。",
+      "reflection": "予定どおりでなくてもよいことはある？",
+      "theme": "雨について",
+      "aside": "わしのふんどしもじゃ。",
+      "tags": ["rest", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-20",
+      "mood": "quiet",
+      "text": "眠る前の答えは薄味でよい。\n濃いのは明日に回せ。",
+      "reflection": "今夜、考えなくてよいことは何？",
+      "theme": "夜について",
+      "aside": "布団が呼んでおる。",
+      "tags": ["rest", "information"],
       "isPremium": false
     },
     {
@@ -103,6 +253,156 @@
       "isPremium": false
     },
     {
+      "id": "foggy-6",
+      "mood": "foggy",
+      "text": "部屋に入った理由を忘れた。\n部屋も黙っておる。",
+      "reflection": "忘れたままでも困らないことはある？",
+      "theme": "記憶について",
+      "aside": "何しに来たかの。",
+      "tags": ["daily", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-7",
+      "mood": "foggy",
+      "text": "選択肢が多い日は、\n最初に茶を選ぶのじゃ。",
+      "reflection": "いま決める必要があるのは、本当にどれ？",
+      "theme": "選択について",
+      "aside": "献立はまだ決まらん。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-8",
+      "mood": "foggy",
+      "text": "先が読めぬなら傘を持て。\n晴れたら杖にすればよい。",
+      "reflection": "小さく備えられることはある？",
+      "theme": "不確かさについて",
+      "aside": "先が曲がっとるがの。",
+      "tags": ["daily", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-9",
+      "mood": "foggy",
+      "text": "やる気を探しておる。\n座布団の下にはなかった。",
+      "reflection": "やる気がなくても始められる一歩はある？",
+      "theme": "やる気について",
+      "aside": "団子の串はあったぞ。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-10",
+      "mood": "foggy",
+      "text": "地図が逆さでも道は道じゃ。\n目的地は困るじゃろうが。",
+      "reflection": "見方をひっくり返すと何が変わる？",
+      "theme": "見方について",
+      "aside": "北はどっちかの。",
+      "tags": ["creative", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-11",
+      "mood": "foggy",
+      "text": "人の機嫌は天気に似ておる。\nわしの予報はよく外れる。",
+      "reflection": "相手の機嫌まで背負っていない？",
+      "theme": "機嫌について",
+      "aside": "傘だけ持っとくかの。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-12",
+      "mood": "foggy",
+      "text": "言葉が出ぬなら待てばよい。\n先にあくびが出ることもある。",
+      "reflection": "まだ言葉にしなくてよい気持ちはある？",
+      "theme": "言葉について",
+      "aside": "ふぁ、と出たの。",
+      "tags": ["relationship", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-13",
+      "mood": "foggy",
+      "text": "集中は追うと逃げるのじゃ。\n蠅だけは戻ってくる。",
+      "reflection": "集中する前に片づけたい邪魔は何？",
+      "theme": "集中について",
+      "aside": "あやつ、また来た。",
+      "tags": ["work", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-14",
+      "mood": "foggy",
+      "text": "心配ごとが会議を始めた。\n議事録は取らんでよい。",
+      "reflection": "頭の中で何度も話していることはある？",
+      "theme": "心配について",
+      "aside": "わしは欠席じゃ。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-15",
+      "mood": "foggy",
+      "text": "未来はまだ幕の向こうじゃ。\n足だけ少し見えておる。",
+      "reflection": "先の全部ではなく、何なら見えている？",
+      "theme": "未来について",
+      "aside": "あれは裏方かの。",
+      "tags": ["daily", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-16",
+      "mood": "foggy",
+      "text": "二つ同時に持つとこぼす。\n茶で何度も学んだはずじゃ。",
+      "reflection": "いま一つだけ選ぶならどれ？",
+      "theme": "手いっぱいについて",
+      "aside": "また膝が熱い。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-17",
+      "mood": "foggy",
+      "text": "自信は出かけておる。\n置き手紙は読めぬ字じゃ。",
+      "reflection": "自信がなくても、できそうなことはある？",
+      "theme": "自信について",
+      "aside": "わしの字かもしれん。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-18",
+      "mood": "foggy",
+      "text": "理由はあとから来ることもある。\n遅れて詫びもしない。",
+      "reflection": "理由がなくても大切にしたい感覚はある？",
+      "theme": "理由について",
+      "aside": "まあ茶は出すがの。",
+      "tags": ["creative", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-19",
+      "mood": "foggy",
+      "text": "難しい話は結び目に似ておる。\n靴ひもなら脱げば済む。",
+      "reflection": "ほどく前に、手放せる問題はある？",
+      "theme": "複雑さについて",
+      "aside": "裸足で行くかの。",
+      "tags": ["information", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-20",
+      "mood": "foggy",
+      "text": "答えを冷蔵庫に探した。\n豆腐しかなかった。",
+      "reflection": "探す場所を間違えている問いはある？",
+      "theme": "答えについて",
+      "aside": "冷ややっこにするかの。",
+      "tags": ["daily", "information"],
+      "isPremium": false
+    },
+    {
       "id": "thinking-1",
       "mood": "thinking",
       "text": "深く考えるほど、\n浅い眠りになる。",
@@ -150,6 +450,156 @@
       "theme": "数字について",
       "aside": "指が足りん。",
       "tags": ["money", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-6",
+      "mood": "thinking",
+      "text": "理想へ梯子をかけたのじゃ。\n壁を間違えたかもしれん。",
+      "reflection": "登る前に確かめたい方向はある？",
+      "theme": "理想について",
+      "aside": "もう三段目じゃ。",
+      "tags": ["work", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-7",
+      "mood": "thinking",
+      "text": "効率よく遠回りした。\n途中の厠には詳しくなった。",
+      "reflection": "遠回りで得たものは何かあった？",
+      "theme": "効率について",
+      "aside": "わしが紙も補充したぞ。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-8",
+      "mood": "thinking",
+      "text": "成功を測る物差しが曲がった。\nちょうどよい気もする。",
+      "reflection": "自分なりの成功は、どんな形だろう？",
+      "theme": "成功について",
+      "aside": "まっすぐは、わしには疲れる。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-9",
+      "mood": "thinking",
+      "text": "失敗は土になるという。\n種をまくのを忘れたがの。",
+      "reflection": "失敗から次に育てたいものはある？",
+      "theme": "失敗について",
+      "aside": "まず鍬を探すか。",
+      "tags": ["work", "creative"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-10",
+      "mood": "thinking",
+      "text": "決断の銭を投げたら、\n棚の下へ転がっていった。",
+      "reflection": "偶然に任せたくないのは、どちら？",
+      "theme": "決断について",
+      "aside": "取れぬ。手が届かん。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-11",
+      "mood": "thinking",
+      "text": "本を積めば知恵は高くなる。\nわしは枕にしておる。",
+      "reflection": "知るだけでなく、試してみたいことはある？",
+      "theme": "知恵について",
+      "aside": "角が首に当たるの。",
+      "tags": ["information", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-12",
+      "mood": "thinking",
+      "text": "真実も見る角度で変わる。\n椅子の脚は変わらんでほしい。",
+      "reflection": "別の角度から見たい出来事はある？",
+      "theme": "真実について",
+      "aside": "まだぐらついておる。",
+      "tags": ["information", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-13",
+      "mood": "thinking",
+      "text": "目的を考えながら歩いた。\n用事のほうを忘れた。",
+      "reflection": "手段より先に思い出したい目的は何？",
+      "theme": "目的について",
+      "aside": "何を買うんじゃったかの。",
+      "tags": ["work", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-14",
+      "mood": "thinking",
+      "text": "策は多いほど安心じゃ。\n肝心の駒が一つない。",
+      "reflection": "策を増やす前に必要なものはある？",
+      "theme": "戦略について",
+      "aside": "袖に入っとった。",
+      "tags": ["work", "information"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-15",
+      "mood": "thinking",
+      "text": "財布は何も語らぬ。\n開くと少し気まずそうじゃ。",
+      "reflection": "お金でなく時間を使いたいものはある？",
+      "theme": "お金について",
+      "aside": "小銭が目をそらした。",
+      "tags": ["money", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-16",
+      "mood": "thinking",
+      "text": "白い紙には何でも描ける。\n見つめ合って半刻たった。",
+      "reflection": "下手でも最初に置けそうな一筆はある？",
+      "theme": "創造について",
+      "aside": "紙のほうが、わしより強い。",
+      "tags": ["creative", "work"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-17",
+      "mood": "thinking",
+      "text": "仕事に終わりはある。\n机が隠しておるだけじゃ。",
+      "reflection": "今日はどこを終わりにする？",
+      "theme": "仕事について",
+      "aside": "書類の下かの。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-18",
+      "mood": "thinking",
+      "text": "完璧には角が多すぎる。\n丸めれば座りやすいぞ。",
+      "reflection": "少し丸めても困らない基準はある？",
+      "theme": "完璧について",
+      "aside": "わしの背にもやさしい。",
+      "tags": ["work", "rest"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-19",
+      "mood": "thinking",
+      "text": "人との距離は声に似ておる。\n近すぎると少し響く。",
+      "reflection": "いま心地よい距離はどのくらい？",
+      "theme": "距離について",
+      "aside": "わしはここで聞いとる。",
+      "tags": ["relationship", "daily"],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-20",
+      "mood": "thinking",
+      "text": "明日の計画を書こうとした。\n鉛筆が先に寝ておる。",
+      "reflection": "明日の自分に一つだけ頼むなら何？",
+      "theme": "明日について",
+      "aside": "わしも横になるかの。",
+      "tags": ["work", "rest"],
       "isPremium": false
     }
   ]

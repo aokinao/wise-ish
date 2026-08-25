@@ -2,6 +2,8 @@ import SwiftUI
 import WidgetKit
 
 private struct WidgetQuote {
+    let id: String
+    let mood: String
     let text: String
     let theme: String
     let tags: [String]
@@ -10,7 +12,7 @@ private struct WidgetQuote {
 private enum WidgetQuoteStore {
     static var quotes: [WidgetQuote] {
         WiseishCatalogStore.currentCatalog().quotes.map {
-            WidgetQuote(text: $0.text, theme: $0.theme, tags: $0.tags)
+            WidgetQuote(id: $0.id, mood: $0.mood, text: $0.text, theme: $0.theme, tags: $0.tags)
         }
     }
 
@@ -22,15 +24,15 @@ private enum WidgetQuoteStore {
             return generated
         }
 
-        let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
-        guard let context = WiseishContextStore.recentExternalContext(now: date) else {
-            return quotes[day % quotes.count]
-        }
-        return quotes.enumerated().max { lhs, rhs in
-            let lhsScore = Set(lhs.element.tags).intersection(context.tags).count * 10 + ((day + lhs.offset) % quotes.count)
-            let rhsScore = Set(rhs.element.tags).intersection(context.tags).count * 10 + ((day + rhs.offset) % quotes.count)
-            return lhsScore < rhsScore
-        }?.element ?? quotes[day % quotes.count]
+        let mood = WiseishContextStore.recommendedMood(date: date)
+        let matchingMood = quotes.filter { $0.mood == mood }
+        let candidates = matchingMood.isEmpty ? quotes : matchingMood
+        let index = WiseishContextStore.preferredIndex(
+            candidateIDs: candidates.map(\.id),
+            candidateTags: Dictionary(uniqueKeysWithValues: candidates.map { ($0.id, $0.tags) }),
+            date: date
+        )
+        return candidates[index % candidates.count]
     }
 
     private static func recentlyDisplayedQuote(for date: Date, calendar: Calendar) -> WidgetQuote? {
@@ -39,7 +41,13 @@ private enum WidgetQuoteStore {
         }) else {
             return nil
         }
-        return WidgetQuote(text: record.text, theme: record.theme, tags: ["daily"])
+        return WidgetQuote(
+            id: record.quoteID,
+            mood: WiseishContextStore.recommendedMood(date: date),
+            text: record.text,
+            theme: record.theme,
+            tags: ["daily"]
+        )
     }
 
     static func contextReason(for date: Date, calendar: Calendar = .current) -> String? {
@@ -56,6 +64,8 @@ private enum WidgetQuoteStore {
             return nil
         }
         return WidgetQuote(
+            id: generated.catalogID,
+            mood: WiseishContextStore.recommendedMood(date: date),
             text: generated.text,
             theme: generated.theme,
             tags: generated.tags
@@ -114,6 +124,7 @@ private struct WiseishWidgetView: View {
                 smallWidget
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .foregroundStyle(ink)
         .containerBackground(for: .widget) {
             paper
@@ -121,35 +132,36 @@ private struct WiseishWidgetView: View {
     }
 
     private var smallWidget: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            brandAndDate
+        ZStack(alignment: .bottomTrailing) {
+            VStack(alignment: .leading, spacing: 0) {
+                brandAndDate
 
-            Text(entry.quote.text)
-                .font(.system(size: 15, weight: .semibold, design: .serif))
-                .lineSpacing(2)
-                .lineLimit(4)
-                .minimumScaleFactor(0.68)
-                .allowsTightening(true)
-                .layoutPriority(2)
-                .padding(.top, 8)
+                Text(entry.quote.text)
+                    .font(.system(size: 15, weight: .semibold, design: .serif))
+                    .lineSpacing(2)
+                    .lineLimit(4)
+                    .minimumScaleFactor(0.64)
+                    .allowsTightening(true)
+                    .layoutPriority(2)
+                    .padding(.top, 9)
 
-            Spacer(minLength: 2)
+                Spacer(minLength: 5)
 
-            HStack(alignment: .bottom) {
                 Text("# \(entry.quote.theme)")
                     .font(.system(size: 8, weight: .semibold))
                     .foregroundStyle(softInk)
                     .lineLimit(1)
-
-                Spacer(minLength: 0)
-
-                Image("IshWidget")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 34, height: 37)
-                    .accessibilityHidden(true)
+                    .padding(.trailing, 36)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            Image("IshWidget")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 37, height: 41)
+                .accessibilityHidden(true)
         }
+        .padding(13)
     }
 
     private var mediumWidget: some View {
@@ -189,6 +201,8 @@ private struct WiseishWidgetView: View {
                 .frame(width: 93)
                 .accessibilityHidden(true)
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var brandAndDate: some View {
@@ -220,6 +234,7 @@ private struct WiseishWidget: Widget {
         .configurationDisplayName("今日の Wise-ish")
         .description("今日の哲学っぽい迷言を、Ishと一緒に表示します。")
         .supportedFamilies([.systemSmall, .systemMedium])
+        .contentMarginsDisabled()
     }
 }
 

@@ -43,12 +43,23 @@ Bundle IDはXcodeのApp targetと一致させる。WidgetとShare Extensionは�
 
 | Secret | 内容 |
 | --- | --- |
-| `APP_STORE_CONNECT_KEY_ID` | App Store Connect API KeyのKey ID |
+| `APP_STORE_CONNECT_API_KEY_ID` | App Store Connect API KeyのKey ID |
 | `APP_STORE_CONNECT_ISSUER_ID` | API KeyのIssuer ID |
-| `APP_STORE_CONNECT_PRIVATE_KEY` | `.p8`秘密鍵の内容（改行を保持） |
-| `APPLE_TEAM_ID` | Apple Developer Team ID（例: `YE3JSRF22E`） |
+| `APP_STORE_CONNECT_API_KEY_BASE64` | `.p8`秘密鍵のBase64文字列 |
+| `BUILD_CERTIFICATE_BASE64` | Apple Distribution証明書（`.p12`）のBase64文字列 |
+| `P12_PASSWORD` | `.p12`のパスワード |
+| `WISEISH_APP_PROVISION_PROFILE_BASE64` | App用Provisioning ProfileのBase64文字列 |
+| `WISEISH_WIDGET_PROVISION_PROFILE_BASE64` | Widget用Provisioning ProfileのBase64文字列 |
+| `WISEISH_SHARE_PROVISION_PROFILE_BASE64` | Share Extension用Provisioning ProfileのBase64文字列 |
+| `KEYCHAIN_PASSWORD` | CI用一時Keychainのパスワード |
 
-API KeyはApp Store Connectの `Users and Access > Integrations > Keys` で、最低限 `App Manager` 権限で作成する。`.p8`は一度しかダウンロードできないため、パスワードマネージャーにも保管する。
+API KeyはApp Store Connectの `Users and Access > Integrations > Keys` で、最低限 `App Manager` 権限で作成する。`.p8`は一度しかダウンロードできないため、Base64化した値と元ファイルをパスワードマネージャーにも保管する。
+
+Apple Developerでは、次の3つのApp IDに対するApp Store用Distribution Provisioning Profileを作成する。
+
+- `com.naoki.Wiseish`
+- `com.naoki.Wiseish.WiseishWidget`
+- `com.naoki.Wiseish.WiseishShare`
 
 このリポジトリの `ios-release.yml` は、`v*`タグまたはActionsの手動実行で以下を行う。
 

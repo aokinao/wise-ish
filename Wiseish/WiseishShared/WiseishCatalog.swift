@@ -93,11 +93,26 @@ enum WiseishCatalogStore {
         let cached = cachedCatalog()
         let bundled = bundledCatalog(bundle: bundle)
         if let cached, let bundled {
-            return cached.catalogVersion > bundled.catalogVersion ? cached : bundled
+            return isNewerCatalogVersion(cached.catalogVersion, than: bundled.catalogVersion) ? cached : bundled
         }
         if let cached { return cached }
         if let bundled { return bundled }
         return fallbackCatalog
+    }
+
+    static func isNewerCatalogVersion(_ lhs: String, than rhs: String) -> Bool {
+        guard let left = catalogVersionKey(lhs), let right = catalogVersionKey(rhs) else {
+            return lhs > rhs
+        }
+        return left > right
+    }
+
+    private static func catalogVersionKey(_ version: String) -> (Int, Int, Int, Int)? {
+        let parts = version.split(separator: ".", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else { return nil }
+        let dateParts = parts[0].split(separator: "-").compactMap { Int($0) }
+        guard dateParts.count == 3, let revision = Int(parts[1]) else { return nil }
+        return (dateParts[0], dateParts[1], dateParts[2], revision)
     }
 
     static func bundledCatalog(bundle: Bundle = .main) -> WiseishCatalog? {

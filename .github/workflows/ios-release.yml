@@ -1,4 +1,4 @@
-name: Build and upload iOS release
+name: Deploy to App Store Connect
 
 on:
   workflow_dispatch:
@@ -10,82 +10,146 @@ permissions:
   contents: read
 
 concurrency:
-  group: ios-release
+  group: wiseish-app-store-connect
   cancel-in-progress: false
 
 jobs:
-  release:
-    runs-on: macos-15
+  deploy:
+    name: Archive and upload Wise-ish
+    runs-on: macos-26
+    environment: app-store-connect
+    timeout-minutes: 60
+
     steps:
-      - name: Checkout
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
+      - name: Select Xcode 26.2
+        run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
-      - name: Import App Store Connect API key
+      - name: Validate deployment secrets
         env:
-          ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          APP_PROFILE_BASE64: ${{ secrets.WISEISH_APP_PROVISION_PROFILE_BASE64 }}
+          WIDGET_PROFILE_BASE64: ${{ secrets.WISEISH_WIDGET_PROVISION_PROFILE_BASE64 }}
+          SHARE_PROFILE_BASE64: ${{ secrets.WISEISH_SHARE_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
-          mkdir -p "$RUNNER_TEMP/private_keys"
-          printf '%s' "$ASC_PRIVATE_KEY" > "$RUNNER_TEMP/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8"
+          set -euo pipefail
+          required_secrets=(ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_BASE64 BUILD_CERTIFICATE_BASE64 P12_PASSWORD APP_PROFILE_BASE64 WIDGET_PROFILE_BASE64 SHARE_PROFILE_BASE64 KEYCHAIN_PASSWORD)
+          for secret_name in "${required_secrets[@]}"; do
+            if [[ -z "${!secret_name:-}" ]]; then
+              echo "::error::Missing GitHub secret: ${secret_name}"
+              exit 1
+            fi
+          done
 
-      - name: Test
+      - name: Install signing credentials
+        env:
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          APP_PROFILE_BASE64: ${{ secrets.WISEISH_APP_PROVISION_PROFILE_BASE64 }}
+          WIDGET_PROFILE_BASE64: ${{ secrets.WISEISH_WIDGET_PROVISION_PROFILE_BASE64 }}
+          SHARE_PROFILE_BASE64: ${{ secrets.WISEISH_SHARE_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
-          xcodebuild \
-            -project Wiseish/Wiseish.xcodeproj \
-            -scheme Wiseish \
+          set -euo pipefail
+          CERTIFICATE_PATH="$RUNNER_TEMP/wiseish_distribution.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/wiseish-signing.keychain-db"
+          API_KEY_DIRECTORY="$RUNNER_TEMP/private_keys"
+          API_KEY_PATH="$API_KEY_DIRECTORY/AuthKey_${ASC_KEY_ID}.p8"
+          PROFILE_DIRECTORY="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$API_KEY_DIRECTORY" "$PROFILE_DIRECTORY"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+          echo -n "$ASC_KEY_BASE64" | base64 --decode -o "$API_KEY_PATH"
+          chmod 600 "$API_KEY_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+          install_profile() {
+            local encoded="$1"
+            local output="$RUNNER_TEMP/$2.mobileprovision"
+            echo -n "$encoded" | base64 --decode -o "$output"
+            security cms -D -i "$output" > "$output.plist"
+            local uuid
+            uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$output.plist")"
+            local name
+            name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$output.plist")"
+            cp "$output" "$PROFILE_DIRECTORY/${uuid}.mobileprovision"
+            echo "${2}_PROFILE_UUID=$uuid" >> "$GITHUB_ENV"
+            echo "${2}_PROFILE_NAME=$name" >> "$GITHUB_ENV"
+          }
+          install_profile "$APP_PROFILE_BASE64" WISEISH_APP
+          install_profile "$WIDGET_PROFILE_BASE64" WISEISH_WIDGET
+          install_profile "$SHARE_PROFILE_BASE64" WISEISH_SHARE
+          echo "API_KEY_PATH=$API_KEY_PATH" >> "$GITHUB_ENV"
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          echo "PROFILE_DIRECTORY=$PROFILE_DIRECTORY" >> "$GITHUB_ENV"
+
+      - name: Run tests
+        run: |
+          set -euo pipefail
+          xcodebuild -project Wiseish/Wiseish.xcodeproj -scheme Wiseish \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -only-testing:WiseishTests test
 
       - name: Archive
-        env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          xcodebuild archive \
-            -project Wiseish/Wiseish.xcodeproj \
-            -scheme Wiseish \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
+          set -euo pipefail
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}"
+          xcodebuild archive -project Wiseish/Wiseish.xcodeproj -scheme Wiseish \
+            -configuration Release -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Wiseish.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$RUNNER_TEMP/private_keys/AuthKey_${KEY_ID}.p8" \
-            -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID"
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM=YE3JSRF22E \
+            CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY='Apple Distribution'
 
-      - name: Export IPA
+      - name: Export and upload to App Store Connect
         env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          set -euo pipefail
+          export_options="$RUNNER_TEMP/ExportOptions.plist"
+          cat > "$export_options" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0"><dict>
-            <key>method</key><string>app-store</string>
-            <key>signingStyle</key><string>automatic</string>
-            <key>teamID</key><string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>destination</key><string>upload</string>
+            <key>method</key><string>app-store-connect</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>stripSwiftSymbols</key><true/>
+            <key>teamID</key><string>YE3JSRF22E</string>
+            <key>uploadSymbols</key><true/>
+            <key>provisioningProfiles</key><dict>
+              <key>com.naoki.Wiseish</key><string>${WISEISH_APP_PROFILE_NAME}</string>
+              <key>com.naoki.Wiseish.WiseishWidget</key><string>${WISEISH_WIDGET_PROFILE_NAME}</string>
+              <key>com.naoki.Wiseish.WiseishShare</key><string>${WISEISH_SHARE_PROFILE_NAME}</string>
+            </dict>
           </dict></plist>
           PLIST
-          xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/Wiseish.xcarchive" \
-            -exportPath "$RUNNER_TEMP/export" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$RUNNER_TEMP/private_keys/AuthKey_${KEY_ID}.p8" \
-            -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Wiseish.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" -exportOptionsPlist "$export_options" \
+            -allowProvisioningUpdates -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
-      - name: Upload to TestFlight
-        env:
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      - name: Clean up signing credentials
+        if: ${{ always() }}
         run: |
-          xcrun altool --upload-app \
-            --type ios \
-            --file "$RUNNER_TEMP/export/Wiseish.ipa" \
-            --apiKey "$KEY_ID" \
-            --apiIssuer "$ISSUER_ID"
+          security delete-keychain "${KEYCHAIN_PATH:-}" 2>/dev/null || true
+          if [[ -n "${PROFILE_DIRECTORY:-}" ]]; then
+            rm -f "$PROFILE_DIRECTORY/${WISEISH_APP_PROFILE_UUID:-}.mobileprovision"
+            rm -f "$PROFILE_DIRECTORY/${WISEISH_WIDGET_PROFILE_UUID:-}.mobileprovision"
+            rm -f "$PROFILE_DIRECTORY/${WISEISH_SHARE_PROFILE_UUID:-}.mobileprovision"
+          fi
+          rm -rf "$RUNNER_TEMP/private_keys"

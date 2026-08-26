@@ -75,9 +75,9 @@ enum WiseishContextStore {
         static let tagReactionScores = "personalization.tagReactionScores"
     }
 
-    private static var defaults: UserDefaults {
-        UserDefaults(suiteName: appGroupID) ?? .standard
-    }
+    // App Groupが利用できない場合に標準UserDefaultsへ混ざると、アプリ固有の
+    // データが別Widgetや他の機能から見えてしまう。隔離した一時ストアにする。
+    private static let defaults = UserDefaults(suiteName: appGroupID) ?? UserDefaults()
 
     static var preferredMood: String? {
         preferredMood(for: .now)
@@ -261,7 +261,10 @@ enum WiseishContextStore {
         aside: String,
         date: Date = .now
     ) {
-        let day = date.formatted(.iso8601.year().month().day())
+        let components = Calendar.current.dateComponents([.era, .year, .month, .day], from: date)
+        let day = [components.era, components.year, components.month, components.day]
+            .map { String($0 ?? 0) }
+            .joined(separator: "-")
         let record = WiseishQuoteRecord(
             id: "\(quoteID)-\(day)",
             quoteID: quoteID,

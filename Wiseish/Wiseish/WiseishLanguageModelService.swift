@@ -107,7 +107,7 @@ enum WiseishLanguageModelService {
                 date: date
             ))
         } catch {
-            logger.notice("Model selection failed; using local ranking: \(String(describing: error), privacy: .public)")
+            logger.notice("Model selection failed; using local ranking: \(String(describing: error), privacy: .private)")
             return .generated(makeQuote(
                 from: localChoice,
                 context: localContext,

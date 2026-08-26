@@ -51,6 +51,10 @@ private enum WiseishTodayQuoteResolver {
         let active = catalog.quotes.filter { $0.isActive(on: date, calendar: calendar) }
         let candidates = active.filter { $0.mood == mood }
         let available = candidates.isEmpty ? active : candidates
+        guard !available.isEmpty else {
+            // 季節限定データの更新途中でもApp Intentをクラッシュさせない。
+            return catalog.quotes[0]
+        }
         let index = WiseishContextStore.preferredIndex(
             candidateIDs: available.map(\.id),
             candidateTags: Dictionary(uniqueKeysWithValues: available.map { ($0.id, $0.tags) }),

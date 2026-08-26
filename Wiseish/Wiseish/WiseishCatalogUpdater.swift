@@ -38,7 +38,7 @@ final class WiseishCatalogUpdater {
                 defaults.set(eTag, forKey: eTagKey)
             }
             let shouldReplace = current.catalogVersion.hasPrefix("fallback-")
-                || remote.catalogVersion > current.catalogVersion
+                || WiseishCatalogStore.isNewerCatalogVersion(remote.catalogVersion, than: current.catalogVersion)
             guard shouldReplace else { return false }
 
             try WiseishCatalogStore.saveRemoteCatalog(data: data)

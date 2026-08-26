@@ -18,6 +18,12 @@ struct WiseishTests {
         #expect(Set(catalog.quotes.map(\.id)).count == catalog.quotes.count)
     }
 
+    @Test func catalogVersionsCompareNumericRevisions() {
+        #expect(WiseishCatalogStore.isNewerCatalogVersion("2026-08-26.10", than: "2026-08-26.9"))
+        #expect(!WiseishCatalogStore.isNewerCatalogVersion("2026-08-26.9", than: "2026-08-26.10"))
+        #expect(WiseishCatalogStore.isNewerCatalogVersion("2026-08-27.1", than: "2026-08-26.99"))
+    }
+
     @Test func contextClassifierFindsWorkAndRestWithoutKeepingOriginalText() {
         let context = WiseishContextClassifier.classify("会議続きで疲れたので休みたい")
 

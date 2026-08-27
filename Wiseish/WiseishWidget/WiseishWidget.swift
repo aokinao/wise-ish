@@ -36,6 +36,16 @@ private enum WidgetQuoteStore {
     }
 
     static func quote(for date: Date, calendar: Calendar = .current) -> WidgetQuote {
+        if let shared = WiseishContextStore.widgetQuote(for: date) {
+            return WidgetQuote(
+                id: shared.quoteID,
+                mood: "daily",
+                text: shared.text,
+                theme: shared.theme,
+                tags: ["daily"],
+                activeMonths: nil
+            )
+        }
         let active = quotes.filter { $0.isActive(on: date, calendar: calendar) }
         guard !active.isEmpty else {
             // 季節限定データや一時的なCatalog更新で候補が空になっても、

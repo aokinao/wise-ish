@@ -59,6 +59,7 @@ enum WiseishUsageEvent: String, CaseIterable {
 
 enum WiseishContextStore {
     static let appGroupID = "group.com.naoki.Wiseish"
+    private static let widgetQuoteFileName = "wiseish-widget-quote.json"
 
     private enum Key {
         static let preferredMood = "personalization.preferredMood"
@@ -279,6 +280,27 @@ enum WiseishContextStore {
         records.insert(record, at: 0)
         guard let data = try? JSONEncoder().encode(Array(records.prefix(100))) else { return }
         defaults.set(data, forKey: Key.quoteHistory)
+        // WidgetはUserDefaultsの復旧待ちで描画が止まることがあるため、
+        // 今日実際に表示した一言だけは小さな共有ファイルにも保存する。
+        if let widgetURL = widgetQuoteURL,
+           let widgetData = try? JSONEncoder().encode(record) {
+            try? widgetData.write(to: widgetURL, options: .atomic)
+        }
+    }
+
+    static func widgetQuote(for date: Date = .now) -> WiseishQuoteRecord? {
+        guard let url = widgetQuoteURL,
+              let data = try? Data(contentsOf: url),
+              let record = try? JSONDecoder().decode(WiseishQuoteRecord.self, from: data),
+              Calendar.current.isDate(record.shownAt, inSameDayAs: date)
+        else { return nil }
+        return record
+    }
+
+    private static var widgetQuoteURL: URL? {
+        FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
+            .appendingPathComponent(widgetQuoteFileName)
     }
 
     static func quoteHistory() -> [WiseishQuoteRecord] {

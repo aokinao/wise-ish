@@ -14,7 +14,8 @@ struct WiseishTests {
         let catalog = WiseishCatalogStore.currentCatalog()
 
         try WiseishCatalogValidator.validate(catalog)
-        #expect(catalog.quotes.count == 120)
+        // カタログは増える一方なので、固定値ではなく下限で欠落だけを見る。
+        #expect(catalog.quotes.count >= 120)
         #expect(Set(catalog.quotes.map(\.id)).count == catalog.quotes.count)
     }
 

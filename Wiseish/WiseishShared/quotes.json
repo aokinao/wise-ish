@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-28.1",
+  "catalogVersion": "2026-08-28.2",
   "quotes": [
     {
       "id": "quiet-1",
@@ -1536,6 +1536,584 @@
       "tags": [
         "creative",
         "information"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-41",
+      "mood": "quiet",
+      "text": "繰り返した動きは、考えるより先に手が動く。\n靴を履いてから、どこへ行くのか思い出した。",
+      "theme": "習慣について",
+      "aside": "鍵は持ったかの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-42",
+      "mood": "quiet",
+      "text": "聞くとは、次に言うことを考えずにおることじゃ。\nわしはたいてい、考えてしまう。",
+      "theme": "聞くことについて",
+      "aside": "うなずきだけは早い。",
+      "tags": [
+        "relationship",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-43",
+      "mood": "quiet",
+      "text": "手放せぬものは、たいてい置き場所が決まっておる。\n捨てられぬ箱は、いつも同じ棚の同じ角じゃ。",
+      "theme": "執着について",
+      "aside": "中身は見ておらん。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-44",
+      "mood": "quiet",
+      "text": "親切は、受け取る側の都合で重さが変わる。\n腹一杯の者に団子を渡すと、荷物になる。",
+      "theme": "親切について",
+      "aside": "半分だけ渡すかの。",
+      "tags": [
+        "relationship",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-45",
+      "mood": "quiet",
+      "text": "人の話は、近すぎると内容より息づかいが届く。\n少し下がって、ようやく言葉になった。",
+      "theme": "距離について",
+      "aside": "耳は遠いほうじゃ。",
+      "tags": [
+        "relationship"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-46",
+      "mood": "quiet",
+      "text": "許すとは、忘れることではない。\n覚えたまま、持ち歩く重さを決め直すことじゃ。",
+      "theme": "許すことについて",
+      "aside": "軽いほうから持つ。",
+      "tags": [
+        "relationship",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-47",
+      "mood": "quiet",
+      "text": "相談とは、答えを聞く場ではないことがある。\n茶を出すと、たいてい先に片がつく。",
+      "theme": "相談について",
+      "aside": "二杯目は要らぬらしい。",
+      "tags": [
+        "relationship",
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-48",
+      "mood": "quiet",
+      "text": "旨いと感じるのは、舌より前の空腹かもしれぬ。\n同じ飯が、走った日だけ違う顔をする。",
+      "theme": "味について",
+      "aside": "今日は普通じゃ。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-49",
+      "mood": "quiet",
+      "text": "古い物を捨てられぬのは、値打ちではなく手間のせいじゃ。\n決めるより、置くほうが早い。",
+      "theme": "物について",
+      "aside": "また来年見るかの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-50",
+      "mood": "quiet",
+      "text": "味を決めるのは、最後に足した一つとは限らぬ。\n出汁は、誰にも見えぬところで働いておる。",
+      "theme": "支度について",
+      "aside": "湯気だけ褒められる。",
+      "tags": [
+        "daily",
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-51",
+      "mood": "quiet",
+      "text": "見えぬものが増えたのではない。\n見ようとする距離が、少しずつ延びただけじゃ。",
+      "theme": "見ることについて",
+      "aside": "腕が足りぬ。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-52",
+      "mood": "quiet",
+      "text": "風の強さは、立っておっては分からぬ。\n障子の紙が、いつも先に知らせてくる。",
+      "theme": "風について",
+      "aside": "そろそろ張り替えかの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-53",
+      "mood": "quiet",
+      "text": "慣れるとは、驚かなくなることじゃ。\n毎日飲む茶の味を、いつから確かめておらん。",
+      "theme": "慣れについて",
+      "aside": "今日は一口目を味わう。",
+      "tags": [
+        "daily",
+        "rest"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-54",
+      "mood": "quiet",
+      "text": "退屈は、何もないときではなく、何かを待つときに来る。\n座っておるだけなら、そう悪くない。",
+      "theme": "退屈について",
+      "aside": "日なたが動いておる。",
+      "tags": [
+        "rest"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-55",
+      "mood": "quiet",
+      "text": "残すために撮ると、見る時間が後ろへずれる。\nわしの秋は、まだ箱の中で待っておる。",
+      "theme": "記録について",
+      "aside": "去年の分もある。",
+      "tags": [
+        "daily",
+        "creative"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-56",
+      "mood": "quiet",
+      "text": "真似から始めても、どこかは必ずずれる。\nそのずれのほうが、あとから名前を持つ。",
+      "theme": "真似について",
+      "aside": "わしのずれは大きい。",
+      "tags": [
+        "creative"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "quiet-57",
+      "mood": "quiet",
+      "text": "待つことの上手い者は、退屈と付き合いが長い。\n釣り人と猫は、同じ顔で座っておる。",
+      "theme": "待つことについて",
+      "aside": "わしも並ぶかの。",
+      "tags": [
+        "rest",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-41",
+      "mood": "foggy",
+      "text": "覚えておくとは、どこかへ置くことじゃ。\n置いた場所を覚える者が、別に要るのではないか。",
+      "theme": "記憶について",
+      "aside": "手帳を探しておる。",
+      "tags": [
+        "daily",
+        "information"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-42",
+      "mood": "foggy",
+      "text": "決めた予定は、決めた時点の自分のものじゃ。\n明日の自分は、まだ何も約束しておらん。",
+      "theme": "予定について",
+      "aside": "印だけは丸くつけた。",
+      "tags": [
+        "work",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-43",
+      "mood": "foggy",
+      "text": "言葉にすると、輪郭のなかったものに角ができる。\n悩みを口に出したら、四角くなって転がらん。",
+      "theme": "言葉について",
+      "aside": "転がるほうが楽かの。",
+      "tags": [
+        "daily",
+        "relationship"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-44",
+      "mood": "foggy",
+      "text": "選ぶとは、捨てる練習でもある。\n蕎麦を選んだ日は、丼を一つ捨てておる。",
+      "theme": "選択について",
+      "aside": "捨てた丼は数えぬ。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-45",
+      "mood": "foggy",
+      "text": "決められぬのは、どちらも悪くないからじゃ。\n昼寝と散歩で半刻迷い、どちらも逃した。",
+      "theme": "決断について",
+      "aside": "座ったまま暮れたの。",
+      "tags": [
+        "rest",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-46",
+      "mood": "foggy",
+      "text": "早く済ませた仕事の分だけ、別の仕事が来る。\n世の中は、空いた場所を放っておかぬ。",
+      "theme": "仕事量について",
+      "aside": "手を止めておこう。",
+      "tags": [
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-47",
+      "mood": "foggy",
+      "text": "貯めるとは、使う日を先へ延ばす約束じゃ。\nわしは延ばしすぎて、約束の相手を忘れた。",
+      "theme": "貯えについて",
+      "aside": "壺の中は見ておらん。",
+      "tags": [
+        "money"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-48",
+      "mood": "foggy",
+      "text": "眠りは、意識して手放すことのできぬ数少ないものじゃ。\n力を抜こうと力を入れて、朝になった。",
+      "theme": "眠りについて",
+      "aside": "枕は悪くない。",
+      "tags": [
+        "rest"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-49",
+      "mood": "foggy",
+      "text": "やらぬ理由は、探せばいくらでも出てくる。\n今日は腰と天気の二つが手を挙げた。",
+      "theme": "言い訳について",
+      "aside": "多数決には弱いのじゃ。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-50",
+      "mood": "foggy",
+      "text": "よく着る服ほど、選んだ記憶が薄い。\n毎日決めておるのに、決めた覚えがない。",
+      "theme": "服について",
+      "aside": "同じ羽織じゃ。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-51",
+      "mood": "foggy",
+      "text": "合わぬ靴は、歩き出すまで分からぬ。\n店では、たいてい皆おとなしい顔をしておる。",
+      "theme": "選び方について",
+      "aside": "帰りは裸足かの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-52",
+      "mood": "foggy",
+      "text": "朝は、昨日決めたことを疑う時間らしい。\n夜のわしは、いつも他人のように強気じゃ。",
+      "theme": "朝について",
+      "aside": "起きてから考える。",
+      "tags": [
+        "rest",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-53",
+      "mood": "foggy",
+      "text": "変わったのは自分か、周りか。\n引き出しの取っ手が固くなったのか、手が弱ったのか。",
+      "theme": "変化について",
+      "aside": "油を差してみるかの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-54",
+      "mood": "foggy",
+      "text": "独り言は、聞き手のおらぬ相談じゃ。\n答えも自分で出すので、たいてい話が早い。",
+      "theme": "独り言について",
+      "aside": "たまに反対もする。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-55",
+      "mood": "foggy",
+      "text": "知らせは、届いた順に大事なわけではない。\n並べ替える手間だけが、こちらに残る。",
+      "theme": "知らせについて",
+      "aside": "上から三つでよいかの。",
+      "tags": [
+        "information"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-56",
+      "mood": "foggy",
+      "text": "安く買えたと思うとき、比べておるのは値札同士じゃ。\n要るかどうかは、まだ誰も聞いておらん。",
+      "theme": "買い物について",
+      "aside": "袋だけ増えたの。",
+      "tags": [
+        "money",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "foggy-57",
+      "mood": "foggy",
+      "text": "降るかどうかは空が決め、傘を持つかは自分が決める。\n決められる側だけ、朝から悩んでおる。",
+      "theme": "天気について",
+      "aside": "折り畳みにするかの。",
+      "tags": [
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-41",
+      "mood": "thinking",
+      "text": "時間の速さは、測る側の都合で変わるらしい。\n湯が沸くまでは長く、飲むうちに冷めるのは早い。",
+      "theme": "時間について",
+      "aside": "二杯目は急がぬ。",
+      "tags": [
+        "rest",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-42",
+      "mood": "thinking",
+      "text": "年を取るとは、同じ話を二度する権利を得ることじゃ。\nわしは三度目からが本番と決めておる。",
+      "theme": "年月について",
+      "aside": "茶を出す係がおらん。",
+      "tags": [
+        "daily",
+        "relationship"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-43",
+      "mood": "thinking",
+      "text": "分かりやすく説明できることと、分かっていることは違う。\n団子の旨さを説明できたが、旨くはならん。",
+      "theme": "説明について",
+      "aside": "もう一本もらうかの。",
+      "tags": [
+        "information",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-44",
+      "mood": "thinking",
+      "text": "自由には、たいてい維持費がかかる。\n出かけぬ自由を守るために、家賃を払っておる。",
+      "theme": "自由について",
+      "aside": "今月分は払った。",
+      "tags": [
+        "money",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-45",
+      "mood": "thinking",
+      "text": "人と比べるとき、相手の一番と自分の平均を並べてしまう。\nわしは団子の数だけ勝っておる。",
+      "theme": "比較について",
+      "aside": "数える相手がおらん。",
+      "tags": [
+        "relationship",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-46",
+      "mood": "thinking",
+      "text": "急ぎの用事は、他の用事を静かにさせる。\n机の上が急に片づいたのは、そのせいじゃ。",
+      "theme": "仕事について",
+      "aside": "元に戻る頃かの。",
+      "tags": [
+        "work",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-47",
+      "mood": "thinking",
+      "text": "準備が整うのを待つ者は、たいてい始めぬ。\n包丁を研ぐうちに、飯の刻限が過ぎた。",
+      "theme": "準備について",
+      "aside": "よく切れるようになった。",
+      "tags": [
+        "work",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-48",
+      "mood": "thinking",
+      "text": "腹が減ると、考えの角が立つ。\n世界の不条理は、飯のあとに半分に減った。",
+      "theme": "空腹について",
+      "aside": "残りは明日考えるかの。",
+      "tags": [
+        "daily",
+        "rest"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-49",
+      "mood": "thinking",
+      "text": "片づけとは、物を減らすことではない。\n置き場所を決めて、探す時間を先払いすることじゃ。",
+      "theme": "片づけについて",
+      "aside": "先払いを忘れておる。",
+      "tags": [
+        "daily",
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-50",
+      "mood": "thinking",
+      "text": "正しさは、持っていると誰かへ向けたくなる。\nわしは棚へ置いて、たまに眺めることにした。",
+      "theme": "正しさについて",
+      "aside": "埃はかぶっておらん。",
+      "tags": [
+        "relationship"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-51",
+      "mood": "thinking",
+      "text": "期待とは、まだ起きておらぬことへの前払いじゃ。\n釣りは、たいてい返ってこん。",
+      "theme": "期待について",
+      "aside": "領収書はないの。",
+      "tags": [
+        "relationship",
+        "money"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-52",
+      "mood": "thinking",
+      "text": "数えると安心するのは、増減が見えるからじゃ。\n数えぬものは、いつの間にか増えておる。",
+      "theme": "数について",
+      "aside": "本が積まれておる。",
+      "tags": [
+        "information",
+        "daily"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-53",
+      "mood": "thinking",
+      "text": "探し方を知るほど、探す前に答えの形を決めてしまう。\n聞きたかったのは、そこではなかったかもしれぬ。",
+      "theme": "調べることについて",
+      "aside": "もう一度聞き直すかの。",
+      "tags": [
+        "information",
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-54",
+      "mood": "thinking",
+      "text": "すぐ返すと早い人になり、早い人には多く届く。\n返さぬ日を作るのも、仕事のうちじゃ。",
+      "theme": "返事について",
+      "aside": "今日はもう店じまい。",
+      "tags": [
+        "work",
+        "information"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-55",
+      "mood": "thinking",
+      "text": "作るとは、選ぶことを何度も繰り返す仕事じゃ。\n消した分は誰にも見えぬが、確かに減っておる。",
+      "theme": "作ることについて",
+      "aside": "消しかすは残る。",
+      "tags": [
+        "creative",
+        "work"
+      ],
+      "isPremium": false
+    },
+    {
+      "id": "thinking-56",
+      "mood": "thinking",
+      "text": "群れるのは弱いからではなく、そのほうが考えずに済むからじゃ。\n雀は皆で飛び、皆で戻ってくる。",
+      "theme": "群れについて",
+      "aside": "一羽だけ遅れておる。",
+      "tags": [
+        "relationship"
       ],
       "isPremium": false
     }

@@ -140,6 +140,16 @@ struct WiseishTests {
         #expect(components.hour == 0)
     }
 
+    @Test func dayKeyUsesTheProvidedLocalCalendar() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Asia/Tokyo"))
+        let beforeMidnight = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 27, hour: 23, minute: 59)))
+        let afterMidnight = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 28, hour: 0, minute: 1)))
+
+        #expect(WiseishDayRollover.dayKey(for: beforeMidnight, calendar: calendar) == "1-2026-8-27")
+        #expect(WiseishDayRollover.dayKey(for: afterMidnight, calendar: calendar) == "1-2026-8-28")
+    }
+
     @Test func widgetTimelinePrecomputesFutureMidnights() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))

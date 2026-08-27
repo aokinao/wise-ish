@@ -64,7 +64,7 @@ struct WiseishDailyMetric: Equatable {
         let ratio = Double(day) / Double(max(total, 1))
         return WiseishDailyMetric(
             kind: .year,
-            title: "今年の進み具合（何の？）",
+            title: "今年の進み具合",
             value: "\(day)日目",
             detail: "あと\(remaining)日 / \(percentage(ratio))%経過",
             progress: ratio
@@ -100,7 +100,7 @@ struct WiseishDailyMetric: Equatable {
         let ratio = Double(day) / Double(max(total, 1))
         return WiseishDailyMetric(
             kind: .month,
-            title: "今月の進み具合（何の？）",
+            title: "今月の進み具合",
             value: "\(day)日目",
             detail: "あと\(max(total - day, 0))日 / \(percentage(ratio))%経過",
             progress: ratio

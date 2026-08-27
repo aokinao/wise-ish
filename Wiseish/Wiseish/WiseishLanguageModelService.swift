@@ -127,6 +127,7 @@ enum WiseishLanguageModelService {
         context: WiseishExternalContext?,
         date: Date
     ) -> WiseishQuote {
+        guard !candidates.isEmpty else { return .placeholder }
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
         return candidates.enumerated().max { lhs, rhs in
             localScore(lhs.element, offset: lhs.offset, context: context, day: day)

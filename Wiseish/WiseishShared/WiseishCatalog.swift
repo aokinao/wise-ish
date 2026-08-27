@@ -125,6 +125,16 @@ enum WiseishCatalogStore {
         return try? WiseishCatalogValidator.decodeAndValidate(data)
     }
 
+    /// アプリ、Widget、App Intentで同じ日付の一枚を選ぶ決定的なResolver。
+    static func dailyQuote(for date: Date, bundle: Bundle = .main, calendar: Calendar = .current) -> WiseishCatalogQuote {
+        let catalog = bundledCatalog(bundle: bundle) ?? currentCatalog(bundle: bundle)
+        let active = catalog.quotes.filter { $0.isActive(on: date, calendar: calendar) }
+        let candidates = active.isEmpty ? catalog.quotes : active
+        guard !candidates.isEmpty else { return fallbackCatalog.quotes[0] }
+        let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
+        return candidates[abs(day) % candidates.count]
+    }
+
     static func cachedCatalog() -> WiseishCatalog? {
         guard
             let url = cacheURL,

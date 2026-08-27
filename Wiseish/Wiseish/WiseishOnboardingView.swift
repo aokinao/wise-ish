@@ -23,11 +23,15 @@ struct WiseishOnboardingView: View {
         self.onComplete = onComplete
         let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood()) ?? .quiet
         let quotes = mood.quotes
-        let index = WiseishContextStore.preferredIndex(
-            candidateIDs: quotes.map(\.id),
-            candidateTags: Dictionary(uniqueKeysWithValues: quotes.map { ($0.id, $0.tags) })
-        )
-        _firstQuote = State(initialValue: quotes[index % quotes.count])
+        if quotes.isEmpty {
+            _firstQuote = State(initialValue: .placeholder)
+        } else {
+            let index = WiseishContextStore.preferredIndex(
+                candidateIDs: quotes.map(\.id),
+                candidateTags: Dictionary(uniqueKeysWithValues: quotes.map { ($0.id, $0.tags) })
+            )
+            _firstQuote = State(initialValue: quotes[index % quotes.count])
+        }
     }
 
     var body: some View {

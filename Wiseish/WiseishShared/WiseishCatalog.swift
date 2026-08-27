@@ -127,7 +127,12 @@ enum WiseishCatalogStore {
 
     /// アプリとApp Intentで使う決定的なResolver。リモート更新を含む現行Catalogを使う。
     static func dailyQuote(for date: Date, bundle: Bundle = .main, calendar: Calendar = .current) -> WiseishCatalogQuote {
-        dailyQuote(for: date, catalog: currentCatalog(bundle: bundle), calendar: calendar)
+        dailyQuote(
+            for: date,
+            catalog: currentCatalog(bundle: bundle),
+            shownQuoteDates: WiseishContextStore.shownQuoteDates(),
+            calendar: calendar
+        )
     }
 
     /// Widgetの未確定時に使うResolver。App GroupのCatalogキャッシュは読まず、
@@ -137,11 +142,40 @@ enum WiseishCatalogStore {
     }
 
     static func dailyQuote(for date: Date, catalog: WiseishCatalog, calendar: Calendar = .current) -> WiseishCatalogQuote {
+        dailyQuote(for: date, catalog: catalog, shownQuoteDates: WiseishContextStore.shownQuoteDates(), calendar: calendar)
+    }
+
+    static func dailyQuote(
+        for date: Date,
+        catalog: WiseishCatalog,
+        shownQuoteDates: [String: Date],
+        calendar: Calendar = .current
+    ) -> WiseishCatalogQuote {
         let active = catalog.quotes.filter { $0.isActive(on: date, calendar: calendar) }
         let candidates = active.isEmpty ? catalog.quotes : active
         guard !candidates.isEmpty else { return fallbackCatalog.quotes[0] }
+
+        // その日の表示済みの一枚は、再起動やWidget更新でも固定する。
+        let shownToday = candidates.first { quote in
+            guard let shownAt = shownQuoteDates[quote.id] else { return false }
+            return calendar.isDate(shownAt, inSameDayAs: date)
+        }
+        if let shownToday { return shownToday }
+
+        let unseen = candidates.filter { shownQuoteDates[$0.id] == nil }
+        if unseen.isEmpty {
+            // 一巡後は、最も古く表示した言葉から再登場させる。
+            let order = Dictionary(uniqueKeysWithValues: candidates.enumerated().map { ($0.element.id, $0.offset) })
+            return candidates.min { lhs, rhs in
+                let left = shownQuoteDates[lhs.id] ?? .distantPast
+                let right = shownQuoteDates[rhs.id] ?? .distantPast
+                return left == right
+                    ? order[lhs.id, default: 0] < order[rhs.id, default: 0]
+                    : left < right
+            } ?? candidates[0]
+        }
         let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
-        return candidates[abs(day) % candidates.count]
+        return unseen[abs(day) % unseen.count]
     }
 
     static func cachedCatalog() -> WiseishCatalog? {

@@ -70,6 +70,7 @@ enum WiseishContextStore {
         static let pendingInput = "personalization.pendingInput"
         static let generatedQuote = "personalization.generatedQuote"
         static let quoteHistory = "personalization.quoteHistory"
+        static let shownQuoteDates = "daily.shownQuoteDates"
         static let usageCounts = "diagnostics.usageCounts"
         static let reflectionReactions = "personalization.reflectionReactions"
         static let quoteReactionScores = "personalization.quoteReactionScores"
@@ -280,12 +281,33 @@ enum WiseishContextStore {
         records.insert(record, at: 0)
         guard let data = try? JSONEncoder().encode(Array(records.prefix(100))) else { return }
         defaults.set(data, forKey: Key.quoteHistory)
+        recordShownQuote(quoteID: quoteID, date: date)
         // WidgetはUserDefaultsの復旧待ちで描画が止まることがあるため、
         // 今日実際に表示した一言だけは小さな共有ファイルにも保存する。
         if let widgetURL = widgetQuoteURL,
            let widgetData = try? JSONEncoder().encode(record) {
             try? widgetData.write(to: widgetURL, options: .atomic)
         }
+    }
+
+    /// 日めくりの重複回避に使う、IDと表示日時だけの全期間記録。
+    /// 詳細な履歴（最大100件）とは分けて保持する。
+    static func shownQuoteDates() -> [String: Date] {
+        guard
+            let data = defaults.data(forKey: Key.shownQuoteDates),
+            let dates = try? JSONDecoder().decode([String: Date].self, from: data)
+        else { return [:] }
+        return dates
+    }
+
+    private static func recordShownQuote(quoteID: String, date: Date) {
+        var dates = shownQuoteDates()
+        if let previous = dates[quoteID], Calendar.current.isDate(previous, inSameDayAs: date) {
+            return
+        }
+        dates[quoteID] = date
+        guard let data = try? JSONEncoder().encode(dates) else { return }
+        defaults.set(data, forKey: Key.shownQuoteDates)
     }
 
     static func widgetQuote(for date: Date = .now) -> WiseishQuoteRecord? {

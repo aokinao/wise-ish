@@ -44,6 +44,27 @@ struct WiseishTests {
         #expect(WiseishCatalogStore.dailyQuote(for: date, catalog: catalog, calendar: calendar).id == "remote-only")
     }
 
+    @Test func dailyQuotePrefersUnseenQuotesAndThenReusesTheOldest() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 27)))
+        let quotes = (1...3).map { index in
+            WiseishCatalogQuote(
+                id: "quote-\(index)", mood: "quiet", text: "今日の棚には、\(index)がある。\n取るかどうかは、また考えるのじゃ。",
+                reflection: "棚について考える。", theme: "棚", aside: "急がぬのじゃ。", tags: ["daily"], isPremium: false, activeMonths: nil
+            )
+        }
+        let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: quotes)
+        let first = WiseishCatalogStore.dailyQuote(for: date, catalog: catalog, shownQuoteDates: [:], calendar: calendar)
+        let shown = [first.id: date]
+        let second = WiseishCatalogStore.dailyQuote(for: date.addingTimeInterval(86_400), catalog: catalog, shownQuoteDates: shown, calendar: calendar)
+
+        #expect(second.id != first.id)
+        #expect(WiseishCatalogStore.dailyQuote(for: date, catalog: catalog, shownQuoteDates: shown, calendar: calendar).id == first.id)
+        let allShown = ["quote-1": date, "quote-2": date.addingTimeInterval(-86_400), "quote-3": date.addingTimeInterval(-2 * 86_400)]
+        #expect(WiseishCatalogStore.dailyQuote(for: date.addingTimeInterval(3 * 86_400), catalog: catalog, shownQuoteDates: allShown, calendar: calendar).id == "quote-3")
+    }
+
     @Test func catalogUpdateRetriesAfterFailureBackoffInsteadOfWaitingADay() {
         let now = Date(timeIntervalSince1970: 10_000)
         let failedAt = now.addingTimeInterval(-16 * 60)

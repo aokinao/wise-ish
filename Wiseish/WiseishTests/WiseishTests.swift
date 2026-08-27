@@ -44,6 +44,40 @@ struct WiseishTests {
         #expect(WiseishCatalogStore.dailyQuote(for: date, catalog: catalog, calendar: calendar).id == "remote-only")
     }
 
+    @Test func catalogUpdateRetriesAfterFailureBackoffInsteadOfWaitingADay() {
+        let now = Date(timeIntervalSince1970: 10_000)
+        let failedAt = now.addingTimeInterval(-16 * 60)
+
+        #expect(WiseishCatalogUpdater.retryDelay(failureCount: 1) == 15 * 60)
+        #expect(WiseishCatalogUpdater.shouldAttempt(
+            now: now,
+            lastSuccess: nil,
+            lastFailure: failedAt,
+            failureCount: 1,
+            force: false
+        ))
+    }
+
+    @Test func successfulCatalogUpdateKeepsTheNormalDailyInterval() {
+        let now = Date(timeIntervalSince1970: 10_000)
+        let succeededAt = now.addingTimeInterval(-23 * 60 * 60)
+
+        #expect(!WiseishCatalogUpdater.shouldAttempt(
+            now: now,
+            lastSuccess: succeededAt,
+            lastFailure: nil,
+            failureCount: 0,
+            force: false
+        ))
+        #expect(WiseishCatalogUpdater.shouldAttempt(
+            now: now,
+            lastSuccess: now.addingTimeInterval(-25 * 60 * 60),
+            lastFailure: nil,
+            failureCount: 0,
+            force: false
+        ))
+    }
+
     @Test func contextClassifierFindsWorkAndRestWithoutKeepingOriginalText() {
         let context = WiseishContextClassifier.classify("会議続きで疲れたので休みたい")
 

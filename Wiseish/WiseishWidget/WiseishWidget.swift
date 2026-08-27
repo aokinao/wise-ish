@@ -20,7 +20,7 @@ private enum WidgetQuoteStore {
                 tags: ["daily"]
             )
         }
-        let quote = WiseishCatalogStore.dailyQuote(for: date, bundle: .main, calendar: calendar)
+        let quote = WiseishCatalogStore.bundledDailyQuote(for: date, bundle: .main, calendar: calendar)
         return WidgetQuote(
             id: quote.id,
             mood: quote.mood,

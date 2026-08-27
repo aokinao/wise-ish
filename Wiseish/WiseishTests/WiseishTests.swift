@@ -24,6 +24,26 @@ struct WiseishTests {
         #expect(WiseishCatalogStore.isNewerCatalogVersion("2026-08-27.1", than: "2026-08-26.99"))
     }
 
+    @Test func dailyQuoteCanSelectQuoteThatExistsOnlyInRemoteCatalog() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 27)))
+        let remoteOnly = WiseishCatalogQuote(
+            id: "remote-only",
+            mood: "quiet",
+            text: "遠くの棚にも、今日がある。\n取りに行くかは、また考える。",
+            reflection: "",
+            theme: "遠さについて",
+            aside: "今日は近い棚でよいのじゃ。",
+            tags: ["daily"],
+            isPremium: false,
+            activeMonths: nil
+        )
+        let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: [remoteOnly])
+
+        #expect(WiseishCatalogStore.dailyQuote(for: date, catalog: catalog, calendar: calendar).id == "remote-only")
+    }
+
     @Test func contextClassifierFindsWorkAndRestWithoutKeepingOriginalText() {
         let context = WiseishContextClassifier.classify("会議続きで疲れたので休みたい")
 

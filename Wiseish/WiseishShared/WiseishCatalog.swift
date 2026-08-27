@@ -125,9 +125,18 @@ enum WiseishCatalogStore {
         return try? WiseishCatalogValidator.decodeAndValidate(data)
     }
 
-    /// アプリ、Widget、App Intentで同じ日付の一枚を選ぶ決定的なResolver。
+    /// アプリとApp Intentで使う決定的なResolver。リモート更新を含む現行Catalogを使う。
     static func dailyQuote(for date: Date, bundle: Bundle = .main, calendar: Calendar = .current) -> WiseishCatalogQuote {
-        let catalog = bundledCatalog(bundle: bundle) ?? currentCatalog(bundle: bundle)
+        dailyQuote(for: date, catalog: currentCatalog(bundle: bundle), calendar: calendar)
+    }
+
+    /// Widgetの未確定時に使うResolver。App GroupのCatalogキャッシュは読まず、
+    /// 拡張に同梱されたCatalogだけを使って即時描画する。
+    static func bundledDailyQuote(for date: Date, bundle: Bundle = .main, calendar: Calendar = .current) -> WiseishCatalogQuote {
+        dailyQuote(for: date, catalog: bundledCatalog(bundle: bundle) ?? fallbackCatalog, calendar: calendar)
+    }
+
+    static func dailyQuote(for date: Date, catalog: WiseishCatalog, calendar: Calendar = .current) -> WiseishCatalogQuote {
         let active = catalog.quotes.filter { $0.isActive(on: date, calendar: calendar) }
         let candidates = active.isEmpty ? catalog.quotes : active
         guard !candidates.isEmpty else { return fallbackCatalog.quotes[0] }

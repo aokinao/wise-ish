@@ -223,8 +223,10 @@ struct ContentView: View {
             Text("\(dayNumber)")
                 .font(.system(size: 88, weight: .regular, design: .serif))
                 .tracking(-5)
-                .minimumScaleFactor(0.75)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .contentTransition(.numericText(value: Double(dayNumber)))
+                .frame(width: 98, height: 112, alignment: .center)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("\(monthNumber)月")
@@ -238,7 +240,7 @@ struct ContentView: View {
 
             Spacer()
         }
-        .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 132, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(yearNumber)年\(monthNumber)月\(dayNumber)日 \(weekday)")
     }

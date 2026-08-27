@@ -17,7 +17,13 @@ private struct WidgetQuote {
 
 private enum WidgetQuoteStore {
     static var quotes: [WidgetQuote] {
-        WiseishCatalogStore.currentCatalog().quotes.map {
+        // Widgetの初回Timeline生成ではApp Groupのキャッシュを読まない。
+        // cfprefsdや共有コンテナの復旧待ちでWidgetがLoadingのままになることがあるため、
+        // まずは拡張自身に同梱されたCatalogだけで必ず描画できるようにする。
+        guard let catalog = WiseishCatalogStore.bundledCatalog(bundle: .main) else {
+            return []
+        }
+        return catalog.quotes.map {
             WidgetQuote(
                 id: $0.id,
                 mood: $0.mood,
@@ -30,18 +36,8 @@ private enum WidgetQuoteStore {
     }
 
     static func quote(for date: Date, calendar: Calendar = .current) -> WidgetQuote {
-        if let displayed = recentlyDisplayedQuote(for: date, calendar: calendar) {
-            return displayed
-        }
-        if let generated = generatedQuote(for: date, calendar: calendar) {
-            return generated
-        }
-
-        let mood = WiseishContextStore.recommendedMood(date: date)
         let active = quotes.filter { $0.isActive(on: date, calendar: calendar) }
-        let matchingMood = active.filter { $0.mood == mood }
-        let candidates = matchingMood.isEmpty ? active : matchingMood
-        guard !candidates.isEmpty else {
+        guard !active.isEmpty else {
             // 季節限定データや一時的なCatalog更新で候補が空になっても、
             // Widget全体を落とさず、最低限の一言を表示する。
             return WidgetQuote(
@@ -53,43 +49,8 @@ private enum WidgetQuoteStore {
                 activeMonths: nil
             )
         }
-        let index = WiseishContextStore.preferredIndex(
-            candidateIDs: candidates.map(\.id),
-            candidateTags: Dictionary(uniqueKeysWithValues: candidates.map { ($0.id, $0.tags) }),
-            date: date
-        )
-        return candidates[index % candidates.count]
-    }
-
-    private static func recentlyDisplayedQuote(for date: Date, calendar: Calendar) -> WidgetQuote? {
-        guard let record = WiseishContextStore.quoteHistory().first(where: {
-            calendar.isDate($0.shownAt, inSameDayAs: date)
-        }) else {
-            return nil
-        }
-        return WidgetQuote(
-            id: record.quoteID,
-            mood: WiseishContextStore.recommendedMood(date: date),
-            text: record.text,
-            theme: record.theme,
-            tags: ["daily"],
-            activeMonths: nil
-        )
-    }
-
-    private static func generatedQuote(for date: Date, calendar: Calendar) -> WidgetQuote? {
-        guard let generated = WiseishContextStore.recentGeneratedQuote(now: date),
-              calendar.isDate(generated.createdAt, inSameDayAs: date) else {
-            return nil
-        }
-        return WidgetQuote(
-            id: generated.catalogID,
-            mood: WiseishContextStore.recommendedMood(date: date),
-            text: generated.text,
-            theme: generated.theme,
-            tags: generated.tags,
-            activeMonths: nil
-        )
+        let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
+        return active[abs(day) % active.count]
     }
 }
 

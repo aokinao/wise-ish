@@ -115,8 +115,8 @@ struct WiseishDailyMetric: Equatable {
         return WiseishDailyMetric(
             kind: .week,
             title: "今週の位置",
-            value: "(position)日目",
-            detail: "あと(7 - position)日 / 週はまだ続く",
+            value: "\(position)日目",
+            detail: "あと\(7 - position)日 / 週はまだ続く",
             progress: ratio
         )
     }
@@ -127,7 +127,7 @@ struct WiseishDailyMetric: Equatable {
         return WiseishDailyMetric(
             kind: .thoughtDepth,
             title: "今日の思考の深さ",
-            value: "(depth)cm",
+            value: "\(depth)cm",
             detail: "測った場所は、わしの頭の中じゃ",
             progress: nil
         )
@@ -139,8 +139,8 @@ struct WiseishDailyMetric: Equatable {
         return WiseishDailyMetric(
             kind: .meaning,
             title: "今日の意味",
-            value: "(meaning)%",
-            detail: "残り(100 - meaning)%は、たぶん余白じゃ",
+            value: "\(meaning)%",
+            detail: "残り\(100 - meaning)%は、たぶん余白じゃ",
             progress: nil
         )
     }
@@ -151,7 +151,7 @@ struct WiseishDailyMetric: Equatable {
         return WiseishDailyMetric(
             kind: .coincidence,
             title: "今日の偶然",
-            value: "(coincidences)回",
+            value: "\(coincidences)回",
             detail: "数えたことはないが、たぶんある",
             progress: nil
         )
@@ -169,7 +169,7 @@ struct WiseishDailyMetric: Equatable {
         return WiseishDailyMetric(
             kind: .elapsedTime,
             title: "今日の経過",
-            value: "(hours)時間(minutes)分",
+            value: "\(hours)時間\(minutes)分",
             detail: "今日の時間は、もう戻らぬ。たぶん",
             progress: ratio
         )

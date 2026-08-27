@@ -1,6 +1,5 @@
 import UIKit
 import UniformTypeIdentifiers
-import Vision
 
 final class ShareViewController: UIViewController {
     private let titleLabel = UILabel()
@@ -95,28 +94,11 @@ final class ShareViewController: UIViewController {
         }
 
         group.notify(queue: .global(qos: .userInitiated)) { [weak self] in
-            let recognized = images.compactMap { self?.recognizeText(in: $0) }.joined(separator: "\n")
-            let combined = (fragments + [recognized]).filter { !$0.isEmpty }.joined(separator: "\n")
-            let context = WiseishContextClassifier.classify(combined)
-            WiseishContextStore.saveExternalContext(tags: context.tags, reason: context.reason)
-
             DispatchQueue.main.async {
-                self?.statusLabel.text = "もぐもぐ。\n\(context.reason)として受け取りました。\n明日の一枚へ、こっそり混ぜます。"
+                self?.statusLabel.text = "もぐもぐ。\n受け取りました。\n今日の一枚は、そのまま置いておきます。"
                 self?.doneButton.isEnabled = true
             }
         }
-    }
-
-    private func recognizeText(in image: UIImage) -> String {
-        guard let cgImage = image.cgImage else { return "" }
-        let request = VNRecognizeTextRequest()
-        request.recognitionLevel = .accurate
-        request.recognitionLanguages = ["ja-JP", "en-US"]
-        let handler = VNImageRequestHandler(cgImage: cgImage)
-        try? handler.perform([request])
-        return request.results?
-            .compactMap { $0.topCandidates(1).first?.string }
-            .joined(separator: "\n") ?? ""
     }
 
     @objc private func finish() {

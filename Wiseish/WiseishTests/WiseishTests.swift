@@ -99,15 +99,6 @@ struct WiseishTests {
         ))
     }
 
-    @Test func contextClassifierFindsWorkAndRestWithoutKeepingOriginalText() {
-        let context = WiseishContextClassifier.classify("会議続きで疲れたので休みたい")
-
-        #expect(context.tags.contains("work"))
-        #expect(context.tags.contains("rest"))
-        #expect(context.reason == "仕事の気配が濃い日")
-        #expect(!context.reason.contains("会議"))
-    }
-
     @Test func seasonalQuotesOnlyAppearInTheirActiveMonths() throws {
         let snowQuote = try #require(
             WiseishCatalogStore.currentCatalog().quotes.first { $0.id == "quiet-25" }
@@ -172,10 +163,4 @@ struct WiseishTests {
         #expect(WiseishDayRollover.pageTurnOpacity(for: replacementStep) == 0)
     }
 
-    @Test func contextClassifierFallsBackToDaily() {
-        let context = WiseishContextClassifier.classify("なんとなくぼんやり")
-
-        #expect(context.tags == ["daily"])
-        #expect(context.reason == "気になるものを拾った日")
-    }
 }

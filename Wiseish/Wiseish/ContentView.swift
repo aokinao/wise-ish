@@ -26,40 +26,6 @@ struct WiseishQuote: Identifiable, Equatable {
     )
 }
 
-enum WiseishMood: String, CaseIterable, Identifiable {
-    case quiet
-    case foggy
-    case thinking
-
-    var id: Self { self }
-
-    var title: String {
-        switch self {
-        case .quiet: "静か"
-        case .foggy: "ぼんやり"
-        case .thinking: "考えすぎ"
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .quiet: "◌"
-        case .foggy: "≈"
-        case .thinking: "…"
-        }
-    }
-
-    @MainActor
-    var quotes: [WiseishQuote] { quotes(for: .now) }
-
-    @MainActor
-    func quotes(for date: Date) -> [WiseishQuote] {
-        WiseishCatalogStore.currentCatalog().quotes
-            .filter { $0.mood == rawValue && $0.isActive(on: date) }
-            .map(WiseishQuote.init)
-    }
-}
-
 private extension WiseishQuote {
     init(_ quote: WiseishCatalogQuote) {
         self.init(
@@ -741,29 +707,10 @@ struct ContentView: View {
             return
         }
 
-        if let generated = WiseishContextStore.recentGeneratedQuote(now: date),
-           Calendar.current.isDate(generated.createdAt, inSameDayAs: date) {
-            displayedQuote = quote(from: generated)
-            isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-            if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
-            return
-        }
-
         displayedQuote = WiseishQuote(WiseishCatalogStore.dailyQuote(for: date))
         isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
         if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
-    }
-
-    private func quote(from generated: WiseishGeneratedQuote) -> WiseishQuote {
-        WiseishQuote(
-            id: generated.catalogID,
-            text: generated.text,
-            reflection: generated.reflection,
-            theme: generated.theme,
-            aside: generated.aside,
-            tags: generated.tags
-        )
     }
 
     private func quote(from record: WiseishQuoteRecord) -> WiseishQuote {

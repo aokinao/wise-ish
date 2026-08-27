@@ -41,12 +41,6 @@ private enum WiseishTodayQuoteResolver {
             return quote
         }
 
-        if let generated = WiseishContextStore.recentGeneratedQuote(now: date),
-           calendar.isDate(generated.createdAt, inSameDayAs: date),
-           let quote = catalog.quotes.first(where: { $0.id == generated.catalogID }) {
-            return quote
-        }
-
         return WiseishCatalogStore.dailyQuote(for: date, bundle: .main, calendar: calendar)
     }
 }

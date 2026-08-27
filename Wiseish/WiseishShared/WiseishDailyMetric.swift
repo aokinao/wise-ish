@@ -10,6 +10,7 @@ struct WiseishDailyMetric: Equatable {
         case thoughtDepth
         case meaning
         case coincidence
+        case elapsedTime
     }
 
     let kind: Kind
@@ -20,7 +21,7 @@ struct WiseishDailyMetric: Equatable {
 
     static func make(for date: Date, calendar: Calendar = .current) -> WiseishDailyMetric {
         let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 1
-        switch day % 8 {
+        switch day % 9 {
         case 0:
             return yearMetric(for: date, calendar: calendar)
         case 1:
@@ -35,8 +36,10 @@ struct WiseishDailyMetric: Equatable {
             return thoughtDepthMetric(for: date, calendar: calendar)
         case 6:
             return meaningMetric(for: date, calendar: calendar)
-        default:
+        case 7:
             return coincidenceMetric(for: date, calendar: calendar)
+        default:
+            return elapsedTimeMetric(for: date, calendar: calendar)
         }
     }
 
@@ -137,6 +140,24 @@ struct WiseishDailyMetric: Equatable {
             value: "(coincidences)回",
             detail: "数えたことはないが、たぶんある",
             progress: nil
+        )
+    }
+
+    private static func elapsedTimeMetric(for date: Date, calendar: Calendar) -> WiseishDailyMetric {
+        let start = calendar.startOfDay(for: date)
+        let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86_400)
+        let reference = min(max(date, start), end)
+        let elapsedMinutes = max(Int(reference.timeIntervalSince(start) / 60), 0)
+        let hours = elapsedMinutes / 60
+        let minutes = elapsedMinutes % 60
+        let totalMinutes = max(Int(end.timeIntervalSince(start) / 60), 1)
+        let ratio = min(max(Double(elapsedMinutes) / Double(totalMinutes), 0), 1)
+        return WiseishDailyMetric(
+            kind: .elapsedTime,
+            title: "今日の経過",
+            value: "(hours)時間(minutes)分",
+            detail: "今日の時間は、もう戻らぬ。たぶん",
+            progress: ratio
         )
     }
 

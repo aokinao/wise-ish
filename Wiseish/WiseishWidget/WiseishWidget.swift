@@ -84,7 +84,18 @@ private struct WiseishProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<WiseishEntry>) -> Void) {
         let now = Date()
         let calendar = Calendar.current
-        let dates = WiseishDayRollover.timelineDates(from: now, daysAhead: 7, calendar: calendar)
+        let tomorrow = WiseishDayRollover.nextStartOfDay(after: now, calendar: calendar)
+        var dates = [now]
+        var hourly = calendar.date(byAdding: .hour, value: 1, to: now) ?? now
+        while hourly < tomorrow {
+            dates.append(hourly)
+            hourly = calendar.date(byAdding: .hour, value: 1, to: hourly) ?? tomorrow
+        }
+        dates.append(contentsOf: WiseishDayRollover.timelineDates(
+            from: tomorrow,
+            daysAhead: 6,
+            calendar: calendar
+        ))
         let entries = dates.map { date in
             WiseishEntry(
                 date: date,

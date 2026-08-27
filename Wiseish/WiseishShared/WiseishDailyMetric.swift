@@ -184,6 +184,6 @@ struct WiseishDailyMetric: Equatable {
     }
 
     private static func percentage(_ ratio: Double) -> String {
-        ratio.formatted(.number.precision(.fractionLength(1)))
+        (ratio * 100).formatted(.number.precision(.fractionLength(1)))
     }
 }

@@ -46,21 +46,15 @@ private enum WidgetQuoteStore {
                 activeMonths: nil
             )
         }
-        let active = quotes.filter { $0.isActive(on: date, calendar: calendar) }
-        guard !active.isEmpty else {
-            // 季節限定データや一時的なCatalog更新で候補が空になっても、
-            // Widget全体を落とさず、最低限の一言を表示する。
-            return WidgetQuote(
-                id: "widget-fallback",
-                mood: "quiet",
-                text: "今日は、今日として置いておく。\nそれ以上は、また明日でよい。",
-                theme: "今日について",
-                tags: ["daily"],
-                activeMonths: nil
-            )
-        }
-        let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
-        return active[abs(day) % active.count]
+        let quote = WiseishCatalogStore.dailyQuote(for: date, bundle: .main, calendar: calendar)
+        return WidgetQuote(
+            id: quote.id,
+            mood: quote.mood,
+            text: quote.text,
+            theme: quote.theme,
+            tags: quote.tags,
+            activeMonths: quote.activeMonths
+        )
     }
 }
 

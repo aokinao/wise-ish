@@ -15,3 +15,5 @@ build/
 
 # macOS
 .DS_Store
+
+*.mobileprovision

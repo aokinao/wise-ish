@@ -15,6 +15,15 @@ struct WiseishQuote: Identifiable, Equatable {
     let theme: String
     let aside: String
     let tags: [String]
+
+    static let placeholder = WiseishQuote(
+        id: "placeholder",
+        text: "今日は、今日として置いておく。\nそれ以上は、また明日でよい。",
+        reflection: "",
+        theme: "今日について",
+        aside: "まだ考え中じゃ。",
+        tags: ["daily"]
+    )
 }
 
 enum WiseishMood: String, CaseIterable, Identifiable {
@@ -69,7 +78,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("experience.lastSeenDay.v1") private var lastSeenDayKey = ""
-    @State private var displayedQuote = WiseishMood.quiet.quotes[0]
+    @State private var displayedQuote = WiseishQuote.placeholder
     @State private var currentDate = Date.now
     @State private var isFavorite = false
     @State private var isPoked = false
@@ -677,10 +686,7 @@ struct ContentView: View {
         }) {
             displayedQuote = quote(from: previousRecord)
         } else {
-            let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood(date: previousDate)) ?? .quiet
-            let candidates = mood.quotes(for: previousDate)
-            let index = preferredIndex(for: candidates, date: previousDate)
-            displayedQuote = candidates[index % candidates.count]
+            displayedQuote = WiseishQuote(WiseishCatalogStore.dailyQuote(for: previousDate))
         }
 
         try? await Task.sleep(for: .milliseconds(220))
@@ -719,9 +725,6 @@ struct ContentView: View {
     }
 
     private func restorePersonalizedState(for date: Date = .now) {
-        let mood = WiseishMood(rawValue: WiseishContextStore.recommendedMood(date: date)) ?? .quiet
-        let quotes = mood.quotes(for: date)
-
         if let todayRecord = WiseishContextStore.quoteHistory().first(where: {
             Calendar.current.isDate($0.shownAt, inSameDayAs: date)
         }) {
@@ -740,8 +743,7 @@ struct ContentView: View {
             return
         }
 
-        let index = preferredIndex(for: quotes, date: date)
-        displayedQuote = quotes[index % quotes.count]
+        displayedQuote = WiseishQuote(WiseishCatalogStore.dailyQuote(for: date))
         isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
         if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
         WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")

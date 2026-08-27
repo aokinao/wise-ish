@@ -4,7 +4,6 @@ struct WiseishQuoteRecord: Codable, Equatable, Identifiable {
     let id: String
     let quoteID: String
     let text: String
-    let reflection: String
     let theme: String
     let aside: String
     let shownAt: Date
@@ -62,7 +61,6 @@ enum WiseishContextStore {
     static func recordQuote(
         quoteID: String,
         text: String,
-        reflection: String,
         theme: String,
         aside: String,
         date: Date = .now
@@ -75,7 +73,6 @@ enum WiseishContextStore {
             id: "\(quoteID)-\(day)",
             quoteID: quoteID,
             text: text,
-            reflection: reflection,
             theme: theme,
             aside: aside,
             shownAt: date

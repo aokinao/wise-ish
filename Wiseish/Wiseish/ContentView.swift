@@ -141,13 +141,19 @@ struct ContentView: View {
                     dayFact
                     quoteCard
                     ishCompanion
-                    actionBar
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 6)
                 .padding(.bottom, 22)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                actionBar
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .padding(.bottom, 8)
+                    .background(paper)
+            }
         }
         .foregroundStyle(ink)
         .sheet(isPresented: $showsWidgetGuide) { widgetGuide }
@@ -787,14 +793,6 @@ struct ContentView: View {
         guard let image = WiseishShareCardRenderer.render(quote: currentQuote, date: currentDate) else { return }
         WiseishContextStore.recordUsage(.shareCardCreated)
         sharePayload = WiseishSharePayload(image: image)
-    }
-
-    private func preferredIndex(for quotes: [WiseishQuote], date: Date = .now) -> Int {
-        WiseishContextStore.preferredIndex(
-            candidateIDs: quotes.map(\.id),
-            candidateTags: Dictionary(uniqueKeysWithValues: quotes.map { ($0.id, $0.tags) }),
-            date: date
-        )
     }
 
     private func refreshCatalogIfNeeded() {

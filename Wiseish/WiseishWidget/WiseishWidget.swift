@@ -7,34 +7,9 @@ private struct WidgetQuote {
     let text: String
     let theme: String
     let tags: [String]
-    let activeMonths: [Int]?
-
-    func isActive(on date: Date, calendar: Calendar) -> Bool {
-        guard let activeMonths else { return true }
-        return activeMonths.contains(calendar.component(.month, from: date))
-    }
 }
 
 private enum WidgetQuoteStore {
-    static var quotes: [WidgetQuote] {
-        // Widgetの初回Timeline生成ではApp Groupのキャッシュを読まない。
-        // cfprefsdや共有コンテナの復旧待ちでWidgetがLoadingのままになることがあるため、
-        // まずは拡張自身に同梱されたCatalogだけで必ず描画できるようにする。
-        guard let catalog = WiseishCatalogStore.bundledCatalog(bundle: .main) else {
-            return []
-        }
-        return catalog.quotes.map {
-            WidgetQuote(
-                id: $0.id,
-                mood: $0.mood,
-                text: $0.text,
-                theme: $0.theme,
-                tags: $0.tags,
-                activeMonths: $0.activeMonths
-            )
-        }
-    }
-
     static func quote(for date: Date, calendar: Calendar = .current) -> WidgetQuote {
         if let shared = WiseishContextStore.widgetQuote(for: date) {
             return WidgetQuote(
@@ -42,8 +17,7 @@ private enum WidgetQuoteStore {
                 mood: "daily",
                 text: shared.text,
                 theme: shared.theme,
-                tags: ["daily"],
-                activeMonths: nil
+                tags: ["daily"]
             )
         }
         let quote = WiseishCatalogStore.dailyQuote(for: date, bundle: .main, calendar: calendar)
@@ -52,8 +26,7 @@ private enum WidgetQuoteStore {
             mood: quote.mood,
             text: quote.text,
             theme: quote.theme,
-            tags: quote.tags,
-            activeMonths: quote.activeMonths
+            tags: quote.tags
         )
     }
 }

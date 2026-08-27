@@ -43,6 +43,20 @@ struct WiseishDailyMetric: Equatable {
         }
     }
 
+    static func all(for date: Date, calendar: Calendar = .current) -> [WiseishDailyMetric] {
+        [
+            yearMetric(for: date, calendar: calendar),
+            monthMetric(for: date, calendar: calendar),
+            weekMetric(for: date, calendar: calendar),
+            elapsedTimeMetric(for: date, calendar: calendar),
+            since2000Metric(for: date, calendar: calendar),
+            sinceBirthMetric(for: date, calendar: calendar),
+            thoughtDepthMetric(for: date, calendar: calendar),
+            meaningMetric(for: date, calendar: calendar),
+            coincidenceMetric(for: date, calendar: calendar)
+        ]
+    }
+
     private static func yearMetric(for date: Date, calendar: Calendar) -> WiseishDailyMetric {
         let day = calendar.ordinality(of: .day, in: .year, for: date) ?? 1
         let total = calendar.range(of: .day, in: .year, for: date)?.count ?? 365

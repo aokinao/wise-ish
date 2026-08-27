@@ -82,6 +82,7 @@ struct ContentView: View {
     @State private var showsWidgetGuide = false
     @State private var showsSettings = false
     @State private var showsCollection = false
+    @State private var showsMetrics = false
     @State private var sharePayload: WiseishSharePayload?
 
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
@@ -151,6 +152,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showsCollection) { WiseishCollectionView() }
+        .sheet(isPresented: $showsMetrics) { metricsSheet }
         .sheet(item: $sharePayload) { payload in WiseishActivityView(image: payload.image) }
         .onAppear {
             prepareDayState()
@@ -248,6 +250,9 @@ struct ContentView: View {
     @ViewBuilder
     private var dayFact: some View {
         let metric = WiseishDailyMetric.make(for: today)
+        Button {
+            showsMetrics = true
+        } label: {
         VStack(alignment: .leading, spacing: 9) {
             HStack {
                 Text(metric.title)
@@ -289,6 +294,41 @@ struct ContentView: View {
         .padding(.vertical, 12)
         .background(lightPaper.opacity(0.48), in: RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(ink.opacity(0.1), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("タップすると今日の数字をすべて表示")
+    }
+
+    private var metricsSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 10) {
+                    ForEach(Array(WiseishDailyMetric.all(for: today).enumerated()), id: \.offset) { _, metric in
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(metric.title)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(softInk)
+                                Text(metric.detail)
+                                    .font(.system(size: 10, design: .serif))
+                                    .foregroundStyle(softInk)
+                                    .lineLimit(2)
+                            }
+                            Spacer(minLength: 8)
+                            Text(metric.value)
+                                .font(.system(size: 20, weight: .semibold, design: .serif))
+                        }
+                        .padding(14)
+                        .background(lightPaper.opacity(0.5), in: RoundedRectangle(cornerRadius: 13))
+                    }
+                }
+                .padding(20)
+            }
+            .navigationTitle("今日の数字")
+            .navigationBarTitleDisplayMode(.inline)
+            .background(paper)
+        }
+        .presentationDetents([.medium, .large])
     }
 
     private var quoteCard: some View {

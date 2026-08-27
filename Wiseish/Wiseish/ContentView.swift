@@ -685,6 +685,7 @@ struct ContentView: View {
         }) {
             displayedQuote = quote(from: todayRecord)
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
+            if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
             WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
             return
         }

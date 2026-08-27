@@ -124,7 +124,10 @@ jobs:
             -configuration Release -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Wiseish.xcarchive" \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM=YE3JSRF22E \
-            CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY='Apple Distribution'
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' \
+            WISEISH_APP_PROFILE_NAME="$WISEISH_APP_PROFILE_NAME" \
+            WISEISH_WIDGET_PROFILE_NAME="$WISEISH_WIDGET_PROFILE_NAME" \
+            WISEISH_SHARE_PROFILE_NAME="$WISEISH_SHARE_PROFILE_NAME"
 
       - name: Export and upload to App Store Connect
         env:

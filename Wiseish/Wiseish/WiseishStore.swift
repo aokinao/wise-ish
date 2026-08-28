@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 import StoreKit
 
 /// 買い切りの「言葉の棚」解放を扱う。

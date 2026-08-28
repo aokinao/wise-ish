@@ -19,7 +19,7 @@ struct WiseishSettingsView: View {
     private var ink: Color { colorScheme == .dark ? Color(red: 0.92, green: 0.89, blue: 0.83) : Color(red: 0.16, green: 0.15, blue: 0.13) }
     private var softInk: Color { colorScheme == .dark ? Color(red: 0.68, green: 0.65, blue: 0.59) : Color(red: 0.44, green: 0.41, blue: 0.37) }
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
-    private let store = WiseishStore.shared
+    @State private var store = WiseishStore.shared
 
     var body: some View {
         NavigationStack {

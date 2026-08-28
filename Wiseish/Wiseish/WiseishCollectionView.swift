@@ -13,7 +13,7 @@ struct WiseishCollectionView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedSection: Section = .history
     @State private var revision = 0
-    private let store = WiseishStore.shared
+    @State private var store = WiseishStore.shared
 
     private var paper: Color { colorScheme == .dark ? Color(red: 0.10, green: 0.10, blue: 0.09) : Color(red: 0.96, green: 0.92, blue: 0.85) }
     private var lightPaper: Color { colorScheme == .dark ? Color(red: 0.16, green: 0.15, blue: 0.13) : Color(red: 1.00, green: 0.98, blue: 0.94) }

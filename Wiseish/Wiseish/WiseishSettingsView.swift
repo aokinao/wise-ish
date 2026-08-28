@@ -19,6 +19,7 @@ struct WiseishSettingsView: View {
     private var ink: Color { colorScheme == .dark ? Color(red: 0.92, green: 0.89, blue: 0.83) : Color(red: 0.16, green: 0.15, blue: 0.13) }
     private var softInk: Color { colorScheme == .dark ? Color(red: 0.68, green: 0.65, blue: 0.59) : Color(red: 0.44, green: 0.41, blue: 0.37) }
     private let mustard = Color(red: 0.85, green: 0.66, blue: 0.23)
+    private let store = WiseishStore.shared
 
     var body: some View {
         NavigationStack {
@@ -36,6 +37,7 @@ struct WiseishSettingsView: View {
                 }
             }
             .foregroundStyle(ink)
+            .task { await store.load() }
             .navigationTitle("設定")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -173,6 +175,24 @@ struct WiseishSettingsView: View {
                 Text(WiseishCatalogStore.currentCatalog().catalogVersion)
                     .font(.system(size: 9, weight: .medium, design: .monospaced))
                     .foregroundStyle(softInk)
+            }
+
+            HStack {
+                Text("棚")
+                    .font(.system(size: 11, weight: .medium))
+                Spacer()
+                if store.isUnlocked {
+                    Text("解放済み")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(mustard)
+                } else {
+                    Button("購入を復元する") {
+                        Task { await store.restore() }
+                    }
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(softInk)
+                    .disabled(store.isWorking)
+                }
             }
 
             Text("お気に入りと過去の日々は端末内に置いておきます。")

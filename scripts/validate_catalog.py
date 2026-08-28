@@ -29,7 +29,7 @@ if not isinstance(quotes, list) or not 1 <= len(quotes) <= 500:
 
 ids: set[str] = set()
 unknown_keys = set()
-required = {"id", "mood", "text", "theme", "aside", "tags", "isPremium"}
+required = {"id", "mood", "text", "theme", "aside", "tags"}
 optional = {"activeMonths"}
 for index, quote in enumerate(quotes):
     missing = required - quote.keys()
@@ -45,8 +45,6 @@ for index, quote in enumerate(quotes):
         fail(f"{quote_id}: unknown mood {quote['mood']}")
     if not quote["tags"] or not set(quote["tags"]) <= TAGS:
         fail(f"{quote_id}: invalid tags")
-    if not isinstance(quote["isPremium"], bool):
-        fail(f"{quote_id}: isPremium must be boolean")
     active_months = quote.get("activeMonths")
     if active_months is not None and (
         not isinstance(active_months, list)

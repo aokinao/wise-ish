@@ -36,7 +36,6 @@ struct WiseishTests {
             theme: "遠さについて",
             aside: "今日は近い棚でよいのじゃ。",
             tags: ["daily"],
-            isPremium: false,
             activeMonths: nil
         )
         let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: [remoteOnly])
@@ -51,7 +50,7 @@ struct WiseishTests {
         let quotes = (1...3).map { index in
             WiseishCatalogQuote(
                 id: "quote-\(index)", mood: "quiet", text: "今日の棚には、\(index)がある。\n取るかどうかは、また考えるのじゃ。",
-                theme: "棚", aside: "急がぬのじゃ。", tags: ["daily"], isPremium: false, activeMonths: nil
+                theme: "棚", aside: "急がぬのじゃ。", tags: ["daily"], activeMonths: nil
             )
         }
         let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: quotes)

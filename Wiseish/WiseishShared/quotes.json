@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-28.2",
+  "catalogVersion": "2026-08-28.3",
   "quotes": [
     {
       "id": "quiet-1",
@@ -11,8 +11,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-2",
@@ -23,8 +22,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-3",
@@ -35,8 +33,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-4",
@@ -47,8 +44,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-5",
@@ -59,8 +55,7 @@
       "tags": [
         "rest",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-6",
@@ -71,8 +66,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-7",
@@ -83,8 +77,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-8",
@@ -95,8 +88,7 @@
       "tags": [
         "rest",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-9",
@@ -107,8 +99,7 @@
       "tags": [
         "daily",
         "money"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-10",
@@ -119,8 +110,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-11",
@@ -131,8 +121,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-12",
@@ -143,8 +132,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-13",
@@ -155,8 +143,7 @@
       "tags": [
         "relationship",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-14",
@@ -167,8 +154,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-15",
@@ -179,8 +165,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-16",
@@ -191,8 +176,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-17",
@@ -203,8 +187,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-18",
@@ -215,8 +198,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-19",
@@ -227,8 +209,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-20",
@@ -239,8 +220,7 @@
       "tags": [
         "rest",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-1",
@@ -251,8 +231,7 @@
       "tags": [
         "daily",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-2",
@@ -263,8 +242,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-3",
@@ -275,8 +253,7 @@
       "tags": [
         "information",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-4",
@@ -287,8 +264,7 @@
       "tags": [
         "creative",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-5",
@@ -299,8 +275,7 @@
       "tags": [
         "information",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-6",
@@ -311,8 +286,7 @@
       "tags": [
         "daily",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-7",
@@ -323,8 +297,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-8",
@@ -335,8 +308,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-9",
@@ -347,8 +319,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-10",
@@ -359,8 +330,7 @@
       "tags": [
         "creative",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-11",
@@ -371,8 +341,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-12",
@@ -383,8 +352,7 @@
       "tags": [
         "relationship",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-13",
@@ -395,8 +363,7 @@
       "tags": [
         "work",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-14",
@@ -407,8 +374,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-15",
@@ -419,8 +385,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-16",
@@ -431,8 +396,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-17",
@@ -443,8 +407,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-18",
@@ -455,8 +418,7 @@
       "tags": [
         "creative",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-19",
@@ -467,8 +429,7 @@
       "tags": [
         "information",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-20",
@@ -479,8 +440,7 @@
       "tags": [
         "daily",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-1",
@@ -491,8 +451,7 @@
       "tags": [
         "rest",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-2",
@@ -503,8 +462,7 @@
       "tags": [
         "information",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-3",
@@ -515,8 +473,7 @@
       "tags": [
         "work",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-4",
@@ -527,8 +484,7 @@
       "tags": [
         "creative",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-5",
@@ -539,8 +495,7 @@
       "tags": [
         "money",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-6",
@@ -551,8 +506,7 @@
       "tags": [
         "work",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-7",
@@ -563,8 +517,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-8",
@@ -575,8 +528,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-9",
@@ -587,8 +539,7 @@
       "tags": [
         "work",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-10",
@@ -599,8 +550,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-11",
@@ -611,8 +561,7 @@
       "tags": [
         "information",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-12",
@@ -623,8 +572,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-13",
@@ -635,8 +583,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-14",
@@ -647,8 +594,7 @@
       "tags": [
         "work",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-15",
@@ -659,8 +605,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-16",
@@ -671,8 +616,7 @@
       "tags": [
         "creative",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-17",
@@ -683,8 +627,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-18",
@@ -695,8 +638,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-19",
@@ -707,8 +649,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-20",
@@ -719,8 +660,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-21",
@@ -735,8 +675,7 @@
       "tags": [
         "daily",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-22",
@@ -751,8 +690,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-23",
@@ -767,8 +705,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-24",
@@ -783,8 +720,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-25",
@@ -800,8 +736,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-26",
@@ -817,8 +752,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-27",
@@ -832,8 +766,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-28",
@@ -844,8 +777,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-29",
@@ -856,8 +788,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-30",
@@ -868,8 +799,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-31",
@@ -880,8 +810,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-32",
@@ -892,8 +821,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-33",
@@ -904,8 +832,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-34",
@@ -916,8 +843,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-35",
@@ -928,8 +854,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-36",
@@ -940,8 +865,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-37",
@@ -952,8 +876,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-38",
@@ -964,8 +887,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-39",
@@ -976,8 +898,7 @@
       "tags": [
         "information",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-40",
@@ -988,8 +909,7 @@
       "tags": [
         "work",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-21",
@@ -1005,8 +925,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-22",
@@ -1021,8 +940,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-23",
@@ -1039,8 +957,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-24",
@@ -1056,8 +973,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-25",
@@ -1073,8 +989,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-26",
@@ -1090,8 +1005,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-27",
@@ -1109,8 +1023,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-28",
@@ -1121,8 +1034,7 @@
       "tags": [
         "creative",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-29",
@@ -1133,8 +1045,7 @@
       "tags": [
         "daily",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-30",
@@ -1145,8 +1056,7 @@
       "tags": [
         "relationship",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-31",
@@ -1157,8 +1067,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-32",
@@ -1169,8 +1078,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-33",
@@ -1181,8 +1089,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-34",
@@ -1193,8 +1100,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-35",
@@ -1205,8 +1111,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-36",
@@ -1217,8 +1122,7 @@
       "tags": [
         "information",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-37",
@@ -1229,8 +1133,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-38",
@@ -1241,8 +1144,7 @@
       "tags": [
         "information",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-39",
@@ -1253,8 +1155,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-40",
@@ -1265,8 +1166,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-21",
@@ -1281,8 +1181,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-22",
@@ -1299,8 +1198,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-23",
@@ -1316,8 +1214,7 @@
       "tags": [
         "rest",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-24",
@@ -1335,8 +1232,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-25",
@@ -1350,8 +1246,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-26",
@@ -1368,8 +1263,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-27",
@@ -1380,8 +1274,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-28",
@@ -1392,8 +1285,7 @@
       "tags": [
         "work",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-29",
@@ -1404,8 +1296,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-30",
@@ -1416,8 +1307,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-31",
@@ -1428,8 +1318,7 @@
       "tags": [
         "relationship",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-32",
@@ -1440,8 +1329,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-33",
@@ -1452,8 +1340,7 @@
       "tags": [
         "information",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-34",
@@ -1464,8 +1351,7 @@
       "tags": [
         "information",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-35",
@@ -1476,8 +1362,7 @@
       "tags": [
         "money",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-36",
@@ -1488,8 +1373,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-37",
@@ -1500,8 +1384,7 @@
       "tags": [
         "work",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-38",
@@ -1512,8 +1395,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-39",
@@ -1524,8 +1406,7 @@
       "tags": [
         "work",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-40",
@@ -1536,8 +1417,7 @@
       "tags": [
         "creative",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-41",
@@ -1547,8 +1427,7 @@
       "aside": "鍵は持ったかの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-42",
@@ -1559,8 +1438,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-43",
@@ -1570,8 +1448,7 @@
       "aside": "中身は見ておらん。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-44",
@@ -1582,8 +1459,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-45",
@@ -1593,8 +1469,7 @@
       "aside": "耳は遠いほうじゃ。",
       "tags": [
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-46",
@@ -1605,8 +1480,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-47",
@@ -1617,8 +1491,7 @@
       "tags": [
         "relationship",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-48",
@@ -1628,8 +1501,7 @@
       "aside": "今日は普通じゃ。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-49",
@@ -1639,8 +1511,7 @@
       "aside": "また来年見るかの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-50",
@@ -1651,8 +1522,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-51",
@@ -1662,8 +1532,7 @@
       "aside": "腕が足りぬ。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-52",
@@ -1673,8 +1542,7 @@
       "aside": "そろそろ張り替えかの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-53",
@@ -1685,8 +1553,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-54",
@@ -1696,8 +1563,7 @@
       "aside": "日なたが動いておる。",
       "tags": [
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-55",
@@ -1708,8 +1574,7 @@
       "tags": [
         "daily",
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-56",
@@ -1719,8 +1584,7 @@
       "aside": "わしのずれは大きい。",
       "tags": [
         "creative"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "quiet-57",
@@ -1731,8 +1595,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-41",
@@ -1743,8 +1606,7 @@
       "tags": [
         "daily",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-42",
@@ -1755,8 +1617,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-43",
@@ -1767,8 +1628,7 @@
       "tags": [
         "daily",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-44",
@@ -1778,8 +1638,7 @@
       "aside": "捨てた丼は数えぬ。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-45",
@@ -1790,8 +1649,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-46",
@@ -1801,8 +1659,7 @@
       "aside": "手を止めておこう。",
       "tags": [
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-47",
@@ -1812,8 +1669,7 @@
       "aside": "壺の中は見ておらん。",
       "tags": [
         "money"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-48",
@@ -1823,8 +1679,7 @@
       "aside": "枕は悪くない。",
       "tags": [
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-49",
@@ -1834,8 +1689,7 @@
       "aside": "多数決には弱いのじゃ。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-50",
@@ -1845,8 +1699,7 @@
       "aside": "同じ羽織じゃ。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-51",
@@ -1856,8 +1709,7 @@
       "aside": "帰りは裸足かの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-52",
@@ -1868,8 +1720,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-53",
@@ -1879,8 +1730,7 @@
       "aside": "油を差してみるかの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-54",
@@ -1890,8 +1740,7 @@
       "aside": "たまに反対もする。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-55",
@@ -1901,8 +1750,7 @@
       "aside": "上から三つでよいかの。",
       "tags": [
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-56",
@@ -1913,8 +1761,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "foggy-57",
@@ -1924,8 +1771,7 @@
       "aside": "折り畳みにするかの。",
       "tags": [
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-41",
@@ -1936,8 +1782,7 @@
       "tags": [
         "rest",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-42",
@@ -1948,8 +1793,7 @@
       "tags": [
         "daily",
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-43",
@@ -1960,8 +1804,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-44",
@@ -1972,8 +1815,7 @@
       "tags": [
         "money",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-45",
@@ -1984,8 +1826,7 @@
       "tags": [
         "relationship",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-46",
@@ -1996,8 +1837,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-47",
@@ -2008,8 +1848,7 @@
       "tags": [
         "work",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-48",
@@ -2020,8 +1859,7 @@
       "tags": [
         "daily",
         "rest"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-49",
@@ -2032,8 +1870,7 @@
       "tags": [
         "daily",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-50",
@@ -2043,8 +1880,7 @@
       "aside": "埃はかぶっておらん。",
       "tags": [
         "relationship"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-51",
@@ -2055,8 +1891,7 @@
       "tags": [
         "relationship",
         "money"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-52",
@@ -2067,8 +1902,7 @@
       "tags": [
         "information",
         "daily"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-53",
@@ -2079,8 +1913,7 @@
       "tags": [
         "information",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-54",
@@ -2091,8 +1924,7 @@
       "tags": [
         "work",
         "information"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-55",
@@ -2103,8 +1935,7 @@
       "tags": [
         "creative",
         "work"
-      ],
-      "isPremium": false
+      ]
     },
     {
       "id": "thinking-56",
@@ -2114,8 +1945,7 @@
       "aside": "一羽だけ遅れておる。",
       "tags": [
         "relationship"
-      ],
-      "isPremium": false
+      ]
     }
   ]
 }

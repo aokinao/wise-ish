@@ -194,7 +194,14 @@ xcodebuild -project Wiseish/Wiseish.xcodeproj \
 xcodebuild test \
   -project Wiseish/Wiseish.xcodeproj \
   -scheme Wiseish \
-  -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.2' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -derivedDataPath /tmp/wiseish-tests \
   CODE_SIGNING_ALLOWED=NO
 ```
+
+デプロイメントターゲットがiOS 26.0のため、シミュレータはiOS 26系のランタイムを持つ機種しか使えません。iPhone 13/ 15系はiOS 18以下のため対象外です。手元の環境で使える機種は次で確認してください。
+
+```bash
+xcrun simctl list devices available
+```
+

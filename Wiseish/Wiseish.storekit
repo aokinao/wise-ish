@@ -1,0 +1,31 @@
+{
+  "identifier" : "B1A5E3C0",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "500",
+      "familyShareable" : false,
+      "internalID" : "6A2C4D18",
+      "localizations" : [
+        {
+          "description" : "これまでIshが置いていった言葉を、いつでも読み返せます。過去の日々も全部残ります。",
+          "displayName" : "言葉の棚",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "com.naoki.Wiseish.shelf",
+      "referenceName" : "言葉の棚",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6753000000",
+    "_developerTeamID" : "",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

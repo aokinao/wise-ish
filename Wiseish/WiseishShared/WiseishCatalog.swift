@@ -13,7 +13,6 @@ struct WiseishCatalogQuote: Codable, Equatable, Identifiable {
     let theme: String
     let aside: String
     let tags: [String]
-    let isPremium: Bool
     let activeMonths: [Int]?
 
     func isActive(on date: Date, calendar: Calendar = .current) -> Bool {
@@ -205,7 +204,6 @@ enum WiseishCatalogStore {
                 theme: "比較について",
                 aside: "三寸ほど怪しい。",
                 tags: ["relationship", "daily"],
-                isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
@@ -215,7 +213,6 @@ enum WiseishCatalogStore {
                 theme: "情報について",
                 aside: "茶は見てよい。",
                 tags: ["information", "work"],
-                isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
@@ -225,7 +222,6 @@ enum WiseishCatalogStore {
                 theme: "思考について",
                 aside: "真理は、少し眠い。",
                 tags: ["rest", "work"],
-                isPremium: false,
                 activeMonths: nil
             )
         ]

@@ -171,10 +171,10 @@ struct WiseishCollectionView: View {
             Spacer()
 
             VStack(spacing: 8) {
-                Text("Ishはもう少し考えておる")
+                Text("Ishの言葉の棚")
                     .font(.system(size: 16, weight: .bold, design: .serif))
 
-                Text("これまで置いていった\(WiseishCatalogStore.currentCatalog().quotes.count)枚を、いつでも読み返せます。\n過去の日々も、全部残ります。")
+                Text("Ishは長く生きておる。\n置いてきた言葉を、いつでも読み返せます。")
                     .font(.system(size: 12, weight: .medium, design: .serif))
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
@@ -184,7 +184,7 @@ struct WiseishCollectionView: View {
             Button {
                 Task { await store.purchase() }
             } label: {
-                Text(store.priceText.isEmpty ? "棚を開ける" : "棚を開ける  \(store.priceText)")
+                Text(store.priceText.isEmpty ? "棚をひらく" : "棚をひらく  \(store.priceText)")
                     .font(.system(size: 13, weight: .bold, design: .serif))
                     .padding(.horizontal, 22)
                     .padding(.vertical, 12)

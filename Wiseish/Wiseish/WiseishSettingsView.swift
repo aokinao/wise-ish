@@ -195,6 +195,12 @@ struct WiseishSettingsView: View {
                 }
             }
 
+            if let message = store.purchaseMessage {
+                Text(message)
+                    .font(.system(size: 9, weight: .medium, design: .serif))
+                    .foregroundStyle(softInk)
+            }
+
             Text("お気に入りと過去の日々は端末内に置いておきます。")
                 .font(.system(size: 9, weight: .medium, design: .serif))
                 .lineSpacing(3)

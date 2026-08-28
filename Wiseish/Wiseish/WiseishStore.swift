@@ -2,6 +2,14 @@ import Foundation
 import Observation
 import StoreKit
 
+enum WiseishPurchaseState: Equatable {
+    case idle
+    case pending
+    case cancelled
+    case failed
+    case purchased
+}
+
 /// 買い切りの「言葉の棚」解放を扱う。
 /// 課金の境目は言葉ではなく棚に置くため、今日の一枚とWidgetはここに依存しない。
 @MainActor
@@ -13,6 +21,7 @@ final class WiseishStore {
     private(set) var product: Product?
     private(set) var isUnlocked = false
     private(set) var isWorking = false
+    private(set) var purchaseState: WiseishPurchaseState = .idle
 
     private var updates: Task<Void, Never>?
 
@@ -28,9 +37,22 @@ final class WiseishStore {
 
     var priceText: String { product?.displayPrice ?? "" }
 
+    var purchaseMessage: String? {
+        switch purchaseState {
+        case .idle, .purchased: return nil
+        case .pending: return "承認を待っています。"
+        case .cancelled: return "購入をキャンセルしました。"
+        case .failed: return "購入を完了できませんでした。もう一度お試しください。"
+        }
+    }
+
     func load() async {
         if product == nil {
-            product = try? await Product.products(for: [Self.shelfProductID]).first
+            do {
+                product = try await Product.products(for: [Self.shelfProductID]).first
+            } catch {
+                purchaseState = .failed
+            }
         }
         await refreshEntitlement()
     }
@@ -52,23 +74,40 @@ final class WiseishStore {
         isWorking = true
         defer { isWorking = false }
 
-        guard
-            let result = try? await product.purchase(),
-            case .success(let verification) = result,
-            case .verified(let transaction) = verification
-        else {
-            return false
+        do {
+            switch try await product.purchase() {
+            case .success(let verification):
+                guard case .verified(let transaction) = verification else {
+                    purchaseState = .failed
+                    return false
+                }
+                await transaction.finish()
+                await refreshEntitlement()
+                purchaseState = isUnlocked ? .purchased : .failed
+                return isUnlocked
+            case .pending:
+                purchaseState = .pending
+            case .userCancelled:
+                purchaseState = .cancelled
+            @unknown default:
+                purchaseState = .failed
+            }
+        } catch {
+            purchaseState = .failed
         }
-        await transaction.finish()
-        await refreshEntitlement()
-        return isUnlocked
+        return false
     }
 
     func restore() async {
         guard !isWorking else { return }
         isWorking = true
         defer { isWorking = false }
-        try? await AppStore.sync()
-        await refreshEntitlement()
+        do {
+            try await AppStore.sync()
+            await refreshEntitlement()
+            purchaseState = isUnlocked ? .purchased : .idle
+        } catch {
+            purchaseState = .failed
+        }
     }
 }

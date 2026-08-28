@@ -201,6 +201,13 @@ struct WiseishCollectionView: View {
             .foregroundStyle(softInk)
             .disabled(store.isWorking)
 
+            if let message = store.purchaseMessage {
+                Text(message)
+                    .font(.system(size: 10, weight: .medium, design: .serif))
+                    .foregroundStyle(softInk)
+                    .multilineTextAlignment(.center)
+            }
+
             Text("今日の一枚とWidgetは、買わなくても変わりません。")
                 .font(.system(size: 9, weight: .medium, design: .serif))
                 .foregroundStyle(softInk)

@@ -14,7 +14,8 @@ struct WiseishTests {
         let catalog = WiseishCatalogStore.currentCatalog()
 
         try WiseishCatalogValidator.validate(catalog)
-        #expect(catalog.quotes.count == 120)
+        // カタログは増える一方なので、固定値ではなく下限で欠落だけを見る。
+        #expect(catalog.quotes.count >= 120)
         #expect(Set(catalog.quotes.map(\.id)).count == catalog.quotes.count)
     }
 
@@ -32,11 +33,9 @@ struct WiseishTests {
             id: "remote-only",
             mood: "quiet",
             text: "遠くの棚にも、今日がある。\n取りに行くかは、また考える。",
-            reflection: "",
             theme: "遠さについて",
             aside: "今日は近い棚でよいのじゃ。",
             tags: ["daily"],
-            isPremium: false,
             activeMonths: nil
         )
         let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: [remoteOnly])
@@ -51,7 +50,7 @@ struct WiseishTests {
         let quotes = (1...3).map { index in
             WiseishCatalogQuote(
                 id: "quote-\(index)", mood: "quiet", text: "今日の棚には、\(index)がある。\n取るかどうかは、また考えるのじゃ。",
-                reflection: "棚について考える。", theme: "棚", aside: "急がぬのじゃ。", tags: ["daily"], isPremium: false, activeMonths: nil
+                theme: "棚", aside: "急がぬのじゃ。", tags: ["daily"], activeMonths: nil
             )
         }
         let catalog = WiseishCatalog(schemaVersion: 1, catalogVersion: "2026-08-28.1", quotes: quotes)

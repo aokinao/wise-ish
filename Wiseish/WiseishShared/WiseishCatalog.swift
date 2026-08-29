@@ -10,11 +10,9 @@ struct WiseishCatalogQuote: Codable, Equatable, Identifiable {
     let id: String
     let mood: String
     let text: String
-    let reflection: String
     let theme: String
     let aside: String
     let tags: [String]
-    let isPremium: Bool
     let activeMonths: [Int]?
 
     func isActive(on date: Date, calendar: Calendar = .current) -> Bool {
@@ -64,7 +62,6 @@ enum WiseishCatalogValidator {
                 moods.contains(quote.mood),
                 (2...3).contains(lineCount),
                 (12...80).contains(characterCount),
-                !quote.reflection.isEmpty,
                 !quote.theme.isEmpty,
                 !quote.aside.isEmpty,
                 voiceMarkers.contains(where: { quote.text.contains($0) || quote.aside.contains($0) }),
@@ -79,10 +76,6 @@ enum WiseishCatalogValidator {
             }
         }
 
-        let reflectionQuestionCount = catalog.quotes.filter { $0.reflection.contains("？") }.count
-        guard reflectionQuestionCount * 10 <= catalog.quotes.count * 4 else {
-            throw WiseishCatalogError.invalidQuote("reflection-question-rate")
-        }
     }
 }
 
@@ -208,33 +201,27 @@ enum WiseishCatalogStore {
                 id: "fallback-quiet",
                 mood: "quiet",
                 text: "人は物差しで世界を比べる。\nわしのは曲がっておるので、だいたい皆同じじゃ。",
-                reflection: "曲がった物差しは、違いまでやさしく曲げる。",
                 theme: "比較について",
                 aside: "三寸ほど怪しい。",
                 tags: ["relationship", "daily"],
-                isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-foggy",
                 mood: "foggy",
                 text: "知識が増えるほど、無知も広がる。\n茶柱一本にも、なぜ立つのか分からぬことが多い。",
-                reflection: "知るほど、知らないものの輪郭が増える。",
                 theme: "情報について",
                 aside: "茶は見てよい。",
                 tags: ["information", "work"],
-                isPremium: false,
                 activeMonths: nil
             ),
             WiseishCatalogQuote(
                 id: "fallback-thinking",
                 mood: "thinking",
                 text: "人は、分からぬものに名前をつけて安心する。\nわしは昨夜の不眠を、真理と名づけた。",
-                reflection: "名前をつけただけで、分かった気になっているものはある？",
                 theme: "思考について",
                 aside: "真理は、少し眠い。",
                 tags: ["rest", "work"],
-                isPremium: false,
                 activeMonths: nil
             )
         ]

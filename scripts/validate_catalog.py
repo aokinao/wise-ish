@@ -29,7 +29,7 @@ if not isinstance(quotes, list) or not 1 <= len(quotes) <= 500:
 
 ids: set[str] = set()
 unknown_keys = set()
-required = {"id", "mood", "text", "reflection", "theme", "aside", "tags", "isPremium"}
+required = {"id", "mood", "text", "theme", "aside", "tags"}
 optional = {"activeMonths"}
 for index, quote in enumerate(quotes):
     missing = required - quote.keys()
@@ -45,8 +45,6 @@ for index, quote in enumerate(quotes):
         fail(f"{quote_id}: unknown mood {quote['mood']}")
     if not quote["tags"] or not set(quote["tags"]) <= TAGS:
         fail(f"{quote_id}: invalid tags")
-    if not isinstance(quote["isPremium"], bool):
-        fail(f"{quote_id}: isPremium must be boolean")
     active_months = quote.get("activeMonths")
     if active_months is not None and (
         not isinstance(active_months, list)
@@ -66,7 +64,7 @@ for index, quote in enumerate(quotes):
         fail(f"{quote_id}: use Japanese punctuation")
     if not any(marker in text + quote["aside"] for marker in VOICE_MARKERS):
         fail(f"{quote_id}: Ish voice marker is missing")
-    for field in ("reflection", "theme", "aside"):
+    for field in ("theme", "aside"):
         if not isinstance(quote[field], str) or not quote[field].strip():
             fail(f"{quote_id}: {field} is required")
 
@@ -78,9 +76,6 @@ unknown_rate = sum("知らんけどの。" in quote["text"] + quote["aside"] for
 if unknown_rate > 0.2:
     fail("『知らんけどの。』must stay at or below 20%")
 
-reflection_question_rate = sum("？" in quote["reflection"] for quote in quotes) / len(quotes)
-if reflection_question_rate > 0.4:
-    fail("reflection questions must stay at or below 40%")
 
 for mood in MOODS:
     if not any(quote["mood"] == mood for quote in quotes):

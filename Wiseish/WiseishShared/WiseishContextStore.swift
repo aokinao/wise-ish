@@ -4,7 +4,6 @@ struct WiseishQuoteRecord: Codable, Equatable, Identifiable {
     let id: String
     let quoteID: String
     let text: String
-    let reflection: String
     let theme: String
     let aside: String
     let shownAt: Date
@@ -62,7 +61,6 @@ enum WiseishContextStore {
     static func recordQuote(
         quoteID: String,
         text: String,
-        reflection: String,
         theme: String,
         aside: String,
         date: Date = .now
@@ -75,7 +73,6 @@ enum WiseishContextStore {
             id: "\(quoteID)-\(day)",
             quoteID: quoteID,
             text: text,
-            reflection: reflection,
             theme: theme,
             aside: aside,
             shownAt: date
@@ -83,7 +80,8 @@ enum WiseishContextStore {
         var records = quoteHistory()
         records.removeAll { $0.id == record.id }
         records.insert(record, at: 0)
-        guard let data = try? JSONEncoder().encode(Array(records.prefix(100))) else { return }
+        // 購入後の「言葉の棚」で全期間を読めるよう、日々の記録は端末内に残す。
+        guard let data = try? JSONEncoder().encode(records) else { return }
         defaults.set(data, forKey: Key.quoteHistory)
         recordShownQuote(quoteID: quoteID, date: date)
         // WidgetはUserDefaultsの復旧待ちで描画が止まることがあるため、
@@ -95,7 +93,6 @@ enum WiseishContextStore {
     }
 
     /// 日めくりの重複回避に使う、IDと表示日時だけの全期間記録。
-    /// 詳細な履歴（最大100件）とは分けて保持する。
     static func shownQuoteDates() -> [String: Date] {
         guard
             let data = defaults.data(forKey: Key.shownQuoteDates),

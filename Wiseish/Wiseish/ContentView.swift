@@ -11,7 +11,6 @@ import WidgetKit
 struct WiseishQuote: Identifiable, Equatable {
     let id: String
     let text: String
-    let reflection: String
     let theme: String
     let aside: String
     let tags: [String]
@@ -19,19 +18,17 @@ struct WiseishQuote: Identifiable, Equatable {
     static let placeholder = WiseishQuote(
         id: "placeholder",
         text: "今日は、今日として置いておく。\nそれ以上は、また明日でよい。",
-        reflection: "",
         theme: "今日について",
         aside: "まだ考え中じゃ。",
         tags: ["daily"]
     )
 }
 
-private extension WiseishQuote {
+extension WiseishQuote {
     init(_ quote: WiseishCatalogQuote) {
         self.init(
             id: quote.id,
             text: quote.text,
-            reflection: quote.reflection,
             theme: quote.theme,
             aside: quote.aside,
             tags: quote.tags
@@ -719,7 +716,6 @@ struct ContentView: View {
         return WiseishQuote(
             id: record.quoteID,
             text: record.text,
-            reflection: record.reflection,
             theme: record.theme,
             aside: record.aside,
             tags: catalogQuote?.tags ?? ["daily"]
@@ -730,7 +726,6 @@ struct ContentView: View {
         WiseishContextStore.recordQuote(
             quoteID: currentQuote.id,
             text: currentQuote.text,
-            reflection: currentQuote.reflection,
             theme: currentQuote.theme,
             aside: currentQuote.aside
         )

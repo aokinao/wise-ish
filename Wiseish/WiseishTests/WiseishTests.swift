@@ -149,19 +149,61 @@ struct WiseishTests {
         #expect(WiseishDayRollover.dayKey(for: afterMidnight, calendar: calendar) == "1-2026-8-28")
     }
 
-    @Test func widgetTimelinePrecomputesFutureMidnights() throws {
+    @Test func widgetTimelineOnlyPreparesTheNextMidnight() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
         let now = try #require(
             calendar.date(from: DateComponents(year: 2026, month: 8, day: 25, hour: 18))
         )
-        let dates = WiseishDayRollover.timelineDates(from: now, daysAhead: 2, calendar: calendar)
+        let dates = WiseishDayRollover.widgetTimelineDates(from: now, calendar: calendar)
 
-        #expect(dates.count == 3)
+        #expect(dates.count == 2)
         #expect(dates[0] == now)
         #expect(calendar.component(.day, from: dates[1]) == 26)
         #expect(calendar.component(.hour, from: dates[1]) == 0)
-        #expect(calendar.component(.day, from: dates[2]) == 27)
+    }
+
+    @Test func widgetUsesTheSharedDailyQuoteWhenItIsAlreadyFixed() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 25, hour: 12)))
+        let shared = WiseishQuoteRecord(
+            id: "shared-1-2026-8-25",
+            quoteID: "shared",
+            text: "共有された言葉じゃ。\n今日はこれで動かぬ。",
+            theme: "共有について",
+            aside: "もう決まっておる。",
+            shownAt: date
+        )
+        let catalog = testCatalog(id: "catalog")
+
+        let quote = WiseishWidgetQuoteResolver.quote(
+            for: date,
+            sharedRecord: shared,
+            catalog: catalog,
+            shownQuoteDates: [:],
+            calendar: calendar
+        )
+
+        #expect(quote.id == "shared")
+        #expect(quote.text == shared.text)
+    }
+
+    @Test func widgetUsesTheCurrentCatalogBeforeTheDayIsFixed() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 8, day: 25, hour: 12)))
+        let catalog = testCatalog(id: "remote-only")
+
+        let quote = WiseishWidgetQuoteResolver.quote(
+            for: date,
+            sharedRecord: nil,
+            catalog: catalog,
+            shownQuoteDates: [:],
+            calendar: calendar
+        )
+
+        #expect(quote.id == "remote-only")
     }
 
     @Test func dayContentChangesOnlyAfterThePreviousPageIsInvisible() {
@@ -170,6 +212,24 @@ struct WiseishTests {
         #expect(WiseishDayRollover.pageTurnOpacity(for: replacementStep - 1) > 0)
         #expect(WiseishDayRollover.pageTurnProgress(for: replacementStep) == 1)
         #expect(WiseishDayRollover.pageTurnOpacity(for: replacementStep) == 0)
+    }
+
+    private func testCatalog(id: String) -> WiseishCatalog {
+        WiseishCatalog(
+            schemaVersion: 1,
+            catalogVersion: "2026-08-30.1",
+            quotes: [
+                WiseishCatalogQuote(
+                    id: id,
+                    mood: "quiet",
+                    text: "Catalogの言葉じゃ。\n今日はここから選ぶ。",
+                    theme: "Catalogについて",
+                    aside: "棚は新しい。",
+                    tags: ["daily"],
+                    activeMonths: nil
+                )
+            ]
+        )
     }
 
 }

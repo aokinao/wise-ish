@@ -15,16 +15,11 @@ enum WiseishDayRollover {
             ?? date.addingTimeInterval(86_400)
     }
 
-    static func timelineDates(
+    static func widgetTimelineDates(
         from date: Date,
-        daysAhead: Int,
         calendar: Calendar = .current
     ) -> [Date] {
-        guard daysAhead > 0 else { return [date] }
-        let futureDates = (1...daysAhead).compactMap { offset in
-            calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: date))
-        }
-        return [date] + futureDates
+        [date, nextStartOfDay(after: date, calendar: calendar)]
     }
 
     static func pageTurnProgress(for step: Int) -> Double {

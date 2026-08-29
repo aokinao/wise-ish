@@ -1,50 +1,20 @@
 import SwiftUI
 import WidgetKit
 
-private struct WidgetQuote {
-    let id: String
-    let mood: String
-    let text: String
-    let theme: String
-    let tags: [String]
-}
-
-private enum WidgetQuoteStore {
-    static func quote(for date: Date, calendar: Calendar = .current) -> WidgetQuote {
-        if let shared = WiseishContextStore.widgetQuote(for: date) {
-            return WidgetQuote(
-                id: shared.quoteID,
-                mood: "daily",
-                text: shared.text,
-                theme: shared.theme,
-                tags: ["daily"]
-            )
-        }
-        let quote = WiseishCatalogStore.bundledDailyQuote(for: date, bundle: .main, calendar: calendar)
-        return WidgetQuote(
-            id: quote.id,
-            mood: quote.mood,
-            text: quote.text,
-            theme: quote.theme,
-            tags: quote.tags
-        )
-    }
-}
-
 private struct WiseishEntry: TimelineEntry {
     let date: Date
-    let quote: WidgetQuote
+    let quote: WiseishWidgetQuote
 }
 
 private struct WiseishProvider: TimelineProvider {
     func placeholder(in context: Context) -> WiseishEntry {
-        WiseishEntry(date: .now, quote: WidgetQuoteStore.quote(for: .now))
+        WiseishEntry(date: .now, quote: WiseishWidgetQuoteResolver.quote(for: .now))
     }
 
     func getSnapshot(in context: Context, completion: @escaping (WiseishEntry) -> Void) {
         completion(WiseishEntry(
             date: .now,
-            quote: WidgetQuoteStore.quote(for: .now)
+            quote: WiseishWidgetQuoteResolver.quote(for: .now)
         ))
     }
 
@@ -52,27 +22,16 @@ private struct WiseishProvider: TimelineProvider {
         let now = Date()
         let calendar = Calendar.current
         let tomorrow = WiseishDayRollover.nextStartOfDay(after: now, calendar: calendar)
-        var dates = [now]
-        var hourly = calendar.date(byAdding: .hour, value: 1, to: now) ?? now
-        while hourly < tomorrow {
-            dates.append(hourly)
-            hourly = calendar.date(byAdding: .hour, value: 1, to: hourly) ?? tomorrow
-        }
-        dates.append(contentsOf: WiseishDayRollover.timelineDates(
-            from: tomorrow,
-            daysAhead: 6,
-            calendar: calendar
-        ))
+        let dates = WiseishDayRollover.widgetTimelineDates(from: now, calendar: calendar)
         let entries = dates.map { date in
             WiseishEntry(
                 date: date,
-                quote: WidgetQuoteStore.quote(for: date, calendar: calendar)
+                quote: WiseishWidgetQuoteResolver.quote(for: date, calendar: calendar)
             )
         }
-        // 未来分のエントリを先に作っていても、WidgetKit が古いタイムラインを
-        // 保持することがある。次の0時に必ず再取得させ、アプリと同じ日付を出す。
-        let reloadDate = WiseishDayRollover.nextStartOfDay(after: now, calendar: calendar)
-        completion(Timeline(entries: entries, policy: .after(reloadDate)))
+        // 翌日より先は、表示済み履歴やリモートCatalogが変わり得るため先行確定しない。
+        // 0時用の一件だけを保険として持ち、その時点で新しいTimelineを要求する。
+        completion(Timeline(entries: entries, policy: .after(tomorrow)))
     }
 }
 

@@ -58,37 +58,56 @@ enum WiseishContextStore {
         Set(quoteHistory().map { calendar.startOfDay(for: $0.shownAt) }).count
     }
 
+    @discardableResult
     static func recordQuote(
         quoteID: String,
         text: String,
         theme: String,
         aside: String,
         date: Date = .now
-    ) {
+    ) -> Bool {
         let components = Calendar.current.dateComponents([.era, .year, .month, .day], from: date)
         let day = [components.era, components.year, components.month, components.day]
             .map { String($0 ?? 0) }
             .joined(separator: "-")
-        let record = WiseishQuoteRecord(
-            id: "\(quoteID)-\(day)",
+        var records = quoteHistory()
+        let recordID = "\(quoteID)-\(day)"
+        let existingRecord = records.first { record in
+            record.id == recordID
+                && record.quoteID == quoteID
+                && record.text == text
+                && record.theme == theme
+                && record.aside == aside
+        }
+        let record = existingRecord ?? WiseishQuoteRecord(
+            id: recordID,
             quoteID: quoteID,
             text: text,
             theme: theme,
             aside: aside,
             shownAt: date
         )
-        var records = quoteHistory()
         records.removeAll { $0.id == record.id }
         records.insert(record, at: 0)
         // 購入後の「言葉の棚」で全期間を読めるよう、日々の記録は端末内に残す。
-        guard let data = try? JSONEncoder().encode(records) else { return }
-        defaults.set(data, forKey: Key.quoteHistory)
+        if existingRecord == nil, let data = try? JSONEncoder().encode(records) {
+            defaults.set(data, forKey: Key.quoteHistory)
+        }
         recordShownQuote(quoteID: quoteID, date: date)
         // WidgetはUserDefaultsの復旧待ちで描画が止まることがあるため、
         // 今日実際に表示した一言だけは小さな共有ファイルにも保存する。
-        if let widgetURL = widgetQuoteURL,
-           let widgetData = try? JSONEncoder().encode(record) {
-            try? widgetData.write(to: widgetURL, options: .atomic)
+        guard let widgetURL = widgetQuoteURL,
+              let widgetData = try? JSONEncoder().encode(record) else { return false }
+        if let currentData = try? Data(contentsOf: widgetURL),
+           let currentRecord = try? JSONDecoder().decode(WiseishQuoteRecord.self, from: currentData),
+           currentRecord == record {
+            return false
+        }
+        do {
+            try widgetData.write(to: widgetURL, options: .atomic)
+            return true
+        } catch {
+            return false
         }
     }
 

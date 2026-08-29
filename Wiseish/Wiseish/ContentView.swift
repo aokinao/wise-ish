@@ -509,7 +509,6 @@ struct ContentView: View {
         }
         WiseishContextStore.recordFavorite(quoteID: currentQuote.id, isFavorite: isFavorite)
         if isFavorite { WiseishContextStore.recordUsage(.favoriteAdded) }
-        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
         if isFavorite { pokeIsh() }
     }
 
@@ -562,9 +561,6 @@ struct ContentView: View {
         let now = Date.now
         guard WiseishDayRollover.dayKey(for: currentDate) != WiseishDayRollover.dayKey(for: now) else {
             restorePersonalizedState(for: now)
-            // アプリを開いた直後もWidgetへ現在日の再取得を依頼する。
-            // WidgetKit側の古いTimelineが残っている場合の復帰点になる。
-            WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
             return
         }
         await performDayRollover(to: now)
@@ -628,7 +624,6 @@ struct ContentView: View {
         }
 
         lastSeenDayKey = WiseishDayRollover.dayKey(for: date)
-        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
 
         withAnimation(.spring(duration: 0.58, bounce: 0.28)) {
             rolloverStep = 0
@@ -699,15 +694,13 @@ struct ContentView: View {
         }) {
             displayedQuote = quote(from: todayRecord)
             isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-            if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
-            WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+            if Calendar.current.isDateInToday(date) { syncWidgetIfNeeded() }
             return
         }
 
         displayedQuote = WiseishQuote(WiseishCatalogStore.dailyQuote(for: date))
         isFavorite = WiseishContextStore.isFavorite(quoteID: displayedQuote.id)
-        if Calendar.current.isDateInToday(date) { recordCurrentQuote() }
-        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
+        if Calendar.current.isDateInToday(date) { syncWidgetIfNeeded() }
     }
 
     private func quote(from record: WiseishQuoteRecord) -> WiseishQuote {
@@ -722,13 +715,15 @@ struct ContentView: View {
         )
     }
 
-    private func recordCurrentQuote() {
-        WiseishContextStore.recordQuote(
+    private func syncWidgetIfNeeded() {
+        let widgetChanged = WiseishContextStore.recordQuote(
             quoteID: currentQuote.id,
             text: currentQuote.text,
             theme: currentQuote.theme,
             aside: currentQuote.aside
         )
+        guard widgetChanged else { return }
+        WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
     }
 
     private func createShareCard() {
@@ -741,7 +736,6 @@ struct ContentView: View {
         Task {
             guard await WiseishCatalogUpdater.shared.refreshIfNeeded() else { return }
             restorePersonalizedState(for: currentDate)
-            WidgetCenter.shared.reloadTimelines(ofKind: "WiseishDailyWidget")
         }
     }
 

@@ -194,7 +194,7 @@ struct WiseishCollectionView: View {
             .buttonStyle(.plain)
             .disabled(store.isWorking)
 
-            Button("購入を復元する") {
+            Button("以前の購入を復元する") {
                 Task { await store.restore() }
             }
             .font(.system(size: 11, weight: .semibold))

@@ -58,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		ED7A387E3044846600A6F158 /* Wiseish.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Wiseish.storekit; sourceTree = "<group>"; };
 		EDC51840303C00C7008434F6 /* Wiseish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wiseish.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDC5184F303C00C9008434F6 /* WiseishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WiseishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDC51859303C00C9008434F6 /* WiseishUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WiseishUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,6 +164,7 @@
 		EDC51837303C00C7008434F6 = {
 			isa = PBXGroup;
 			children = (
+				ED7A387E3044846600A6F158 /* Wiseish.storekit */,
 				EDC51842303C00C7008434F6 /* Wiseish */,
 				F20000000000000000000001 /* WiseishShared */,
 				F10000000000000000000005 /* WiseishWidget */,

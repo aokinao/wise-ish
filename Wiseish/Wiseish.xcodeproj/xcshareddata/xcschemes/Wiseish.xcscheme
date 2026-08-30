@@ -75,7 +75,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../../Wiseish.storekit">
+         identifier = "../../Wiseish.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction

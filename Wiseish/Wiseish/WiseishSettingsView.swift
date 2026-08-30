@@ -186,7 +186,7 @@ struct WiseishSettingsView: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(mustard)
                 } else {
-                    Button("購入を復元する") {
+                    Button("以前の購入を復元する") {
                         Task { await store.restore() }
                     }
                     .font(.system(size: 10, weight: .semibold))

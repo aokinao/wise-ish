@@ -13,7 +13,7 @@
           "locale" : "ja"
         }
       ],
-      "productID" : "com.naoki.Wiseish.shelf",
+      "productID" : "com.naoki.Wiseish.wordshelf",
       "referenceName" : "言葉の棚",
       "type" : "NonConsumable"
     }

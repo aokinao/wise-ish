@@ -8,6 +8,7 @@ enum WiseishPurchaseState: Equatable {
     case cancelled
     case failed
     case purchased
+    case unavailable
 }
 
 /// 買い切りの「言葉の棚」解放を扱う。
@@ -16,7 +17,7 @@ enum WiseishPurchaseState: Equatable {
 @Observable
 final class WiseishStore {
     static let shared = WiseishStore()
-    static let shelfProductID = "com.naoki.Wiseish.shelf"
+    static let shelfProductID = "com.naoki.Wiseish.wordshelf"
 
     private(set) var product: Product?
     private(set) var isUnlocked = false
@@ -43,15 +44,20 @@ final class WiseishStore {
         case .pending: return "承認を待っています。"
         case .cancelled: return "購入をキャンセルしました。"
         case .failed: return "購入を完了できませんでした。もう一度お試しください。"
+        case .unavailable: return "いま棚をひらけません。時間をおいてお試しください。"
         }
     }
 
     func load() async {
         if product == nil {
             do {
+                // 未承認・未提出のプロダクトIDはthrowせず空配列で返るため、nilのままかを見る
                 product = try await Product.products(for: [Self.shelfProductID]).first
+                if product == nil, purchaseState == .idle {
+                    purchaseState = .unavailable
+                }
             } catch {
-                purchaseState = .failed
+                purchaseState = .unavailable
             }
         }
         await refreshEntitlement()
@@ -70,7 +76,15 @@ final class WiseishStore {
 
     @discardableResult
     func purchase() async -> Bool {
-        guard let product, !isWorking else { return false }
+        guard !isWorking else { return false }
+        if product == nil {
+            purchaseState = .idle
+            await load()
+        }
+        guard let product else {
+            purchaseState = .unavailable
+            return false
+        }
         isWorking = true
         defer { isWorking = false }
 

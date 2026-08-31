@@ -36,11 +36,10 @@ jobs:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           APP_PROFILE_BASE64: ${{ secrets.WISEISH_APP_PROVISION_PROFILE_BASE64 }}
           WIDGET_PROFILE_BASE64: ${{ secrets.WISEISH_WIDGET_PROVISION_PROFILE_BASE64 }}
-          SHARE_PROFILE_BASE64: ${{ secrets.WISEISH_SHARE_PROVISION_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           set -euo pipefail
-          required_secrets=(ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_BASE64 BUILD_CERTIFICATE_BASE64 P12_PASSWORD APP_PROFILE_BASE64 WIDGET_PROFILE_BASE64 SHARE_PROFILE_BASE64 KEYCHAIN_PASSWORD)
+          required_secrets=(ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_BASE64 BUILD_CERTIFICATE_BASE64 P12_PASSWORD APP_PROFILE_BASE64 WIDGET_PROFILE_BASE64 KEYCHAIN_PASSWORD)
           for secret_name in "${required_secrets[@]}"; do
             if [[ -z "${!secret_name:-}" ]]; then
               echo "::error::Missing GitHub secret: ${secret_name}"
@@ -56,7 +55,6 @@ jobs:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           APP_PROFILE_BASE64: ${{ secrets.WISEISH_APP_PROVISION_PROFILE_BASE64 }}
           WIDGET_PROFILE_BASE64: ${{ secrets.WISEISH_WIDGET_PROVISION_PROFILE_BASE64 }}
-          SHARE_PROFILE_BASE64: ${{ secrets.WISEISH_SHARE_PROVISION_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           set -euo pipefail
@@ -91,7 +89,6 @@ jobs:
           }
           install_profile "$APP_PROFILE_BASE64" WISEISH_APP
           install_profile "$WIDGET_PROFILE_BASE64" WISEISH_WIDGET
-          install_profile "$SHARE_PROFILE_BASE64" WISEISH_SHARE
           echo "API_KEY_PATH=$API_KEY_PATH" >> "$GITHUB_ENV"
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "PROFILE_DIRECTORY=$PROFILE_DIRECTORY" >> "$GITHUB_ENV"
@@ -126,8 +123,7 @@ jobs:
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM=YE3JSRF22E \
             CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' \
             WISEISH_APP_PROFILE_NAME="$WISEISH_APP_PROFILE_NAME" \
-            WISEISH_WIDGET_PROFILE_NAME="$WISEISH_WIDGET_PROFILE_NAME" \
-            WISEISH_SHARE_PROFILE_NAME="$WISEISH_SHARE_PROFILE_NAME"
+            WISEISH_WIDGET_PROFILE_NAME="$WISEISH_WIDGET_PROFILE_NAME"
 
       - name: Export and upload to App Store Connect
         env:
@@ -150,7 +146,6 @@ jobs:
             <key>provisioningProfiles</key><dict>
               <key>com.naoki.Wiseish</key><string>${WISEISH_APP_PROFILE_NAME}</string>
               <key>com.naoki.Wiseish.WiseishWidget</key><string>${WISEISH_WIDGET_PROFILE_NAME}</string>
-              <key>com.naoki.Wiseish.WiseishShare</key><string>${WISEISH_SHARE_PROFILE_NAME}</string>
             </dict>
           </dict></plist>
           PLIST
@@ -166,6 +161,5 @@ jobs:
           if [[ -n "${PROFILE_DIRECTORY:-}" ]]; then
             rm -f "$PROFILE_DIRECTORY/${WISEISH_APP_PROFILE_UUID:-}.mobileprovision"
             rm -f "$PROFILE_DIRECTORY/${WISEISH_WIDGET_PROFILE_UUID:-}.mobileprovision"
-            rm -f "$PROFILE_DIRECTORY/${WISEISH_SHARE_PROFILE_UUID:-}.mobileprovision"
           fi
           rm -rf "$RUNNER_TEMP/private_keys"

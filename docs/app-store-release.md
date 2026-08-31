@@ -9,18 +9,17 @@
 5. Bundle IDは `com.naoki.Wiseish`
 6. SKUは社内用に `wise-ish-ios` など一意な値を設定
 
-Bundle IDはXcodeのApp targetと一致させる。WidgetとShare Extensionは、同じBundle IDとして登録するのではなく、Xcodeの自動署名でApp IDを作成する。
+Bundle IDはXcodeのApp targetと一致させる。WidgetはApp本体と同じBundle IDとして登録するのではなく、Xcodeの自動署名でApp IDを作成する。
 
 ## 2. Xcode側の確認
 
 - Team: Apple Developerのチーム
 - App target: `com.naoki.Wiseish`
 - Widget target: `com.naoki.Wiseish.WiseishWidget`
-- Share target: `com.naoki.Wiseish.WiseishShare`
 - Version: `1.0.0`など、App Store Connectのバージョンと一致
 - Build: 同じVersion内で必ず増やす（1, 2, 3...）
 - Signing & Capabilities: Automatically manage signingを有効化
-- App Groups: `group.com.naoki.Wiseish` がApp、Widget、Shareで一致
+- App Groups: `group.com.naoki.Wiseish` がAppとWidgetで一致
 
 まず実機でArchiveせずRunできることを確認する。次に `Product > Archive` → OrganizerのValidateで署名とExtensionを確認する。
 
@@ -50,16 +49,14 @@ Bundle IDはXcodeのApp targetと一致させる。WidgetとShare Extensionは�
 | `P12_PASSWORD` | `.p12`のパスワード |
 | `WISEISH_APP_PROVISION_PROFILE_BASE64` | App用Provisioning ProfileのBase64文字列 |
 | `WISEISH_WIDGET_PROVISION_PROFILE_BASE64` | Widget用Provisioning ProfileのBase64文字列 |
-| `WISEISH_SHARE_PROVISION_PROFILE_BASE64` | Share Extension用Provisioning ProfileのBase64文字列 |
 | `KEYCHAIN_PASSWORD` | CI用一時Keychainのパスワード |
 
 API KeyはApp Store Connectの `Users and Access > Integrations > Keys` で、最低限 `App Manager` 権限で作成する。`.p8`は一度しかダウンロードできないため、Base64化した値と元ファイルをパスワードマネージャーにも保管する。
 
-Apple Developerでは、次の3つのApp IDに対するApp Store用Distribution Provisioning Profileを作成する。
+Apple Developerでは、次の2つのApp IDに対するApp Store用Distribution Provisioning Profileを作成する。
 
 - `com.naoki.Wiseish`
 - `com.naoki.Wiseish.WiseishWidget`
-- `com.naoki.Wiseish.WiseishShare`
 
 このリポジトリの `ios-release.yml` は、`v*`タグまたはActionsの手動実行で以下を行う。
 
@@ -93,6 +90,6 @@ TestFlightで問題がなければ、ビルドをバージョンに紐づけて�
 - 本番Bundle IDとProvisioning Profileが一致している
 - Debug用の長押し日付変更がReleaseビルドに残っていない
 - API Key、秘密鍵、個人情報がリポジトリに入っていない
-- WidgetとShare Extensionを含むArchiveになっている
+- Widgetを含むArchiveになっている
 - オフライン時にも編集済みカタログが表示される
 - Widgetの表示日付がアプリの日付と一致している

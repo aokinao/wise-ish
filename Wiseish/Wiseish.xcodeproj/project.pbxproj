@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		F10000000000000000000001 /* WiseishWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* WiseishWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F30000000000000000000001 /* WiseishShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F30000000000000000000002 /* WiseishShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,13 +32,6 @@
 			remoteGlobalIDString = F10000000000000000000004;
 			remoteInfo = WiseishWidget;
 		};
-		F30000000000000000000003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EDC51838303C00C7008434F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F30000000000000000000004;
-			remoteInfo = WiseishShare;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,7 +42,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				F10000000000000000000001 /* WiseishWidget.appex in Embed Foundation Extensions */,
-				F30000000000000000000001 /* WiseishShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,7 +54,6 @@
 		EDC5184F303C00C9008434F6 /* WiseishTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WiseishTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDC51859303C00C9008434F6 /* WiseishUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WiseishUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F10000000000000000000002 /* WiseishWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WiseishWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		F30000000000000000000002 /* WiseishShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WiseishShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,13 +63,6 @@
 				Info.plist,
 			);
 			target = F10000000000000000000004 /* WiseishWidget */;
-		};
-		F3000000000000000000000D /* Exceptions for "WiseishShare" folder in "WiseishShare" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = F30000000000000000000004 /* WiseishShare */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -110,14 +93,6 @@
 		F20000000000000000000001 /* WiseishShared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WiseishShared;
-			sourceTree = "<group>";
-		};
-		F30000000000000000000005 /* WiseishShare */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				F3000000000000000000000D /* Exceptions for "WiseishShare" folder in "WiseishShare" target */,
-			);
-			path = WiseishShare;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -151,13 +126,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F30000000000000000000006 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -168,7 +136,6 @@
 				EDC51842303C00C7008434F6 /* Wiseish */,
 				F20000000000000000000001 /* WiseishShared */,
 				F10000000000000000000005 /* WiseishWidget */,
-				F30000000000000000000005 /* WiseishShare */,
 				EDC51852303C00C9008434F6 /* WiseishTests */,
 				EDC5185C303C00C9008434F6 /* WiseishUITests */,
 				EDC51841303C00C7008434F6 /* Products */,
@@ -180,7 +147,6 @@
 			children = (
 				EDC51840303C00C7008434F6 /* Wiseish.app */,
 				F10000000000000000000002 /* WiseishWidget.appex */,
-				F30000000000000000000002 /* WiseishShare.appex */,
 				EDC5184F303C00C9008434F6 /* WiseishTests.xctest */,
 				EDC51859303C00C9008434F6 /* WiseishUITests.xctest */,
 			);
@@ -203,7 +169,6 @@
 			);
 			dependencies = (
 				F1000000000000000000000B /* PBXTargetDependency */,
-				F30000000000000000000009 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				EDC51842303C00C7008434F6 /* Wiseish */,
@@ -285,29 +250,6 @@
 			productReference = F10000000000000000000002 /* WiseishWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		F30000000000000000000004 /* WiseishShare */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F3000000000000000000000C /* Build configuration list for PBXNativeTarget "WiseishShare" */;
-			buildPhases = (
-				F30000000000000000000007 /* Sources */,
-				F30000000000000000000006 /* Frameworks */,
-				F30000000000000000000008 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				F20000000000000000000001 /* WiseishShared */,
-				F30000000000000000000005 /* WiseishShare */,
-			);
-			name = WiseishShare;
-			packageProductDependencies = (
-			);
-			productName = WiseishShare;
-			productReference = F30000000000000000000002 /* WiseishShare.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -342,14 +284,6 @@
 							};
 						};
 					};
-					F30000000000000000000004 = {
-						CreatedOnToolsVersion = 26.2;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-						};
-					};
 				};
 			};
 			buildConfigurationList = EDC5183B303C00C7008434F6 /* Build configuration list for PBXProject "Wiseish" */;
@@ -369,7 +303,6 @@
 			targets = (
 				EDC5183F303C00C7008434F6 /* Wiseish */,
 				F10000000000000000000004 /* WiseishWidget */,
-				F30000000000000000000004 /* WiseishShare */,
 				EDC5184E303C00C9008434F6 /* WiseishTests */,
 				EDC51858303C00C9008434F6 /* WiseishUITests */,
 			);
@@ -399,13 +332,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1000000000000000000000A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F30000000000000000000008 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -443,13 +369,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F30000000000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -467,11 +386,6 @@
 			isa = PBXTargetDependency;
 			target = F10000000000000000000004 /* WiseishWidget */;
 			targetProxy = F10000000000000000000003 /* PBXContainerItemProxy */;
-		};
-		F30000000000000000000009 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F30000000000000000000004 /* WiseishShare */;
-			targetProxy = F30000000000000000000003 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -811,65 +725,6 @@
 			};
 			name = Release;
 		};
-		F3000000000000000000000A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = WiseishShare/WiseishShare.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YE3JSRF22E;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WiseishShare/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.Wiseish.WiseishShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		F3000000000000000000000B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = WiseishShare/WiseishShare.entitlements;
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YE3JSRF22E;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WiseishShare/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.Wiseish.WiseishShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "$(WISEISH_SHARE_PROFILE_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -914,15 +769,6 @@
 			buildConfigurations = (
 				F1000000000000000000000C /* Debug */,
 				F1000000000000000000000D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F3000000000000000000000C /* Build configuration list for PBXNativeTarget "WiseishShare" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F3000000000000000000000A /* Debug */,
-				F3000000000000000000000B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

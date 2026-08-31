@@ -33,6 +33,7 @@
 ## 実装
 
 - プロダクトID `com.naoki.Wiseish.wordshelf`（非消耗型・買い切り）
+- App Store Connectへの登録手順は [in-app-purchase-setup.md](in-app-purchase-setup.md) にまとめた
 - `Wiseish/Wiseish/WiseishStore.swift` がStoreKit 2で購入と権利判定を持つ
 - 「言葉の棚」画面に「棚」タブを追加した。未購入は案内、購入済みは全枚を表示する
 - 「日々」タブは未購入で直近7日まで、購入で全期間
